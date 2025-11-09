@@ -1,0 +1,10 @@
+// Test bug boucle for
+
+let sum = 0.0
+
+for i in [1.0, 2.0, 3.0] {
+    sum = sum + i
+}
+
+print("Sum:")
+print(to_string(sum))

@@ -1,0 +1,95 @@
+# ============================================
+# O-RedMind - Requirements (100% Local)
+# ============================================
+# Toutes les dépendances fonctionnent en local sans API externe
+
+# Core Python Libraries
+# --------------------------------------------
+numpy>=1.24.0
+dataclasses-json>=0.6.0
+
+# Perception - Vision
+# --------------------------------------------
+opencv-python>=4.8.0           # Capture caméra, traitement image
+pillow>=10.0.0                 # Manipulation images
+ultralytics>=8.0.0             # YOLOv8 pour détection objets (local)
+
+# Perception - Audio
+# --------------------------------------------
+sounddevice>=0.4.6             # Capture microphone
+soundfile>=0.12.1              # Lecture/écriture audio
+scipy>=1.11.0                  # Traitement signal audio
+openai-whisper>=20230314       # Speech-to-Text LOCAL (pas d'API)
+
+# Language - NLU/NLG
+# --------------------------------------------
+sentence-transformers>=2.2.0   # Embeddings sémantiques LOCAL
+transformers>=4.35.0           # Modèles Hugging Face LOCAL
+torch>=2.0.0                   # Backend pour transformers
+accelerate>=0.24.0             # Optimisation GPU/CPU
+
+# Language - Text Generation (Local LLM)
+# --------------------------------------------
+llama-cpp-python>=0.2.0        # Llama local ultra-rapide
+# Alternative: gpt4all>=2.0.0  # Interface simple pour LLMs locaux
+
+# Voice - Text-to-Speech (Local)
+# --------------------------------------------
+TTS>=0.20.0                    # Coqui TTS (gratuit, local, qualité)
+pyttsx3>=2.90                  # TTS simple offline (fallback)
+
+# Memory - Vector Store
+# --------------------------------------------
+faiss-cpu>=1.7.4               # Recherche vectorielle ultra-rapide
+# hnswlib>=0.7.0               # Alternative HNSW (plus léger)
+
+# Utilities
+# --------------------------------------------
+tqdm>=4.66.0                   # Progress bars
+pyyaml>=6.0                    # Configuration files
+python-dotenv>=1.0.0           # Variables d'environnement
+
+# Optional - Performance
+# --------------------------------------------
+# numba>=0.58.0                # JIT compilation pour accélération
+# onnxruntime>=1.16.0          # Inference optimisée
+
+# Optional - Advanced Features
+# --------------------------------------------
+# pyautogui>=0.9.54            # Contrôle souris/clavier
+# requests>=2.31.0             # HTTP requests
+# beautifulsoup4>=4.12.0       # Web scraping
+# wikipedia>=1.4.0             # Accès Wikipedia offline
+
+
+# ============================================
+# Installation Instructions
+# ============================================
+# 
+# 1. Installation complète:
+#    pip install -r requirements.txt
+#
+# 2. Installation minimale (sans voix/vision avancée):
+#    pip install numpy opencv-python sounddevice sentence-transformers
+#
+# 3. Pour GPU (plus rapide):
+#    pip install torch --index-url https://download.pytorch.org/whl/cu118
+#    pip install faiss-gpu
+#
+# 4. Télécharger modèles Whisper (première utilisation):
+#    python -c "import whisper; whisper.load_model('base')"
+#
+# 5. Télécharger embeddings sentence-transformers:
+#    python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+#
+# ============================================
+# Disk Space Requirements
+# ============================================
+# - Whisper base: ~140 MB
+# - Sentence Transformers: ~80 MB
+# - YOLOv8n (nano): ~6 MB
+# - Coqui TTS: ~100 MB
+# - Llama 7B (optionnel): ~4 GB
+#
+# Total minimal: ~500 MB
+# Total avec LLM: ~4.5 GB
