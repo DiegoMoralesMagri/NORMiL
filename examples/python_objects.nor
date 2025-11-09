@@ -1,0 +1,179 @@
+// ============================================================================
+// NORMiL - Exemples d'Objets Python (Phase 4.4)
+// ============================================================================
+//
+// Ce fichier démontre l'utilisation d'objets Python en NORMiL :
+// - Méthodes sur les types natifs (strings, listes)
+// - Instantiation de classes Python
+// - Appel de méthodes sur objets
+// - Accès aux attributs d'objets
+// - Chaînage de méthodes
+
+// ============================================================================
+// Exemple 1: Méthodes sur les chaînes de caractères
+// ============================================================================
+
+print("=== Exemple 1: Méthodes sur strings ===")
+
+let message = "bonjour le monde"
+
+// Conversion en majuscules
+let upper = message.upper()
+print("Majuscules: " + upper)  // "BONJOUR LE MONDE"
+
+// Conversion en minuscules (depuis majuscules)
+let lower = upper.lower()
+print("Minuscules: " + lower)  // "bonjour le monde"
+
+// Remplacement de texte
+let replaced = message.replace("monde", "NORMiL")
+print("Remplacé: " + replaced)  // "bonjour le NORMiL"
+
+// Découpage en mots
+let words = message.split(" ")
+print("Mots: ")
+print(words)  // ["bonjour", "le", "monde"]
+
+// Tests de début/fin
+let starts_bonjour = message.startswith("bonjour")
+let starts_hello = message.startswith("hello")
+print("Commence par 'bonjour':")
+print(starts_bonjour)  // true
+print("Commence par 'hello':")
+print(starts_hello)    // false
+
+// ============================================================================
+// Exemple 2: Chaînage de méthodes
+// ============================================================================
+
+print("\n=== Exemple 2: Chaînage de méthodes ===")
+
+let text_avec_espaces = "  hello world  "
+
+// Chaîner strip() puis upper()
+let cleaned = text_avec_espaces.strip().upper()
+print("Nettoyé et majuscules: '" + cleaned + "'")  // "HELLO WORLD"
+
+// Chaîner plusieurs transformations
+let complex_chain = "  python rocks  ".strip().replace("python", "NORMiL").upper()
+print("Chaîne complexe: '" + complex_chain + "'")  // "NORMIL ROCKS"
+
+// ============================================================================
+// Exemple 3: Méthodes sur les listes
+// ============================================================================
+
+print("\n=== Exemple 3: Méthodes sur listes ===")
+
+let nombres = [1, 2, 3]
+print("Liste initiale: ")
+print(nombres)
+
+// Ajouter un élément
+nombres.append(4)
+print("Après append(4): ")
+print(nombres)  // [1, 2, 3, 4]
+
+// Ajouter un autre élément
+nombres.append(5)
+print("Après append(5): ")
+print(nombres)  // [1, 2, 3, 4, 5]
+
+// ============================================================================
+// Exemple 4: Instantiation de classes Python - datetime
+// ============================================================================
+
+print("\n=== Exemple 4: Objets datetime ===")
+
+import datetime
+
+// Créer une date
+let date_noel = datetime.datetime(2024, 12, 25)
+print("Date créée: 2024-12-25")
+
+// Accéder aux attributs
+let annee = date_noel.year
+let mois = date_noel.month
+let jour = date_noel.day
+print("Année:")
+print(annee)   // 2024
+print("Mois:")
+print(mois)     // 12
+print("Jour:")
+print(jour)     // 25
+
+// Appeler des méthodes
+let jour_semaine = date_noel.weekday()
+print("Jour de la semaine (0=Lundi, 6=Dimanche):")
+print(jour_semaine)
+
+// ============================================================================
+// Exemple 5: Manipulation avancée de dates
+// ============================================================================
+
+print("\n=== Exemple 5: Manipulation de dates ===")
+
+// Créer plusieurs dates
+let nouvel_an = datetime.datetime(2024, 1, 1)
+let mi_annee = datetime.datetime(2024, 6, 15)
+let fin_annee = datetime.datetime(2024, 12, 31)
+
+print("Nouvel an - mois:")
+print(nouvel_an.month)
+print("Mi-année - mois:")
+print(mi_annee.month)
+print("Fin année - mois:")
+print(fin_annee.month)
+
+// ============================================================================
+// Exemple 6: Combinaison strings et objets
+// ============================================================================
+
+print("\n=== Exemple 6: Combinaison strings et objets ===")
+
+let date_importante = datetime.datetime(2024, 7, 14)
+let nom_fete = "Fête Nationale"
+
+// Créer un message formaté
+let message_formate = nom_fete.lower().replace(" ", "_")
+print("Message formaté: " + message_formate)  // "fête_nationale"
+
+let annee_fete = date_importante.year
+print("Année de la fête:")
+print(annee_fete)
+
+// ============================================================================
+// Exemple 7: Validation de données avec méthodes
+// ============================================================================
+
+print("\n=== Exemple 7: Validation de données ===")
+
+let email = "user@example.com"
+let est_valide = email.startswith("user") 
+print("Email commence par 'user':")
+print(est_valide)  // true
+
+// Découper l'email
+let parties = email.split("@")
+print("Parties de l'email: ")
+print(parties)  // ["user", "example.com"]
+
+// ============================================================================
+// Exemple 8: Traitement de texte avancé
+// ============================================================================
+
+print("\n=== Exemple 8: Traitement de texte ===")
+
+let csv_line = "nom,prenom,age"
+
+// Parser CSV simple
+let colonnes = csv_line.split(",")
+print("Colonnes CSV: ")
+print(colonnes)  // ["nom", "prenom", "age"]
+
+// Transformer en titres
+let titre1 = colonnes[0].upper()
+let titre2 = colonnes[1].upper()
+let titre3 = colonnes[2].upper()
+print("Titres: " + titre1 + ", " + titre2 + ", " + titre3)
+
+print("\n=== Tous les exemples d'objets Python terminés avec succès ! ===")

@@ -1,0 +1,142 @@
+// ============================================
+// pattern_matching.nor
+// Démonstration du pattern matching
+// ============================================
+
+import memory
+import vectors
+
+// Pattern matching sur types
+fn process_value(value: any) -> str {
+    match value {
+        case int(x) -> {
+            return "Entier: " + str(x)
+        }
+        case float(f) -> {
+            return "Flottant: " + str(f)
+        }
+        case str(s) -> {
+            return "Chaîne: " + s
+        }
+        case bool(b) -> {
+            return "Booléen: " + str(b)
+        }
+        case _ -> {
+            return "Type inconnu"
+        }
+    }
+}
+
+// Pattern matching sur structures
+fn analyze_memory(record: EpisodicRecord) -> str {
+    match record {
+        case EpisodicRecord(e) where e.trust > 0.9 -> {
+            return "Souvenir hautement fiable"
+        }
+        case EpisodicRecord(e) where e.trust > 0.7 -> {
+            return "Souvenir moyennement fiable"
+        }
+        case EpisodicRecord(e) where e.trust > 0.5 -> {
+            return "Souvenir peu fiable"
+        }
+        case _ -> {
+            return "Souvenir non fiable"
+        }
+    }
+}
+
+// Pattern matching sur listes
+fn process_list(items: list<int>) -> str {
+    match items {
+        case [] -> {
+            return "Liste vide"
+        }
+        case [x] -> {
+            return "Un seul élément: " + str(x)
+        }
+        case [x, y] -> {
+            return "Deux éléments: " + str(x) + ", " + str(y)
+        }
+        case [x, y, ...] -> {
+            return "Au moins deux éléments, premier: " + str(x)
+        }
+        case _ -> {
+            return "Autre cas"
+        }
+    }
+}
+
+// Pattern matching temporel (conceptuel, à implémenter)
+// Détecter des séquences dans l'historique
+fn detect_repetitive_sequence() -> optional<list<uuid>> {
+    // Récupérer les derniers souvenirs
+    let recent_vec = random(256)  // Vecteur de référence
+    let recent_memories = episodic_query(vec: recent_vec, k: 100)
+    
+    // Chercher des patterns temporels
+    for i in range(0, len(recent_memories) - 2) {
+        let e1 = recent_memories[i]
+        let e2 = recent_memories[i + 1]
+        let e3 = recent_memories[i + 2]
+        
+        // Vérifier similarité et temps
+        let sim_13 = similarity(e1.vecs["default"], e3.vecs["default"])
+        let time_diff = e3.timestamp - e1.timestamp
+        
+        if sim_13 > 0.8 && time_diff < 60000 {
+            // Séquence répétitive détectée !
+            return optional.some([e1.id, e2.id, e3.id])
+        }
+    }
+    
+    return optional.none()
+}
+
+// Fonction de similarité cosine
+fn similarity(v1: Vec, v2: Vec) -> float {
+    return dot(v1, v2) / (norm(v1) * norm(v2))
+}
+
+// Pattern matching avec extraction de champs
+fn extract_high_trust_labels(record: EpisodicRecord) -> list<str> {
+    match record {
+        case EpisodicRecord({labels: labels, trust: trust}) where trust > 0.8 -> {
+            let result = []
+            for label in labels {
+                if label.score > 0.7 {
+                    result.push(label.label)
+                }
+            }
+            return result
+        }
+        case _ -> {
+            return []
+        }
+    }
+}
+
+// Point d'entrée
+fn main() {
+    // Test pattern matching sur types
+    print(process_value(42))
+    print(process_value(3.14))
+    print(process_value("hello"))
+    print(process_value(true))
+    
+    // Test pattern matching sur listes
+    print(process_list([]))
+    print(process_list([1]))
+    print(process_list([1, 2]))
+    print(process_list([1, 2, 3, 4]))
+    
+    // Test détection de séquences
+    let sequence = detect_repetitive_sequence()
+    match sequence {
+        case optional.some(ids) -> {
+            print("Séquence répétitive détectée : " + str(ids))
+        }
+        case optional.none() -> {
+            print("Aucune séquence répétitive détectée")
+        }
+    }
+}

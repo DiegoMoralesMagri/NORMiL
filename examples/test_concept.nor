@@ -1,0 +1,170 @@
+// Test du type Concept pour NORMiL
+// Phase 5.2 - Mémoire sémantique
+
+// Test 1: Création basique
+print("=== Test 1: Création basique ===")
+c1 = Concept {
+    concept_id: "c001",
+    centroid_vec: vec(3, [1.0, 2.0, 3.0]),
+    doc_count: 0,
+    provenance_versions: [],
+    trust_score: 0.0,
+    labels: []
+}
+print("Concept ID: " + c1.concept_id)
+print("Doc count: " + str(c1.doc_count))
+print("")
+
+// Test 2: Concept avec données
+print("=== Test 2: Avec données ===")
+c2 = Concept {
+    concept_id: "c002",
+    centroid_vec: vec(4, [0.5, 1.5, 2.5, 3.5]),
+    doc_count: 42,
+    provenance_versions: ["v1.0", "v1.1", "v2.0"],
+    trust_score: 0.85,
+    labels: ["AI", "NLP", "machine_learning"]
+}
+print("Concept:", c2.concept_id)
+print("Documents:", c2.doc_count)
+print("Trust:", c2.trust_score)
+print("Versions:", len(c2.provenance_versions))
+print("Labels:", len(c2.labels))
+print("")
+
+// Test 3: Accès aux champs
+print("=== Test 3: Accès aux champs ===")
+id = c2.concept_id
+count = c2.doc_count
+trust = c2.trust_score
+first_label = c2.labels[0]
+print("ID:", id)
+print("Count:", count)
+print("Trust:", trust)
+print("First label:", first_label)
+print("")
+
+// Test 4: Modification des champs
+print("=== Test 4: Modification ===")
+c2.doc_count = 50
+c2.trust_score = 0.95
+print("Nouveau count:", c2.doc_count)
+print("Nouveau trust:", c2.trust_score)
+print("")
+
+// Test 5: Concept dans une fonction
+print("=== Test 5: Fonction ===")
+fn update_trust(concept: Concept, delta: float) -> float {
+    concept.trust_score = concept.trust_score + delta
+    return concept.trust_score
+}
+
+c3 = Concept {
+    concept_id: "c003",
+    centroid_vec: vec(2, [1.0, 2.0]),
+    doc_count: 1,
+    provenance_versions: ["v1"],
+    trust_score: 0.5,
+    labels: []
+}
+
+new_trust = update_trust(c3, 0.3)
+print("Trust après update:", new_trust)
+print("Trust dans concept:", c3.trust_score)
+print("")
+
+// Test 6: Liste de concepts
+print("=== Test 6: Liste de concepts ===")
+concepts = [
+    Concept {
+        concept_id: "c_alpha",
+        centroid_vec: vec(2, [1.0, 0.0]),
+        doc_count: 10,
+        provenance_versions: ["v1"],
+        trust_score: 0.8,
+        labels: ["category_a"]
+    },
+    Concept {
+        concept_id: "c_beta",
+        centroid_vec: vec(2, [0.0, 1.0]),
+        doc_count: 20,
+        provenance_versions: ["v1", "v2"],
+        trust_score: 0.9,
+        labels: ["category_b"]
+    }
+]
+
+print("Nombre de concepts:", len(concepts))
+print("Premier:", concepts[0].concept_id)
+print("Deuxième:", concepts[1].concept_id)
+print("Docs du deuxième:", concepts[1].doc_count)
+print("")
+
+// Test 7: Accès au vecteur
+print("=== Test 7: Accès au vecteur ===")
+c4 = Concept {
+    concept_id: "c004",
+    centroid_vec: vec(4, [1.0, 2.0, 3.0, 4.0]),
+    doc_count: 1,
+    provenance_versions: ["v1"],
+    trust_score: 0.7,
+    labels: []
+}
+
+v = c4.centroid_vec
+dim = len(v)
+first = v[0]
+last = v[3]
+
+print("Dimension:", dim)
+print("Premier élément:", first)
+print("Dernier élément:", last)
+print("")
+
+// Test 8: Modification des versions
+print("=== Test 8: Modification provenance ===")
+c5 = Concept {
+    concept_id: "c005",
+    centroid_vec: vec(2, [1.0, 2.0]),
+    doc_count: 5,
+    provenance_versions: ["v1.0"],
+    trust_score: 0.6,
+    labels: []
+}
+
+c5.provenance_versions = c5.provenance_versions + ["v1.1"]
+c5.provenance_versions = c5.provenance_versions + ["v1.2"]
+
+print("Versions:", len(c5.provenance_versions))
+print("Dernière:", c5.provenance_versions[2])
+print("")
+
+// Test 9: Validation
+print("=== Test 9: Validation ===")
+fn is_valid_concept(c: Concept) -> bool {
+    if c.trust_score < 0.0 {
+        return false
+    }
+    if c.trust_score > 1.0 {
+        return false
+    }
+    if c.doc_count < 0 {
+        return false
+    }
+    return true
+}
+
+good = Concept {
+    concept_id: "good",
+    centroid_vec: vec(2, [1.0, 2.0]),
+    doc_count: 10,
+    provenance_versions: ["v1"],
+    trust_score: 0.8,
+    labels: []
+}
+
+valid = is_valid_concept(good)
+print("Concept valide:", valid)
+print("")
+
+print("=== Tous les tests passés! ===")

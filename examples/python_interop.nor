@@ -1,0 +1,247 @@
+// Exemples d'interopérabilité Python (Phase 4.1)
+// Démonstration de l'utilisation de modules Python depuis NORMiL
+
+import math
+import random
+
+// ============================================
+// Exemple 1: Fonctions mathématiques Python
+// ============================================
+
+fn exemple_math_basique() {
+    print("=== Exemple 1: Fonctions mathématiques ===")
+    
+    // Constantes
+    print("Pi:")
+    print(math.pi)
+    
+    print("e:")
+    print(math.e)
+    
+    // Racine carrée
+    let sqrt_16 = math.sqrt(16.0)
+    print("sqrt(16):")
+    print(sqrt_16)
+    
+    // Puissance
+    let power = math.pow(2.0, 10.0)
+    print("2^10:")
+    print(power)
+    
+    // Arrondi
+    let ceil_val = math.ceil(3.2)
+    print("ceil(3.2):")
+    print(ceil_val)
+    
+    let floor_val = math.floor(3.8)
+    print("floor(3.8):")
+    print(floor_val)
+}
+
+// ============================================
+// Exemple 2: Trigonométrie
+// ============================================
+
+fn exemple_trigonometrie() {
+    print("=== Exemple 2: Trigonométrie ===")
+    
+    // Angles en radians
+    let angle_45 = math.pi / 4.0
+    let angle_90 = math.pi / 2.0
+    
+    print("sin(45°):")
+    print(math.sin(angle_45))
+    
+    print("cos(45°):")
+    print(math.cos(angle_45))
+    
+    print("tan(45°):")
+    print(math.tan(angle_45))
+    
+    print("sin(90°):")
+    print(math.sin(angle_90))
+}
+
+// ============================================
+// Exemple 3: Calculs géométriques
+// ============================================
+
+fn aire_cercle(rayon: float) -> float {
+    return math.pi * rayon * rayon
+}
+
+fn volume_sphere(rayon: float) -> float {
+    return (4.0 / 3.0) * math.pi * math.pow(rayon, 3.0)
+}
+
+fn distance_euclidienne(x1: float, y1: float, x2: float, y2: float) -> float {
+    let dx = x2 - x1
+    let dy = y2 - y1
+    return math.sqrt(dx * dx + dy * dy)
+}
+
+fn exemple_geometrie() {
+    print("=== Exemple 3: Géométrie ===")
+    
+    let r = 5.0
+    
+    print("Aire cercle (r=5):")
+    print(aire_cercle(r))
+    
+    print("Volume sphère (r=5):")
+    print(volume_sphere(r))
+    
+    print("Distance (0,0) à (3,4):")
+    print(distance_euclidienne(0.0, 0.0, 3.0, 4.0))
+}
+
+// ============================================
+// Exemple 4: Génération aléatoire
+// ============================================
+
+fn exemple_random() {
+    print("=== Exemple 4: Nombres aléatoires ===")
+    
+    // Fixer la seed pour reproductibilité
+    random.seed(42)
+    
+    print("Nombre aléatoire [0, 1):")
+    print(random.random())
+    
+    print("Entier aléatoire [1, 100]:")
+    print(random.randint(1, 100))
+    
+    print("5 nombres aléatoires:")
+    for i in [1, 2, 3, 4, 5] {
+        print(random.random())
+    }
+}
+
+// ============================================
+// Exemple 5: Théorème de Pythagore
+// ============================================
+
+fn hypotenuse(a: float, b: float) -> float {
+    // c² = a² + b²
+    let a_carre = math.pow(a, 2.0)
+    let b_carre = math.pow(b, 2.0)
+    let c_carre = a_carre + b_carre
+    return math.sqrt(c_carre)
+}
+
+fn exemple_pythagore() {
+    print("=== Exemple 5: Théorème de Pythagore ===")
+    
+    let cote_a = 3.0
+    let cote_b = 4.0
+    let cote_c = hypotenuse(cote_a, cote_b)
+    
+    print("Triangle rectangle (3, 4, ?):")
+    print(cote_c)  // Devrait être 5.0
+}
+
+// ============================================
+// Exemple 6: Conversions d'angles
+// ============================================
+
+fn degres_vers_radians(degres: float) -> float {
+    return degres * math.pi / 180.0
+}
+
+fn radians_vers_degres(radians: float) -> float {
+    return radians * 180.0 / math.pi
+}
+
+fn exemple_conversions() {
+    print("=== Exemple 6: Conversions d'angles ===")
+    
+    print("90° en radians:")
+    print(degres_vers_radians(90.0))
+    
+    print("π radians en degrés:")
+    print(radians_vers_degres(math.pi))
+    
+    print("180° en radians:")
+    print(degres_vers_radians(180.0))
+}
+
+// ============================================
+// Exemple 7: Statistiques simples
+// ============================================
+
+fn moyenne_geometrique(a: float, b: float) -> float {
+    return math.sqrt(a * b)
+}
+
+fn exemple_statistiques() {
+    print("=== Exemple 7: Statistiques ===")
+    
+    print("Moyenne géométrique de 4 et 9:")
+    print(moyenne_geometrique(4.0, 9.0))  // 6.0
+    
+    print("Log naturel de e:")
+    print(math.log(math.e))  // 1.0
+    
+    print("Exponentielle de 1:")
+    print(math.exp(1.0))  // e
+}
+
+// ============================================
+// Exemple 8: Simulations Monte Carlo
+// ============================================
+
+fn simuler_lancer_de() -> int {
+    return random.randint(1, 6)
+}
+
+fn exemple_monte_carlo() {
+    print("=== Exemple 8: Simulation Monte Carlo ===")
+    
+    random.seed(12345)
+    
+    print("10 lancers de dé:")
+    for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] {
+        let resultat = simuler_lancer_de()
+        print(resultat)
+    }
+}
+
+// ============================================
+// Programme principal
+// ============================================
+
+fn main() {
+    print("╔════════════════════════════════════════╗")
+    print("║  Interopérabilité Python - Phase 4.1  ║")
+    print("╚════════════════════════════════════════╝")
+    print("")
+    
+    exemple_math_basique()
+    print("")
+    
+    exemple_trigonometrie()
+    print("")
+    
+    exemple_geometrie()
+    print("")
+    
+    exemple_random()
+    print("")
+    
+    exemple_pythagore()
+    print("")
+    
+    exemple_conversions()
+    print("")
+    
+    exemple_statistiques()
+    print("")
+    
+    exemple_monte_carlo()
+    print("")
+    
+    print("╔════════════════════════════════════════╗")
+    print("║  Tous les exemples terminés avec      ║")
+    print("║  succès! NORMiL peut utiliser Python! ║")
+    print("╚════════════════════════════════════════╝")
+}

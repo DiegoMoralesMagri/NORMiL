@@ -1,0 +1,192 @@
+// Test des multi-critères de stabilité (Phase 7.8)
+// Validation de la stabilité sur fenêtre et variance
+
+print("=== Test Multi-Criteria Stability ===")
+print("")
+
+// ============================================
+// Section 1: Stabilité sur fenêtre (window)
+// ============================================
+
+print("--- Section 1: Stability window ---")
+
+// Créer une séquence de poids convergeant progressivement
+let w1 = vec(3, [1.0, 2.0, 3.0])
+let w2 = vec(3, [1.001, 2.001, 3.001])
+let w3 = vec(3, [1.002, 2.002, 3.002])
+let w4 = vec(3, [1.003, 2.003, 3.003])
+let w5 = vec(3, [1.004, 2.004, 3.004])
+
+// Fenêtre stable (petits changements)
+let stable_history = [w1, w2, w3, w4, w5]
+let is_stable_win = compute_stability_window(stable_history, 0.01)
+print("Stable window (small changes): " + to_string(is_stable_win))
+
+// Fenêtre instable (grand saut au milieu)
+let w6 = vec(3, [2.0, 4.0, 6.0])
+let unstable_history = [w1, w2, w3, w6, w5]
+let is_unstable_win = compute_stability_window(unstable_history, 0.01)
+print("Unstable window (big jump): " + to_string(is_unstable_win))
+
+print("")
+
+// ============================================
+// Section 2: Variance des poids
+// ============================================
+
+print("--- Section 2: Weight variance ---")
+
+// Poids très stables (faible variance)
+let stable_w1 = vec(2, [1.0, 1.0])
+let stable_w2 = vec(2, [1.01, 1.01])
+let stable_w3 = vec(2, [1.02, 1.02])
+let stable_weights = [stable_w1, stable_w2, stable_w3]
+
+let low_var = compute_weight_variance(stable_weights)
+print("Low variance (stable): " + to_string(low_var))
+
+// Poids variables (haute variance)
+let var_w1 = vec(2, [1.0, 1.0])
+let var_w2 = vec(2, [2.0, 0.5])
+let var_w3 = vec(2, [0.5, 2.5])
+let variable_weights = [var_w1, var_w2, var_w3]
+
+let high_var = compute_weight_variance(variable_weights)
+print("High variance (unstable): " + to_string(high_var))
+
+print("")
+
+// ============================================
+// Section 3: Critères combinés (ET logique)
+// ============================================
+
+print("--- Section 3: Combined criteria (AND) ---")
+
+// Fonction qui vérifie plusieurs critères
+fn is_truly_stable(history: list<Vec>, threshold: float, max_variance: float) -> bool {
+    // Critère 1: Stabilité sur fenêtre
+    let window_stable = compute_stability_window(history, threshold)
+    
+    // Critère 2: Variance faible
+    let variance = compute_weight_variance(history)
+    let var_stable = variance < max_variance
+    
+    // Critère combiné: ET
+    let combined = window_stable
+    if combined {
+        combined = var_stable
+    }
+    
+    return combined
+}
+
+// Tester avec une séquence vraiment stable
+let truly_stable = is_truly_stable(stable_history, 0.01, 0.001)
+print("Truly stable (window AND variance): " + to_string(truly_stable))
+
+// Tester avec séquence partiellement stable
+let partially_stable = is_truly_stable(unstable_history, 0.01, 0.001)
+print("Partially stable: " + to_string(partially_stable))
+
+print("")
+
+// ============================================
+// Section 4: Apprentissage avec tracking historique
+// ============================================
+
+print("--- Section 4: Learning with history tracking ---")
+
+fn train_with_history(data: Vec, epochs: int) -> list<Vec> {
+    let history = []
+    let weights = zeros(data.dim)
+    
+    let epoch = 0
+    while epoch < epochs {
+        // Mise à jour
+        weights = onlinecluster_update(weights, data, 0.05)
+        weights = normalize_plasticity(weights)
+        
+        // Ajouter à l'historique
+        history = history + [weights]
+        
+        // Si historique > 5, garder seulement les 5 derniers
+        let len_hist = len(history)
+        if len_hist > 5 {
+            // Créer nouveau historique avec 5 derniers éléments
+            let new_history = []
+            let i = len_hist - 5
+            while i < len_hist {
+                new_history = new_history + [history[i]]
+                i = i + 1
+            }
+            history = new_history
+        }
+        
+        epoch = epoch + 1
+    }
+    
+    return history
+}
+
+let training_data = vec(4, [0.8, 0.6, 0.4, 0.2])
+let weight_history = train_with_history(training_data, 10)
+
+print("Trained for 10 epochs")
+print("History size: " + to_string(len(weight_history)))
+
+// Vérifier stabilité sur les 5 dernières itérations
+let final_stable = compute_stability_window(weight_history, 0.01)
+print("Final stability (last 5 epochs): " + to_string(final_stable))
+
+let final_var = compute_weight_variance(weight_history)
+print("Final variance: " + to_string(final_var))
+
+print("")
+
+// ============================================
+// Section 5: Détection de convergence multi-critères
+// ============================================
+
+print("--- Section 5: Multi-criteria convergence detection ---")
+
+fn check_convergence(history: list<Vec>) -> bool {
+    let hist_len = len(history)
+    if hist_len < 3 {
+        return false  // Pas assez d'historique
+    }
+    
+    // Critère 1: Stabilité fenêtre (strict)
+    let win_stable = compute_stability_window(history, 0.005)
+    
+    // Critère 2: Variance très faible
+    let var_val = compute_weight_variance(history)
+    let var_ok = var_val < 0.0001
+    
+    // Critère 3: Dernier changement minime
+    let last_idx = hist_len - 1
+    let prev_idx = last_idx - 1
+    let last_change_ok = compute_stability(history[prev_idx], history[last_idx], 0.001)
+    
+    // Tous les critères doivent être satisfaits
+    let converged = win_stable
+    if converged {
+        converged = var_ok
+    }
+    if converged {
+        converged = last_change_ok
+    }
+    
+    return converged
+}
+
+// Test avec historique convergent
+let conv_w1 = vec(2, [0.707, 0.707])
+let conv_w2 = vec(2, [0.7071, 0.7071])
+let conv_w3 = vec(2, [0.70711, 0.70711])
+let conv_history = [conv_w1, conv_w2, conv_w3]
+
+let has_converged = check_convergence(conv_history)
+print("Convergence detected (3 criteria): " + to_string(has_converged))
+
+print("")
+print("=== All Multi-Criteria Tests Complete ===")

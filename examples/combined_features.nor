@@ -1,0 +1,217 @@
+// ============================================
+// combined_features.nor
+// Démonstration de toutes les features Phase 2
+// ============================================
+
+// Feature 1 : Arguments nommés
+fn create_vector(dim: int, mean: float, std: float) -> Vec {
+    return random(dim: dim, mean: mean, std: std)
+}
+
+// Feature 2 : Pattern matching
+fn classify_vector_norm(v: Vec) -> str {
+    let n = norm(v)
+    
+    match n {
+        case float(x) where x < 0.5 -> {
+            return "faible magnitude"
+        }
+        case float(x) where x < 1.5 -> {
+            return "magnitude normale"
+        }
+        case float(x) -> {
+            return "forte magnitude"
+        }
+    }
+}
+
+// Feature 3 : Annotation @plastic
+@plastic(rate: 0.005, mode: "hebbian")
+fn plastic_transform(state: Vec, input: Vec) -> Vec {
+    let delta = scale(input, 0.005)
+    return vec_add(state, delta)
+}
+
+// Feature 4 : Annotation @atomic
+@atomic
+fn safe_vector_operation(v1: Vec, v2: Vec, factor: float) -> Vec {
+    let scaled = scale(v1, factor)
+    let result = vec_add(scaled, v2)
+    return normalize(result)
+}
+
+// Feature 5 : Combinaison @atomic + @plastic
+@atomic
+@plastic(rate: 0.01, mode: "stdp")
+fn atomic_plastic_update(weights: Vec, error: Vec) -> Vec {
+    let correction = scale(error, 0.01)
+    let updated = vec_add(weights, correction)
+    return normalize(updated)
+}
+
+// Feature 6 : Pattern matching dans une fonction atomique
+@atomic
+fn robust_classifier(value: float) -> int {
+    match value {
+        case float(x) where x < 0.0 -> {
+            return -1
+        }
+        case float(x) where x == 0.0 -> {
+            return 0
+        }
+        case float(x) -> {
+            return 1
+        }
+    }
+}
+
+// Feature 7 : Arguments nommés + pattern matching
+fn smart_vector_gen(size: int, preset: str) -> Vec {
+    match preset {
+        case "zeros" -> {
+            return zeros(dim: size)
+        }
+        case "ones" -> {
+            return ones(dim: size)
+        }
+        case "random" -> {
+            return random(dim: size, mean: 0.0, std: 1.0)
+        }
+        case _ -> {
+            return fill(dim: size, value: 0.5)
+        }
+    }
+}
+
+// Test complet de toutes les features
+fn test_all_features() {
+    print("=== Test de toutes les features Phase 2 ===")
+    print("")
+    
+    // Test 1 : Arguments nommés
+    print("1. Arguments nommes:")
+    let v1 = create_vector(dim: 32, mean: 0.5, std: 0.2)
+    print("Vecteur cree - norme:")
+    print(norm(v1))
+    print("")
+    
+    // Test 2 : Pattern matching
+    print("2. Pattern matching:")
+    let v2 = random(dim: 32, mean: 2.0, std: 0.5)
+    let classification = classify_vector_norm(v2)
+    print(classification)
+    print("")
+    
+    // Test 3 : Plasticité
+    print("3. Annotation @plastic:")
+    let state = random(dim: 32, mean: 0.0, std: 0.1)
+    let input = random(dim: 32, mean: 1.0, std: 0.2)
+    let transformed = plastic_transform(state, input)
+    print("Norme apres transformation plastique:")
+    print(norm(transformed))
+    print("")
+    
+    // Test 4 : Transaction atomique
+    print("4. Annotation @atomic:")
+    let v3 = random(dim: 32, mean: 0.0, std: 1.0)
+    let v4 = random(dim: 32, mean: 1.0, std: 0.5)
+    let safe_result = safe_vector_operation(v3, v4, 2.0)
+    print("Resultat operation sure:")
+    print(norm(safe_result))
+    print("")
+    
+    // Test 5 : Combinaison atomic + plastic
+    print("5. Combinaison @atomic + @plastic:")
+    let weights = random(dim: 32, mean: 0.0, std: 0.1)
+    let error = random(dim: 32, mean: 0.0, std: 0.05)
+    let updated_weights = atomic_plastic_update(weights, error)
+    print("Poids mis a jour - norme:")
+    print(norm(updated_weights))
+    print("")
+    
+    // Test 6 : Pattern matching atomique
+    print("6. Pattern matching dans fonction atomique:")
+    let class1 = robust_classifier(-0.5)
+    let class2 = robust_classifier(0.0)
+    let class3 = robust_classifier(1.5)
+    print("Classifications:")
+    print(class1)
+    print(class2)
+    print(class3)
+    print("")
+    
+    // Test 7 : Smart vector generation
+    print("7. Generation intelligente de vecteurs:")
+    let v_zeros = smart_vector_gen(size: 16, preset: "zeros")
+    let v_ones = smart_vector_gen(size: 16, preset: "ones")
+    let v_random = smart_vector_gen(size: 16, preset: "random")
+    print("Norme zeros:")
+    print(norm(v_zeros))
+    print("Norme ones:")
+    print(norm(v_ones))
+    print("Norme random:")
+    print(norm(v_random))
+}
+
+// Exemple complexe : Réseau neuronal simplifié
+@atomic
+fn neural_network_forward(input: Vec, weights: Vec, bias: float) -> Vec {
+    // Forward pass simple
+    let weighted = vec_mul(input, weights)
+    let biased = scale(weighted, bias)
+    return normalize(biased)
+}
+
+@atomic
+@plastic(rate: 0.001, mode: "backprop")
+fn neural_network_backward(weights: Vec, gradient: Vec) -> Vec {
+    // Backward pass simplifié
+    let update = scale(gradient, 0.001)
+    let new_weights = vec_sub(weights, update)
+    return normalize(new_weights)
+}
+
+// Boucle d'entraînement
+fn training_loop() {
+    print("")
+    print("=== Boucle d'entrainement ===")
+    
+    let weights = random(dim: 64, mean: 0.0, std: 0.1)
+    let input = random(dim: 64, mean: 1.0, std: 0.2)
+    
+    let epochs = 3
+    let i = 0
+    
+    while i < epochs {
+        // Forward
+        let output = neural_network_forward(input, weights, 1.0)
+        
+        // Simuler gradient
+        let gradient = scale(output, -0.1)
+        
+        // Backward
+        weights = neural_network_backward(weights, gradient)
+        
+        print("Epoch - norme weights:")
+        print(norm(weights))
+        
+        i = i + 1
+    }
+    
+    print("Entrainement termine!")
+}
+
+// Fonction principale
+fn main() {
+    print("╔════════════════════════════════════════════╗")
+    print("║  NORMiL - Toutes les Features Phase 2     ║")
+    print("╚════════════════════════════════════════════╝")
+    print("")
+    
+    test_all_features()
+    training_loop()
+    
+    print("")
+    print("Demonstration complete!")
+    print("Toutes les features fonctionnent ensemble harmonieusement.")
+}

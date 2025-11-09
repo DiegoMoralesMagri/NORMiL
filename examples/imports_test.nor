@@ -1,0 +1,43 @@
+// Test d'imports - Phase 3.2
+
+import math
+import vectors as vec
+
+fn main() {
+    print("=== Test Système d'Imports ===")
+    
+    // Test module math
+    print("Module math:")
+    let result1 = math.abs(-42)
+    print("abs(-42) =")
+    print(result1)
+    
+    let result2 = math.max(10, 20)
+    print("max(10, 20) =")
+    print(result2)
+    
+    let result3 = math.clamp(150, min_val: 0, max_val: 100)
+    print("clamp(150, 0, 100) =")
+    print(result3)
+    
+    // Test module vectors (avec alias)
+    print("Module vectors (alias vec):")
+    let v1 = vec.create_normalized(dim: 64, mean: 1.0, std: 0.2)
+    print("Vecteur normalisé, norme =")
+    print(norm(v1))
+    
+    let v2 = vec.create_normalized(dim: 64, mean: 0.5, std: 0.1)
+    let sim = vec.compute_similarity(v1, v2)
+    print("Similarité =")
+    print(sim)
+    
+    let dist = vec.distance(v1, v2)
+    print("Distance =")
+    print(dist)
+    
+        let weighted = vec.weighted_sum(v1: v1, w1: 0.7, v2: v2, w2: 0.3)
+    print("Somme pondérée, norme =")
+    print(norm(weighted))
+    
+    print("Tous les tests d'imports réussis!")
+}

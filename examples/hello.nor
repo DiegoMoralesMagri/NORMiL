@@ -1,0 +1,14 @@
+// ============================================
+// hello.nor - Premier exemple NORMiL
+// ============================================
+
+// Fonction simple
+fn greet(name: str) -> str {
+    return "Bonjour, " + name + " !"
+}
+
+// Point d'entrée
+fn main() {
+    let message = greet("O-RedMind")
+    print(message)
+}

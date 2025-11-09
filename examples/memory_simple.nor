@@ -1,0 +1,31 @@
+// ============================================
+// memory_simple.nor
+// Test simple des opérations mémoire
+// ============================================
+
+fn main() {
+    print("=== Test Mémoire NORMiL ===")
+    
+    // Créer des vecteurs
+    let v1 = random(256, mean: 0.0, std: 1.0)
+    let v2 = random(256, mean: 0.5, std: 0.8)
+    let v3 = random(256, mean: 1.0, std: 0.5)
+    
+    print("Vecteurs créés")
+    
+    // Opérations vectorielles
+    let sum = vec_add(v1, v2)
+    let similarity = dot(v1, v2)
+    
+    print("Similarité v1-v2:")
+    print(similarity)
+    
+    // Normaliser
+    let v1_norm = normalize(v1)
+    let magnitude = norm(v1_norm)
+    
+    print("Norme de v1 normalisé:")
+    print(magnitude)
+    
+    print("=== Test terminé ===")
+}

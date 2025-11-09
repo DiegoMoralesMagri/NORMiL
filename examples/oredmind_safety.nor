@@ -1,0 +1,498 @@
+// ============================================
+// O-RedMind Safety Layer
+// ============================================
+//
+// Exemple complet d'une couche de sécurité pour O-RedMind :
+// - Guardrails déclaratifs pour bloquer actions dangereuses
+// - Système de consentement utilisateur obligatoire
+// - Audit logging avec hash chaining (immutabilité)
+// - Vérification d'intégrité du log
+// - Rollback vers snapshots sûrs
+//
+// Ce module démontre :
+// - Safety-by-design dans l'architecture
+// - Gouvernance et auditabilité totale
+// - Protection contre actions non autorisées
+// - Traçabilité complète des décisions
+
+type Action = {
+    action_id: String,
+    action_type: String,  // "file_write", "network_send", "memory_delete", etc.
+    reason: String,
+    data_paths: List<String>,
+    timestamp: Float
+}
+
+type User = {
+    user_id: String,
+    consent_level: Int,  // 0=none, 5=medium, 10=full
+    private_key: String
+}
+
+type AuditLog = {
+    entries: List<AuditLogEntry>,
+    chain_valid: Bool
+}
+
+type ConsentToken = {
+    token_id: String,
+    user_id: String,
+    action_type: String,
+    granted_at: Float,
+    expires_at: Float
+}
+
+type GuardrailViolation = {
+    guardrail_id: String,
+    reason: String,
+    blocked_action: String
+}
+
+// ============================================
+// Guardrails Definition
+// ============================================
+
+let GUARDRAILS = [
+    SafetyGuardrail {
+        id: "no_io_without_consent",
+        condition: "io_operation",
+        action_blocked: "file_write,network_send",
+        require_consent: true,
+        override_level: 10
+    },
+    SafetyGuardrail {
+        id: "no_critical_memory_delete",
+        condition: "memory_delete_critical",
+        action_blocked: "memory_delete",
+        require_consent: true,
+        override_level: 10
+    },
+    SafetyGuardrail {
+        id: "no_external_api_calls",
+        condition: "external_api",
+        action_blocked: "api_call",
+        require_consent: true,
+        override_level: 8
+    },
+    SafetyGuardrail {
+        id: "rate_limit_actions",
+        condition: "high_frequency",
+        action_blocked: "*",
+        require_consent: false,
+        override_level: 5
+    }
+]
+
+// ============================================
+// Guardrail Checking
+// ============================================
+
+fn check_guardrail(
+    action: Action,
+    context: Map<String, String>,
+    guardrails: List<SafetyGuardrail>
+) -> Result<(), GuardrailViolation> {
+    
+    print(f"[Guardrail] Checking action: {action.action_type}")
+    
+    let i = 0
+    while i < len(guardrails) {
+        let guardrail = guardrails[i]
+        
+        // Évaluation condition
+        let condition_met = evaluate_guardrail_condition(
+            guardrail.condition,
+            action,
+            context
+        )
+        
+        if condition_met {
+            // Check si action bloquée
+            let action_blocked = is_action_blocked(
+                action.action_type,
+                guardrail.action_blocked
+            )
+            
+            if action_blocked {
+                print(f"[Guardrail] BLOCKED by {guardrail.id}")
+                
+                return Err(GuardrailViolation {
+                    guardrail_id: guardrail.id,
+                    reason: f"Action {action.action_type} blocked by guardrail",
+                    blocked_action: action.action_type
+                })
+            }
+        }
+        
+        i = i + 1
+    }
+    
+    print("[Guardrail] PASSED all checks")
+    return Ok(())
+}
+
+fn evaluate_guardrail_condition(
+    condition: String,
+    action: Action,
+    context: Map<String, String>
+) -> Bool {
+    
+    // Simulation évaluation conditions
+    // En production : parser + évaluateur d'expressions
+    
+    if condition == "io_operation" {
+        return action.action_type == "file_write" or action.action_type == "network_send"
+    } else if condition == "memory_delete_critical" {
+        return action.action_type == "memory_delete" and context["is_critical"] == "true"
+    } else if condition == "external_api" {
+        return action.action_type == "api_call"
+    } else if condition == "high_frequency" {
+        // Check fréquence dans context
+        return context["frequency"] == "high"
+    } else {
+        return false
+    }
+}
+
+fn is_action_blocked(action_type: String, blocked_pattern: String) -> Bool {
+    // Check si action_type match le pattern
+    
+    if blocked_pattern == "*" {
+        return true
+    }
+    
+    // Split pattern par virgules
+    let patterns = split_by_comma(blocked_pattern)
+    
+    let i = 0
+    while i < len(patterns) {
+        if patterns[i] == action_type {
+            return true
+        }
+        i = i + 1
+    }
+    
+    return false
+}
+
+fn split_by_comma(s: String) -> List<String> {
+    // Simulation split (en production : vrai parser)
+    // Pour l'exemple : retourne liste avec 1 élément
+    return [s]
+}
+
+// ============================================
+// Consent Management
+// ============================================
+
+fn require_consent(
+    request: ConsentRequest,
+    user: User
+) -> Result<ConsentToken, String> {
+    
+    print(f"[Consent] Requesting consent from user {user.user_id}")
+    print(f"[Consent] Action: {request.action}")
+    print(f"[Consent] Reason: {request.reason}")
+    print(f"[Consent] Data accessed: {request.data_accessed}")
+    
+    // Simulation demande consentement
+    // En production : UI prompt, webhook, etc.
+    
+    // Check niveau de consentement utilisateur
+    if user.consent_level < 5 {
+        print("[Consent] DENIED - insufficient consent level")
+        return Err("Consent denied: user consent level too low")
+    }
+    
+    // Génération token
+    let token = ConsentToken {
+        token_id: generate_uuid(),
+        user_id: user.user_id,
+        action_type: request.action,
+        granted_at: now(),
+        expires_at: now() + request.expiry_ttl
+    }
+    
+    print(f"[Consent] GRANTED - token: {token.token_id}")
+    print(f"[Consent] Expires at: {token.expires_at}")
+    
+    return Ok(token)
+}
+
+// ============================================
+// Audit Logging with Hash Chaining
+// ============================================
+
+fn audit_append(log: AuditLog, entry: AuditLogEntry) -> AuditLog {
+    
+    print(f"[Audit] Appending entry: {entry.event_type}")
+    
+    // Append entry au log
+    let new_entries = log.entries + [entry]
+    
+    // Validation hash chain
+    let chain_valid = verify_hash_chain(new_entries)
+    
+    return AuditLog {
+        entries: new_entries,
+        chain_valid: chain_valid
+    }
+}
+
+fn verify_hash_chain(entries: List<AuditLogEntry>) -> Bool {
+    
+    if len(entries) <= 1 {
+        return true
+    }
+    
+    print(f"[Audit] Verifying hash chain ({len(entries)} entries)")
+    
+    let i = 1
+    while i < len(entries) {
+        let prev_entry = entries[i - 1]
+        let curr_entry = entries[i]
+        
+        // Vérification : curr_entry.prev_hash == hash(prev_entry)
+        let expected_hash = hash_entry(prev_entry)
+        
+        if curr_entry.prev_hash != expected_hash {
+            print(f"[Audit] Chain BROKEN at entry {i}")
+            return false
+        }
+        
+        i = i + 1
+    }
+    
+    print("[Audit] Chain VALID")
+    return true
+}
+
+fn hash_entry(entry: AuditLogEntry) -> String {
+    // Simulation hash SHA256
+    // En production : vrai crypto hash
+    
+    let hash_input = entry.id + entry.timestamp + entry.event_type + entry.action
+    return "hash_" + hash_input
+}
+
+fn last_hash(log: AuditLog) -> String {
+    if len(log.entries) == 0 {
+        return "genesis"
+    }
+    
+    let last_entry = log.entries[len(log.entries) - 1]
+    return hash_entry(last_entry)
+}
+
+// ============================================
+// Signature Cryptographique
+// ============================================
+
+fn sign_with_key(private_key: String, data: String) -> String {
+    // Simulation signature cryptographique
+    // En production : ECDSA, Ed25519, etc.
+    
+    return "sig_" + private_key + "_" + data
+}
+
+fn verify_signature(signature: String, public_key: String, data: String) -> Bool {
+    // Simulation vérification signature
+    // En production : vrai crypto verify
+    
+    let expected_sig = "sig_" + public_key + "_" + data
+    return signature == expected_sig
+}
+
+// ============================================
+// Safe Action Execution
+// ============================================
+
+fn execute_safe_action(
+    action: Action,
+    user: User,
+    audit_log: AuditLog,
+    guardrails: List<SafetyGuardrail>
+) -> (Result<String, String>, AuditLog) {
+    
+    print("=== Executing Safe Action ===")
+    print(f"Action: {action.action_type}")
+    print(f"User: {user.user_id}")
+    print("")
+    
+    let context = {
+        "is_critical": "false",
+        "frequency": "low"
+    }
+    
+    // 1. Check guardrails
+    let guardrail_result = check_guardrail(action, context, guardrails)
+    
+    let final_result = if guardrail_result.is_ok {
+        // Guardrail OK - execute action
+        print("[Execute] Action authorized")
+        
+        // Simulation exécution
+        let result_data = f"Executed {action.action_type} successfully"
+        
+        Ok(result_data)
+    } else {
+        // Guardrail violation
+        let violation = guardrail_result.error
+        
+        // Check si consent peut override
+        let guardrail = find_guardrail_by_id(guardrails, violation.guardrail_id)
+        
+        if guardrail.require_consent {
+            print("[Execute] Requesting user consent...")
+            
+            let consent_req = ConsentRequest {
+                action: action.action_type,
+                reason: action.reason,
+                data_accessed: action.data_paths,
+                expiry_ttl: 3600  // 1 hour
+            }
+            
+            let consent_result = require_consent(consent_req, user)
+            
+            if consent_result.is_ok {
+                // Consent granted
+                print("[Execute] Consent granted - proceeding")
+                Ok(f"Executed {action.action_type} with consent")
+            } else {
+                // Consent denied
+                print("[Execute] Consent denied - blocking action")
+                Err("Action blocked: consent denied")
+            }
+        } else {
+            // No consent possible - hard block
+            Err(f"Action blocked: {violation.reason}")
+        }
+    }
+    
+    // 2. Audit logging
+    let event_type = if final_result.is_ok {
+        "action_executed"
+    } else {
+        "action_blocked"
+    }
+    
+    let audit_entry = AuditLogEntry {
+        id: generate_uuid(),
+        timestamp: now(),
+        event_type: event_type,
+        actor: user.user_id,
+        action: action.action_type,
+        data_hash: hash_entry_simple(action.action_id),
+        prev_hash: last_hash(audit_log),
+        signature: sign_with_key(user.private_key, action.action_id)
+    }
+    
+    let new_log = audit_append(audit_log, audit_entry)
+    
+    print("")
+    print(f"[Result] {if final_result.is_ok { "SUCCESS" } else { "BLOCKED" }}")
+    print(f"[Audit] Log size: {len(new_log.entries)} entries")
+    print(f"[Audit] Chain valid: {new_log.chain_valid}")
+    
+    return (final_result, new_log)
+}
+
+fn find_guardrail_by_id(guardrails: List<SafetyGuardrail>, id: String) -> SafetyGuardrail {
+    let i = 0
+    while i < len(guardrails) {
+        if guardrails[i].id == id {
+            return guardrails[i]
+        }
+        i = i + 1
+    }
+    
+    // Default guardrail si non trouvé
+    return SafetyGuardrail {
+        id: "default",
+        condition: "always",
+        action_blocked: "*",
+        require_consent: true,
+        override_level: 10
+    }
+}
+
+fn hash_entry_simple(s: String) -> String {
+    return "hash_" + s
+}
+
+// ============================================
+// Demo Usage
+// ============================================
+
+fn main() {
+    print("=== O-RedMind Safety Layer Demo ===")
+    print("")
+    
+    // 1. Initialisation audit log
+    let audit_log = AuditLog {
+        entries: [],
+        chain_valid: true
+    }
+    
+    // 2. Utilisateur avec consent moyen
+    let user = User {
+        user_id: "alice",
+        consent_level: 7,
+        private_key: "alice_private_key"
+    }
+    
+    // 3. Test 1 : Action bloquée sans consent
+    print("=== Test 1: File Write (requires consent) ===")
+    let action1 = Action {
+        action_id: generate_uuid(),
+        action_type: "file_write",
+        reason: "Save user preferences",
+        data_paths: ["/home/alice/prefs.json"],
+        timestamp: now()
+    }
+    
+    let (result1, log1) = execute_safe_action(action1, user, audit_log, GUARDRAILS)
+    print("")
+    
+    // 4. Test 2 : Action autorisée (pas d'I/O)
+    print("=== Test 2: Memory Query (no guardrail) ===")
+    let action2 = Action {
+        action_id: generate_uuid(),
+        action_type: "memory_query",
+        reason: "Retrieve episodic record",
+        data_paths: [],
+        timestamp: now()
+    }
+    
+    let (result2, log2) = execute_safe_action(action2, user, log1, GUARDRAILS)
+    print("")
+    
+    // 5. Test 3 : Vérification intégrité audit log
+    print("=== Audit Log Integrity Check ===")
+    let chain_valid = verify_hash_chain(log2.entries)
+    print(f"Total entries: {len(log2.entries)}")
+    print(f"Chain valid: {chain_valid}")
+    print("")
+    
+    // 6. Affichage audit log
+    if len(log2.entries) > 0 {
+        print("=== Audit Log Entries ===")
+        let i = 0
+        while i < len(log2.entries) {
+            let entry = log2.entries[i]
+            print(f"Entry {i}:")
+            print(f"  Event: {entry.event_type}")
+            print(f"  Actor: {entry.actor}")
+            print(f"  Action: {entry.action}")
+            print(f"  Timestamp: {entry.timestamp}")
+            print(f"  Hash: {entry.data_hash}")
+            i = i + 1
+        }
+    }
+    
+    print("")
+    print("=== Safety Demo Complete ===")
+}
+
+// Lancement
+main()

@@ -1,0 +1,279 @@
+// Benchmark de performance NORMiL
+// Mesure les performances des différentes opérations
+
+print("=== BENCHMARK NORMIL - Performance Tests ===")
+print("")
+
+// ============================================
+// Benchmark 1: Opérations vectorielles
+// ============================================
+
+print("--- Benchmark 1: Vector Operations ---")
+
+fn benchmark_vector_ops(iterations: int) -> float {
+    let v1 = random(128, 0.0, 1.0)
+    let v2 = random(128, 0.0, 1.0)
+    
+    let start_iter = 0
+    let iter = 0
+    while iter < iterations {
+        let v3 = v1 + v2
+        let v4 = v3 - v1
+        let v5 = scale(v4, 0.5)
+        let n = norm(v5)
+        iter = iter + 1
+    }
+    
+    return norm(v1)  // Retourner une valeur pour éviter optimisation
+}
+
+let iterations_vec = 1000
+let result1 = benchmark_vector_ops(iterations_vec)
+print("Vector ops (" + to_string(iterations_vec) + " iterations): done")
+print("Result norm: " + to_string(result1))
+print("")
+
+// ============================================
+// Benchmark 2: Plasticité
+// ============================================
+
+print("--- Benchmark 2: Plasticity ---")
+
+@plastic(rate: 0.01, mode: "hebbian")
+fn plastic_learn(input: Vec) -> Vec {
+    let w = zeros(input.dim)
+    w = onlinecluster_update(w, input, 0.01)
+    return w
+}
+
+fn benchmark_plasticity(iterations: int) -> Vec {
+    let data = random(64, 0.0, 1.0)
+    let result = zeros(64)
+    
+    let iter = 0
+    while iter < iterations {
+        result = plastic_learn(data)
+        iter = iter + 1
+    }
+    
+    return result
+}
+
+let iterations_plastic = 100
+let result2 = benchmark_plasticity(iterations_plastic)
+print("Plasticity (" + to_string(iterations_plastic) + " iterations): done")
+print("Result norm: " + to_string(norm(result2)))
+print("")
+
+// ============================================
+// Benchmark 3: Pattern Matching
+// ============================================
+
+print("--- Benchmark 3: Conditional Logic ---")
+
+fn classify(x: int) -> string {
+    let result = "other"
+    
+    if x == 0 {
+        result = "zero"
+    }
+    if x == 1 {
+        result = "one"
+    }
+    if x == 2 {
+        result = "two"
+    }
+    if x == 3 {
+        result = "three"
+    }
+    if x == 4 {
+        result = "four"
+    }
+    if x == 5 {
+        result = "five"
+    }
+    
+    return result
+}
+
+fn benchmark_matching(iterations: int) -> int {
+    let count = 0
+    let iter = 0
+    
+    while iter < iterations {
+        let r1 = classify(0)
+        let r2 = classify(1)
+        let r3 = classify(2)
+        let r4 = classify(5)
+        let r5 = classify(99)
+        
+        count = count + 5
+        iter = iter + 1
+    }
+    
+    return count
+}
+
+let iterations_match = 1000
+let result3 = benchmark_matching(iterations_match)
+print("Conditional logic (" + to_string(result3) + " classifications): done")
+print("")
+
+// ============================================
+// Benchmark 4: LR Scheduling
+// ============================================
+
+print("--- Benchmark 4: LR Scheduling ---")
+
+fn benchmark_scheduling(epochs: int) -> float {
+    let current_lr = 0.0
+    let epoch = 0
+    
+    while epoch < epochs {
+        // Warmup
+        if epoch < 10 {
+            current_lr = lr_warmup_linear(epoch, 10, 0.01)
+        }
+        
+        // Cosine annealing
+        if epoch >= 10 {
+            let adj_epoch = epoch - 10
+            let adj_total = epochs - 10
+            current_lr = lr_cosine_annealing(adj_epoch, adj_total, 0.0001, 0.01)
+        }
+        
+        epoch = epoch + 1
+    }
+    
+    return current_lr
+}
+
+let epochs_sched = 100
+let result4 = benchmark_scheduling(epochs_sched)
+print("LR Scheduling (" + to_string(epochs_sched) + " epochs): done")
+print("Final LR: " + to_string(result4))
+print("")
+
+// ============================================
+// Benchmark 5: Multi-criteria Stability
+// ============================================
+
+print("--- Benchmark 5: Multi-criteria Stability ---")
+
+fn benchmark_stability(iterations: int) -> bool {
+    let weights_history = []
+    let data = random(32, 0.0, 1.0)
+    
+    let iter = 0
+    while iter < iterations {
+        let w = onlinecluster_update(zeros(32), data, 0.01)
+        w = normalize_plasticity(w)
+        
+        weights_history = weights_history + [w]
+        
+        // Garder seulement les 10 derniers
+        let len_hist = len(weights_history)
+        if len_hist > 10 {
+            let new_history = []
+            let i = len_hist - 10
+            while i < len_hist {
+                new_history = new_history + [weights_history[i]]
+                i = i + 1
+            }
+            weights_history = new_history
+        }
+        
+        iter = iter + 1
+    }
+    
+    // Vérifier stabilité finale
+    let stable = compute_stability_window(weights_history, 0.01)
+    let variance = compute_weight_variance(weights_history)
+    
+    return stable
+}
+
+let iterations_stab = 50
+let result5 = benchmark_stability(iterations_stab)
+print("Stability check (" + to_string(iterations_stab) + " iterations): done")
+print("Is stable: " + to_string(result5))
+print("")
+
+// ============================================
+// Benchmark 6: Combined Workflow
+// ============================================
+
+print("--- Benchmark 6: Combined Workflow ---")
+
+@plastic(rate: 0.01, mode: "hebbian", decay_factor: 0.95)
+fn advanced_network(input: Vec, lr: float) -> Vec {
+    let w = zeros(input.dim)
+    w = onlinecluster_update(w, input, lr)
+    return w
+}
+
+fn benchmark_combined(epochs: int) -> Vec {
+    let data = random(64, 0.0, 1.0)
+    let weights = zeros(64)
+    let losses = []
+    let weight_history = []
+    
+    let epoch = 0
+    while epoch < epochs {
+        // Calculer LR avec scheduling
+        let current_lr = 0.0
+        if epoch < 5 {
+            current_lr = lr_warmup_linear(epoch, 5, 0.01)
+        } else {
+            current_lr = lr_cosine_annealing(epoch - 5, epochs - 5, 0.0001, 0.01)
+        }
+        
+        // Entraîner
+        weights = advanced_network(data, current_lr)
+        
+        // Tracker historique
+        weight_history = weight_history + [weights]
+        
+        // Calculer loss
+        let diff = data - weights
+        let loss = dot(diff, diff)
+        losses = losses + [loss]
+        
+        // Vérifier stabilité tous les 10 epochs
+        if epoch > 10 {
+            let len_hist = len(weight_history)
+            if len_hist > 5 {
+                let stable = compute_stability_window(weight_history, 0.01)
+                if stable {
+                    print("Early stop at epoch " + to_string(epoch))
+                }
+            }
+        }
+        
+        epoch = epoch + 1
+    }
+    
+    return weights
+}
+
+let epochs_combined = 50
+let result6 = benchmark_combined(epochs_combined)
+print("Combined workflow (" + to_string(epochs_combined) + " epochs): done")
+print("Final weights norm: " + to_string(norm(result6)))
+print("")
+
+// ============================================
+// Résumé
+// ============================================
+
+print("=== BENCHMARK COMPLETE ===")
+print("")
+print("Summary:")
+print("- Vector operations: " + to_string(iterations_vec) + " iterations")
+print("- Plasticity: " + to_string(iterations_plastic) + " iterations")
+print("- Conditional logic: " + to_string(result3) + " classifications")
+print("- LR Scheduling: " + to_string(epochs_sched) + " epochs")
+print("- Stability checks: " + to_string(iterations_stab) + " iterations")
+print("- Combined workflow: " + to_string(epochs_combined) + " epochs")
+print("")
+print("All benchmarks completed successfully!")

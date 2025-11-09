@@ -1,0 +1,148 @@
+// ============================================
+// memory_operations.nor
+// Démonstration des opérations mémoire
+// ============================================
+
+import memory
+import vectors
+
+// Type personnalisé pour un événement
+type Event = {
+    id: uuid,
+    timestamp: timestamp,
+    description: str,
+    vec: Vec,
+    trust: float
+}
+
+// Créer et enregistrer un souvenir épisodique
+@audit(level: "full")
+transaction create_memory(description: str, vec: Vec) {
+    // Créer un enregistrement épisodique
+    let record = EpisodicRecord {
+        id: generate_uuid(),
+        timestamp: now(),
+        sources: ["user_input"],
+        vecs: {"default": vec},
+        summary: description,
+        labels: [],
+        trust: 0.9,
+        provenance: Provenance {
+            device_id: "device_001",
+            signature: sign(description),
+            timestamp: now()
+        },
+        outcome: optional.none()
+    }
+    
+    // Ajouter à l'Episodic Log
+    let memory_id = episodic_append(record)
+    
+    // Logger l'opération
+    audit_log("memory_created", {
+        "id": memory_id,
+        "description": description
+    })
+    
+    return memory_id
+}
+
+// Rechercher des souvenirs similaires
+fn find_similar_memories(query_vec: Vec, k: int = 5) -> list<EpisodicRecord> {
+    // Query vectorielle sur l'Episodic Log
+    let results = episodic_query(
+        vec: query_vec,
+        k: k,
+        filters: {"trust": 0.7}  // Seulement les souvenirs de confiance > 0.7
+    )
+    
+    return results
+}
+
+// Consolider des souvenirs en concept
+@plastic(rate: 0.01, mode: "lowrank")
+fn consolidate_memories(memories: list<EpisodicRecord>) -> Concept {
+    // Extraire tous les vecteurs
+    let vecs = []
+    for memory in memories {
+        vecs.push(memory.vecs["default"])
+    }
+    
+    // Calculer le centroïde
+    let centroid = compute_centroid(vecs)
+    
+    // Créer le concept
+    let concept = Concept {
+        concept_id: generate_uuid(),
+        centroid_vec: centroid,
+        doc_count: len(memories),
+        provenance_versions: ["v1"],
+        trust_score: average_trust(memories),
+        labels: extract_common_labels(memories)
+    }
+    
+    // Ajouter au Semantic Store
+    semantic_upsert(concept)
+    
+    return concept
+}
+
+// Fonction utilitaire : calculer le centroïde
+fn compute_centroid(vecs: list<Vec>) -> Vec {
+    if len(vecs) == 0 {
+        return zeros(256)
+    }
+    
+    let sum_vec = zeros(256)
+    for vec in vecs {
+        sum_vec = add(sum_vec, vec)
+    }
+    
+    return scale(sum_vec, 1.0 / float(len(vecs)))
+}
+
+// Fonction utilitaire : moyenne de confiance
+fn average_trust(memories: list<EpisodicRecord>) -> float {
+    let total = 0.0
+    for memory in memories {
+        total = total + memory.trust
+    }
+    return total / float(len(memories))
+}
+
+// Fonction utilitaire : extraire labels communs
+fn extract_common_labels(memories: list<EpisodicRecord>) -> list<str> {
+    // Simplification : retourne les labels du premier souvenir
+    if len(memories) > 0 {
+        let labels = []
+        for label in memories[0].labels {
+            labels.push(label.label)
+        }
+        return labels
+    }
+    return []
+}
+
+// Point d'entrée : exemple complet
+fn main() {
+    // Créer des vecteurs d'exemple
+    let vec1 = random(256, mean: 0.0, std: 1.0)
+    let vec2 = random(256, mean: 0.0, std: 1.0)
+    let vec3 = random(256, mean: 0.0, std: 1.0)
+    
+    // Créer des souvenirs
+    let id1 = create_memory("Première rencontre", vec1)
+    let id2 = create_memory("Conversation amicale", vec2)
+    let id3 = create_memory("Discussion technique", vec3)
+    
+    print("Souvenirs créés : " + str(id1) + ", " + str(id2) + ", " + str(id3))
+    
+    // Rechercher des souvenirs similaires au premier
+    let similar = find_similar_memories(vec1, k: 2)
+    print("Souvenirs similaires trouvés : " + str(len(similar)))
+    
+    // Consolider en concept
+    let concept = consolidate_memories(similar)
+    print("Concept créé : " + str(concept.concept_id))
+    print("Labels : " + str(concept.labels))
+}

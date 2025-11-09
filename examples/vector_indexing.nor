@@ -1,0 +1,22 @@
+fn main() {
+    // Créer un vecteur
+    let v = fill(dim: 5, value: 3.0)
+    
+    print("Vecteur créé:")
+    print(v)
+    
+    // Test d'accès par index
+    print("Test accès index [0]:")
+    let elem = v[0]
+    print(elem)
+    
+    print("Test accès index [2]:")
+    let elem2 = v[2]
+    print(elem2)
+    
+    print("Test accès index [4]:")
+    let elem4 = v[4]
+    print(elem4)
+    
+    print("Tests terminés!")
+}

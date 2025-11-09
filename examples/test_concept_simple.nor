@@ -1,0 +1,86 @@
+// Test simple du type Concept pour NORMiL - Phase 5.2
+
+print("=== Test Concept - Phase 5.2 ===")
+print("")
+
+// Test 1: Création basique
+c1 = Concept {
+    concept_id: "c001",
+    centroid_vec: vec(3, [1.0, 2.0, 3.0]),
+    doc_count: 0,
+    provenance_versions: [],
+    trust_score: 0.0,
+    labels: []
+}
+print("Test 1: Création OK")
+print("Concept ID: " + c1.concept_id)
+print("")
+
+// Test 2: Avec données
+c2 = Concept {
+    concept_id: "c002",
+    centroid_vec: vec(4, [0.5, 1.5, 2.5, 3.5]),
+    doc_count: 42,
+    provenance_versions: ["v1.0", "v1.1", "v2.0"],
+    trust_score: 0.85,
+    labels: ["AI", "NLP", "ML"]
+}
+print("Test 2: Données OK")
+print("Doc count: " + to_string(c2.doc_count))
+print("Trust score: " + to_string(c2.trust_score))
+print("")
+
+// Test 3: Modification
+c2.doc_count = 50
+c2.trust_score = 0.95
+print("Test 3: Modification OK")
+print("Nouveau count: " + to_string(c2.doc_count))
+print("Nouveau trust: " + to_string(c2.trust_score))
+print("")
+
+// Test 4: Liste de concepts
+concepts = [
+    Concept {
+        concept_id: "c_alpha",
+        centroid_vec: vec(2, [1.0, 0.0]),
+        doc_count: 10,
+        provenance_versions: ["v1"],
+        trust_score: 0.8,
+        labels: ["cat_a"]
+    },
+    Concept {
+        concept_id: "c_beta",
+        centroid_vec: vec(2, [0.0, 1.0]),
+        doc_count: 20,
+        provenance_versions: ["v1"],
+        trust_score: 0.9,
+        labels: ["cat_b"]
+    }
+]
+print("Test 4: Liste OK")
+print("Nombre: " + to_string(len(concepts)))
+print("Premier: " + concepts[0].concept_id)
+print("Deuxième: " + concepts[1].concept_id)
+print("")
+
+// Test 5: Fonction
+fn update_trust(concept: Concept, delta: float) -> float {
+    concept.trust_score = concept.trust_score + delta
+    return concept.trust_score
+}
+
+c3 = Concept {
+    concept_id: "c003",
+    centroid_vec: vec(2, [1.0, 2.0]),
+    doc_count: 1,
+    provenance_versions: ["v1"],
+    trust_score: 0.5,
+    labels: []
+}
+
+new_trust = update_trust(c3, 0.3)
+print("Test 5: Fonction OK")
+print("Trust après update: " + to_string(new_trust))
+print("")
+
+print("=== Tous les tests Concept réussis! ===")

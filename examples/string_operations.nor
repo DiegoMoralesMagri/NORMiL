@@ -1,0 +1,98 @@
+// Test opérations sur strings - Phase 3.3
+
+fn main() {
+    print("=== Test Opérations String ===")
+    
+    // Concaténation avec +
+    print("1. Concaténation:")
+    let greeting = "Hello" + ", " + "World!"
+    print(greeting)
+    
+    let name = "Alice"
+    let message = "Welcome, " + name + "!"
+    print(message)
+    
+    // Conversion avec to_string()
+    print("2. Conversion:")
+    let num = 42
+    let text = "The answer is " + to_string(num)
+    print(text)
+    
+    // Length
+    print("3. Longueur:")
+    let word = "NORMiL"
+    let len_val = string_length(word)
+    print(len_val)
+    
+    // Upper/Lower
+    print("4. Majuscules/Minuscules:")
+    let lower = string_lower("HELLO")
+    let upper = string_upper("world")
+    print(lower)
+    print(upper)
+    
+    // Substring
+    print("5. Sous-chaîne:")
+    let full = "Hello, World!"
+    let sub = string_substring(full, start: 0, end: 5)
+    print(sub)
+    
+    // Split
+    print("6. Split:")
+    let sentence = "one two three"
+    let words = string_split(sentence, delimiter: " ")
+    let first = string_char_at(sentence, index: 0)
+    print(first)
+    
+    // Join
+    print("7. Join:")
+    let parts = ["Hello", "NORMiL", "World"]
+    let joined = string_join(parts, separator: " ")
+    print(joined)
+    
+    // Replace
+    print("8. Replace:")
+    let original = "Hello Python"
+    let replaced = string_replace(original, old: "Python", new: "NORMiL")
+    print(replaced)
+    
+    // Contains
+    print("9. Contains:")
+    let contains_result = string_contains("Hello World", substring: "World")
+    print(contains_result)
+    
+    // Starts/Ends with
+    print("10. Starts/Ends:")
+    let starts = string_startswith("Hello", prefix: "He")
+    let ends = string_endswith("World", suffix: "ld")
+    print(starts)
+    print(ends)
+    
+    // Trim
+    print("11. Trim:")
+    let padded = "  space  "
+    let trimmed = string_trim(padded)
+    let trimmed_len = string_length(trimmed)
+    print(trimmed_len)
+    
+    // Repeat
+    print("12. Repeat:")
+    let repeated = string_repeat("Ha", count: 3)
+    print(repeated)
+    
+    // Index of
+    print("13. Index:")
+    let haystack = "Hello World"
+    let index = string_index_of(haystack, substring: "World")
+    print(index)
+    
+    // Combinaison avec inférence de types
+    print("14. Combinaison:")
+    let part1 = "Type"
+    let part2 = "Inference"
+    let combined = part1 + " " + part2
+    let final = string_upper(combined)
+    print(final)
+    
+    print("Tous les tests string réussis!")
+}

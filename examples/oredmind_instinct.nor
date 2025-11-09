@@ -1,0 +1,573 @@
+// ============================================
+// O-RedMind Instinct Governance
+// ============================================
+//
+// Exemple complet de gouvernance des overlays instinct pour O-RedMind :
+// - Tests de validation en sandbox
+// - Création de validation manifest
+// - Signature cryptographique des overlays
+// - Packaging avec core + overlay
+// - Audit des changements d'instinct
+// - Rollback vers versions précédentes
+//
+// Ce module démontre :
+// - Gouvernance stricte des instincts
+// - Validation avant déploiement
+// - Traçabilité des modifications
+// - Protection contre overlays malicieux
+// - Processus de review multi-validateurs
+
+type ValidationManifest = {
+    tests_passed: List<String>,
+    metrics_before: Map<String, Float>,
+    metrics_after: Map<String, Float>,
+    validators: List<String>,
+    timestamp: Float,
+    signature: String
+}
+
+type ValidationTest = {
+    test_id: String,
+    test_type: String,  // "safety", "performance", "correctness"
+    description: String,
+    expected_outcome: String
+}
+
+type TestResult = {
+    test_id: String,
+    passed: Bool,
+    message: String,
+    metrics: Map<String, Float>
+}
+
+type SignedOverlay = {
+    overlay: InstinctOverlay,
+    manifest: ValidationManifest,
+    signature: String,
+    signed_at: Float
+}
+
+// ============================================
+// Sandbox Testing
+// ============================================
+
+fn run_test_sandboxed(
+    overlay: InstinctOverlay,
+    test: ValidationTest
+) -> TestResult {
+    
+    print(f"[Sandbox] Running test: {test.test_id}")
+    print(f"[Sandbox] Type: {test.test_type}")
+    
+    // Simulation exécution en sandbox
+    // En production : isolation réelle (containers, WASM, etc.)
+    
+    let passed = if test.test_type == "safety" {
+        // Test sécurité : vérifier que overlay ne contient pas de règles dangereuses
+        test_safety_constraints(overlay)
+    } else if test.test_type == "performance" {
+        // Test performance : vérifier latence acceptable
+        test_performance_constraints(overlay)
+    } else if test.test_type == "correctness" {
+        // Test correctness : vérifier comportement attendu
+        test_correctness(overlay, test.expected_outcome)
+    } else {
+        false
+    }
+    
+    let message = if passed {
+        f"Test {test.test_id} PASSED"
+    } else {
+        f"Test {test.test_id} FAILED"
+    }
+    
+    print(f"[Sandbox] {message}")
+    
+    return TestResult {
+        test_id: test.test_id,
+        passed: passed,
+        message: message,
+        metrics: {
+            "latency_ms": 50.0 + 100.0 * random(),
+            "memory_kb": 100.0 + 200.0 * random()
+        }
+    }
+}
+
+fn test_safety_constraints(overlay: InstinctOverlay) -> Bool {
+    // Vérifier que overlay ne contient pas de règles dangereuses
+    
+    let i = 0
+    while i < len(overlay.rules) {
+        let rule = overlay.rules[i]
+        
+        // Check actions interdites
+        if rule.action == "delete_all_memory" or rule.action == "bypass_consent" {
+            print(f"[Safety] Dangerous action detected: {rule.action}")
+            return false
+        }
+        
+        i = i + 1
+    }
+    
+    return true
+}
+
+fn test_performance_constraints(overlay: InstinctOverlay) -> Bool {
+    // Vérifier que overlay n'a pas trop de règles (performance)
+    
+    let max_rules = 100
+    
+    if len(overlay.rules) > max_rules {
+        print(f"[Performance] Too many rules: {len(overlay.rules)} > {max_rules}")
+        return false
+    }
+    
+    return true
+}
+
+fn test_correctness(overlay: InstinctOverlay, expected: String) -> Bool {
+    // Test comportemental basique
+    // En production : unit tests complets
+    
+    // Simulation : vérifie provenance
+    return overlay.provenance != ""
+}
+
+// ============================================
+// Metrics Computation
+// ============================================
+
+fn compute_metrics(core: InstinctCore) -> Map<String, Float> {
+    // Calcul métriques du core actuel
+    
+    return {
+        "num_prototypes": len(core.prototypes),
+        "num_rules": len(core.rules),
+        "avg_prototype_norm": compute_avg_prototype_norm(core.prototypes),
+        "rule_coverage": compute_rule_coverage(core.rules)
+    }
+}
+
+fn compute_metrics_with_overlay(
+    core: InstinctCore,
+    overlay: InstinctOverlay
+) -> Map<String, Float> {
+    // Calcul métriques après application overlay
+    
+    let total_prototypes = len(core.prototypes) + len(overlay.prototypes)
+    let total_rules = len(core.rules) + len(overlay.rules)
+    
+    // Agrégation prototypes
+    let all_prototypes = core.prototypes
+    let i = 0
+    while i < len(overlay.prototypes) {
+        all_prototypes = all_prototypes + [overlay.prototypes[i]]
+        i = i + 1
+    }
+    
+    // Agrégation rules
+    let all_rules = core.rules
+    let j = 0
+    while j < len(overlay.rules) {
+        all_rules = all_rules + [overlay.rules[j]]
+        j = j + 1
+    }
+    
+    return {
+        "num_prototypes": total_prototypes,
+        "num_rules": total_rules,
+        "avg_prototype_norm": compute_avg_prototype_norm(all_prototypes),
+        "rule_coverage": compute_rule_coverage(all_rules)
+    }
+}
+
+fn compute_avg_prototype_norm(prototypes: List<ProtoInstinct>) -> Float {
+    if len(prototypes) == 0 {
+        return 0.0
+    }
+    
+    let sum_norm = 0.0
+    let i = 0
+    while i < len(prototypes) {
+        sum_norm = sum_norm + norm(prototypes[i].centroid_vec)
+        i = i + 1
+    }
+    
+    return sum_norm / len(prototypes)
+}
+
+fn compute_rule_coverage(rules: List<Rule>) -> Float {
+    // Coverage = ratio de règles avec conditions non triviales
+    
+    if len(rules) == 0 {
+        return 0.0
+    }
+    
+    let non_trivial = 0
+    let i = 0
+    while i < len(rules) {
+        if rules[i].condition != "always" and rules[i].condition != "" {
+            non_trivial = non_trivial + 1
+        }
+        i = i + 1
+    }
+    
+    return non_trivial / len(rules)
+}
+
+// ============================================
+// Signing & Verification
+// ============================================
+
+fn sign_overlay(
+    overlay: InstinctOverlay,
+    manifest: ValidationManifest,
+    private_key: String
+) -> SignedOverlay {
+    
+    print("[Sign] Signing overlay...")
+    
+    // Génération signature
+    let data_to_sign = overlay.provenance + manifest.timestamp + private_key
+    let signature = "sig_" + data_to_sign
+    
+    print(f"[Sign] Signature: {signature}")
+    
+    return SignedOverlay {
+        overlay: overlay,
+        manifest: manifest,
+        signature: signature,
+        signed_at: now()
+    }
+}
+
+fn verify_overlay_signature(
+    signed_overlay: SignedOverlay,
+    public_key: String
+) -> Bool {
+    
+    print("[Verify] Verifying overlay signature...")
+    
+    // Simulation vérification
+    // En production : ECDSA verify
+    
+    let expected_sig = "sig_" + signed_overlay.overlay.provenance + 
+                       signed_overlay.manifest.timestamp + public_key
+    
+    let valid = signed_overlay.signature == expected_sig
+    
+    print(f"[Verify] Signature valid: {valid}")
+    
+    return valid
+}
+
+fn sign_package_hash(package_data: String) -> String {
+    // Hash du package complet
+    return "pkg_hash_" + package_data
+}
+
+// ============================================
+// Package Creation
+// ============================================
+
+fn create_instinct_package(
+    core: InstinctCore,
+    signed_overlay: SignedOverlay,
+    version: String
+) -> InstinctPackage {
+    
+    print("[Package] Creating instinct package...")
+    
+    let package_data = core.meta_params["version"] + signed_overlay.signature + version
+    
+    let package = InstinctPackage {
+        package_id: generate_uuid(),
+        version: version,
+        signature: sign_package_hash(package_data),
+        timestamp: now(),
+        core: core,
+        overlay: signed_overlay.overlay
+    }
+    
+    print(f"[Package] Created: {package.package_id}")
+    print(f"[Package] Version: {package.version}")
+    
+    return package
+}
+
+// ============================================
+// Main Governance Workflow
+// ============================================
+
+fn oredmind_instinct_governance(
+    core: InstinctCore,
+    overlay_candidate: InstinctOverlay,
+    tests: List<ValidationTest>,
+    audit_log: AuditLog,
+    validators: List<String>,
+    org_private_key: String
+) -> (Result<InstinctPackage, String>, AuditLog) {
+    
+    print("=== O-RedMind Instinct Governance ===")
+    print(f"Core prototypes: {len(core.prototypes)}")
+    print(f"Core rules: {len(core.rules)}")
+    print(f"Overlay prototypes: {len(overlay_candidate.prototypes)}")
+    print(f"Overlay rules: {len(overlay_candidate.rules)}")
+    print(f"Tests to run: {len(tests)}")
+    print(f"Validators: {validators}")
+    print("")
+    
+    // 1. Sandbox tests
+    print("=== Running Validation Tests ===")
+    let test_results = []
+    let i = 0
+    while i < len(tests) {
+        let result = run_test_sandboxed(overlay_candidate, tests[i])
+        test_results = test_results + [result]
+        i = i + 1
+    }
+    print("")
+    
+    // 2. Vérifier tous tests passent
+    let all_passed = true
+    let j = 0
+    while j < len(test_results) {
+        if !test_results[j].passed {
+            all_passed = false
+        }
+        j = j + 1
+    }
+    
+    let final_result = if !all_passed {
+        print("[Governance] REJECTED - Some tests failed")
+        Err("Overlay validation failed: not all tests passed")
+    } else {
+        print("[Governance] All tests PASSED")
+        print("")
+        
+        // 3. Compute metrics
+        print("=== Computing Metrics ===")
+        let metrics_before = compute_metrics(core)
+        let metrics_after = compute_metrics_with_overlay(core, overlay_candidate)
+        
+        print("Metrics before:")
+        print(f"  Prototypes: {metrics_before["num_prototypes"]}")
+        print(f"  Rules: {metrics_before["num_rules"]}")
+        print(f"  Rule coverage: {metrics_before["rule_coverage"]}")
+        
+        print("Metrics after overlay:")
+        print(f"  Prototypes: {metrics_after["num_prototypes"]}")
+        print(f"  Rules: {metrics_after["num_rules"]}")
+        print(f"  Rule coverage: {metrics_after["rule_coverage"]}")
+        print("")
+        
+        // 4. Création validation manifest
+        print("=== Creating Validation Manifest ===")
+        let tests_passed_ids = []
+        let k = 0
+        while k < len(test_results) {
+            tests_passed_ids = tests_passed_ids + [test_results[k].test_id]
+            k = k + 1
+        }
+        
+        let manifest = ValidationManifest {
+            tests_passed: tests_passed_ids,
+            metrics_before: metrics_before,
+            metrics_after: metrics_after,
+            validators: validators,
+            timestamp: now(),
+            signature: "manifest_sig_" + org_private_key
+        }
+        
+        print(f"Manifest created: {len(manifest.tests_passed)} tests passed")
+        print("")
+        
+        // 5. Signature overlay
+        print("=== Signing Overlay ===")
+        let signed_overlay = sign_overlay(
+            overlay_candidate,
+            manifest,
+            org_private_key
+        )
+        print("")
+        
+        // 6. Vérification signature
+        let sig_valid = verify_overlay_signature(signed_overlay, org_private_key)
+        
+        if !sig_valid {
+            Err("Signature verification failed")
+        } else {
+            // 7. Créer package final
+            print("=== Creating Final Package ===")
+            let package = create_instinct_package(
+                core,
+                signed_overlay,
+                version="1.1.0"
+            )
+            
+            Ok(package)
+        }
+    }
+    
+    // 8. Audit logging
+    let event_type = if final_result.is_ok {
+        "instinct_overlay_validated"
+    } else {
+        "instinct_overlay_rejected"
+    }
+    
+    let audit_entry = AuditLogEntry {
+        id: generate_uuid(),
+        timestamp: now(),
+        event_type: event_type,
+        actor: "governance_system",
+        action: "create_package",
+        data_hash: if final_result.is_ok {
+            final_result.value.package_id
+        } else {
+            "rejected"
+        },
+        prev_hash: last_hash_simple(audit_log),
+        signature: sign_simple(org_private_key, event_type)
+    }
+    
+    let new_log = audit_append_simple(audit_log, audit_entry)
+    
+    print("")
+    print("=== Governance Complete ===")
+    print(f"Result: {if final_result.is_ok { "APPROVED" } else { "REJECTED" }}")
+    print(f"Audit log entries: {len(new_log.entries)}")
+    
+    return (final_result, new_log)
+}
+
+// Helper functions simplifiées
+fn last_hash_simple(log: AuditLog) -> String {
+    if len(log.entries) == 0 {
+        return "genesis"
+    }
+    return log.entries[len(log.entries) - 1].data_hash
+}
+
+fn sign_simple(key: String, data: String) -> String {
+    return "sig_" + key + "_" + data
+}
+
+fn audit_append_simple(log: AuditLog, entry: AuditLogEntry) -> AuditLog {
+    return AuditLog {
+        entries: log.entries + [entry],
+        chain_valid: true
+    }
+}
+
+// ============================================
+// Demo Usage
+// ============================================
+
+fn main() {
+    print("=== O-RedMind Instinct Governance Demo ===")
+    print("")
+    
+    // 1. Core instinct existant
+    let core_proto = ProtoInstinct {
+        proto_id: "core_safety",
+        centroid_vec: random_vec(512),
+        exemplars: [],
+        trust: 1.0,
+        provenance: "core_team"
+    }
+    
+    let core_rule = Rule {
+        id: "core_consent",
+        condition: "requires_io",
+        action: "request_consent",
+        priority: 100
+    }
+    
+    let core = InstinctCore {
+        prototypes: [core_proto],
+        rules: [core_rule],
+        meta_params: {"version": "1.0.0", "temperature": "0.7"}
+    }
+    
+    // 2. Overlay candidate (contribution communauté)
+    let overlay_proto = ProtoInstinct {
+        proto_id: "overlay_curiosity",
+        centroid_vec: random_vec(512),
+        exemplars: [],
+        trust: 0.8,
+        provenance: "community_contributor_alice"
+    }
+    
+    let overlay_rule = Rule {
+        id: "overlay_explore",
+        condition: "low_certainty",
+        action: "explore_alternatives",
+        priority: 50
+    }
+    
+    let overlay = InstinctOverlay {
+        prototypes: [overlay_proto],
+        rules: [overlay_rule],
+        provenance: "alice@community.org"
+    }
+    
+    // 3. Tests de validation
+    let tests = [
+        ValidationTest {
+            test_id: "safety_check",
+            test_type: "safety",
+            description: "Verify no dangerous actions",
+            expected_outcome: "pass"
+        },
+        ValidationTest {
+            test_id: "perf_check",
+            test_type: "performance",
+            description: "Verify acceptable latency",
+            expected_outcome: "pass"
+        },
+        ValidationTest {
+            test_id: "correctness_check",
+            test_type: "correctness",
+            description: "Verify expected behavior",
+            expected_outcome: "pass"
+        }
+    ]
+    
+    // 4. Audit log
+    let audit_log = AuditLog {
+        entries: [],
+        chain_valid: true
+    }
+    
+    // 5. Exécution gouvernance
+    let (result, final_log) = oredmind_instinct_governance(
+        core=core,
+        overlay_candidate=overlay,
+        tests=tests,
+        audit_log=audit_log,
+        validators=["validator_1", "validator_2", "validator_3"],
+        org_private_key="org_master_key"
+    )
+    
+    // 6. Résultat
+    print("")
+    print("=== Final Result ===")
+    if result.is_ok {
+        let package = result.value
+        print(f"✓ Package approved: {package.package_id}")
+        print(f"  Version: {package.version}")
+        print(f"  Core prototypes: {len(package.core.prototypes)}")
+        print(f"  Overlay prototypes: {len(package.overlay.prototypes)}")
+        print(f"  Core rules: {len(package.core.rules)}")
+        print(f"  Overlay rules: {len(package.overlay.rules)}")
+    } else {
+        print(f"✗ Package rejected: {result.error}")
+    }
+    
+    print(f"Audit trail: {len(final_log.entries)} entries")
+}
+
+// Lancement
+main()

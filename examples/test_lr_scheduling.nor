@@ -1,0 +1,285 @@
+// Test des stratégies de scheduling du learning rate (Phase 7.9)
+// Warmup, cosine annealing, step decay, plateau detection
+
+print("=== Test Learning Rate Scheduling ===")
+print("")
+
+// ============================================
+// Section 1: Warmup linéaire
+// ============================================
+
+print("--- Section 1: Linear warmup ---")
+
+// Warmup sur 10 étapes vers LR = 0.01
+let warmup_steps = 10
+let target_lr = 0.01
+
+// Tester différentes étapes
+let lr_step0 = lr_warmup_linear(0, warmup_steps, target_lr)
+print("Step 0 (start): " + to_string(lr_step0))
+
+let lr_step5 = lr_warmup_linear(5, warmup_steps, target_lr)
+print("Step 5 (50%): " + to_string(lr_step5))
+
+let lr_step10 = lr_warmup_linear(10, warmup_steps, target_lr)
+print("Step 10 (100%, at target): " + to_string(lr_step10))
+
+let lr_step15 = lr_warmup_linear(15, warmup_steps, target_lr)
+print("Step 15 (after warmup): " + to_string(lr_step15))
+
+// Vérifier la progression linéaire
+let is_linear_start = lr_step0 == 0.0
+let is_linear_mid = lr_step5 > 0.0
+let is_linear_mid2 = lr_step5 < target_lr
+let is_linear_end = lr_step10 == target_lr
+let warmup_ok = is_linear_start
+if warmup_ok {
+    warmup_ok = is_linear_mid
+}
+if warmup_ok {
+    warmup_ok = is_linear_mid2
+}
+if warmup_ok {
+    warmup_ok = is_linear_end
+}
+
+print("Linear warmup working: " + to_string(warmup_ok))
+print("")
+
+// ============================================
+// Section 2: Cosine annealing
+// ============================================
+
+print("--- Section 2: Cosine annealing ---")
+
+let total_steps = 100
+let min_lr = 0.0001
+let max_lr = 0.01
+
+// Tester différents points de la courbe
+let cos_step0 = lr_cosine_annealing(0, total_steps, min_lr, max_lr)
+print("Step 0 (max): " + to_string(cos_step0))
+
+let cos_step25 = lr_cosine_annealing(25, total_steps, min_lr, max_lr)
+print("Step 25 (75% of max): " + to_string(cos_step25))
+
+let cos_step50 = lr_cosine_annealing(50, total_steps, min_lr, max_lr)
+print("Step 50 (middle): " + to_string(cos_step50))
+
+let cos_step75 = lr_cosine_annealing(75, total_steps, min_lr, max_lr)
+print("Step 75 (25% above min): " + to_string(cos_step75))
+
+let cos_step100 = lr_cosine_annealing(100, total_steps, min_lr, max_lr)
+print("Step 100 (min): " + to_string(cos_step100))
+
+// Vérifier la décroissance monotone
+let cos_decreasing1 = cos_step0 > cos_step25
+let cos_decreasing2 = cos_step25 > cos_step50
+let cos_decreasing3 = cos_step50 > cos_step75
+let cos_decreasing4 = cos_step75 > cos_step100
+let cos_ok = cos_decreasing1
+if cos_ok {
+    cos_ok = cos_decreasing2
+}
+if cos_ok {
+    cos_ok = cos_decreasing3
+}
+if cos_ok {
+    cos_ok = cos_decreasing4
+}
+
+print("Cosine decreasing: " + to_string(cos_ok))
+print("")
+
+// ============================================
+// Section 3: Step decay
+// ============================================
+
+print("--- Section 3: Step decay ---")
+
+let initial_lr = 0.1
+let decay_rate = 0.5
+let decay_steps = 10
+
+// Tester les paliers
+let step_lr0 = lr_step_decay(0, initial_lr, decay_rate, decay_steps)
+print("Step 0-9 (no decay): " + to_string(step_lr0))
+
+let step_lr10 = lr_step_decay(10, initial_lr, decay_rate, decay_steps)
+print("Step 10-19 (1 decay): " + to_string(step_lr10))
+
+let step_lr20 = lr_step_decay(20, initial_lr, decay_rate, decay_steps)
+print("Step 20-29 (2 decays): " + to_string(step_lr20))
+
+let step_lr30 = lr_step_decay(30, initial_lr, decay_rate, decay_steps)
+print("Step 30-39 (3 decays): " + to_string(step_lr30))
+
+// Vérifier les paliers
+let step_plateau1 = step_lr0 == initial_lr
+let step_plateau2 = step_lr10 == initial_lr * decay_rate
+let step_plateau3 = step_lr20 < step_lr10
+let step_plateau4 = step_lr30 < step_lr20
+let step_ok = step_plateau1
+if step_ok {
+    step_ok = step_plateau2
+}
+if step_ok {
+    step_ok = step_plateau3
+}
+if step_ok {
+    step_ok = step_plateau4
+}
+
+print("Step decay working: " + to_string(step_ok))
+print("")
+
+// ============================================
+// Section 4: Plateau detection
+// ============================================
+
+print("--- Section 4: Plateau detection ---")
+
+// Loss qui améliore
+let improving_losses = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5]
+let factor_improving = lr_plateau_factor(improving_losses, 3, 0.5, 0.01)
+print("Improving losses, factor: " + to_string(factor_improving))
+
+// Loss en plateau
+let plateau_losses = [1.0, 0.9, 0.8, 0.8, 0.8, 0.8]
+let factor_plateau = lr_plateau_factor(plateau_losses, 3, 0.5, 0.01)
+print("Plateau losses, factor: " + to_string(factor_plateau))
+
+// Loss qui empire légèrement
+let worsening_losses = [0.5, 0.51, 0.52, 0.53, 0.54, 0.55]
+let factor_worsening = lr_plateau_factor(worsening_losses, 3, 0.5, 0.01)
+print("Worsening losses, factor: " + to_string(factor_worsening))
+
+// Vérifier la détection
+let plateau_no_reduce = factor_improving == 1.0
+let plateau_reduce = factor_plateau == 0.5
+let plateau_reduce_worsen = factor_worsening == 0.5
+let plateau_ok = plateau_no_reduce
+if plateau_ok {
+    plateau_ok = plateau_reduce
+}
+if plateau_ok {
+    plateau_ok = plateau_reduce_worsen
+}
+
+print("Plateau detection working: " + to_string(plateau_ok))
+print("")
+
+// ============================================
+// Section 5: Combinaison warmup + cosine
+// ============================================
+
+print("--- Section 5: Combined warmup + cosine ---")
+
+fn get_scheduled_lr(step: int, warmup: int, total: int) -> float {
+    // Phase 1: Warmup
+    if step < warmup {
+        return lr_warmup_linear(step, warmup, 0.01)
+    }
+    
+    // Phase 2: Cosine annealing
+    let adjusted_step = step - warmup
+    let adjusted_total = total - warmup
+    return lr_cosine_annealing(adjusted_step, adjusted_total, 0.0001, 0.01)
+}
+
+let combined_step0 = get_scheduled_lr(0, 10, 100)
+print("Combined step 0 (warmup): " + to_string(combined_step0))
+
+let combined_step5 = get_scheduled_lr(5, 10, 100)
+print("Combined step 5 (warmup): " + to_string(combined_step5))
+
+let combined_step10 = get_scheduled_lr(10, 10, 100)
+print("Combined step 10 (end warmup): " + to_string(combined_step10))
+
+let combined_step50 = get_scheduled_lr(50, 10, 100)
+print("Combined step 50 (cosine mid): " + to_string(combined_step50))
+
+let combined_step100 = get_scheduled_lr(100, 10, 100)
+print("Combined step 100 (cosine end): " + to_string(combined_step100))
+
+// Vérifier la combinaison
+let comb_grows = combined_step5 > combined_step0
+let comb_peak = combined_step10 > combined_step5
+let comb_decays = combined_step50 < combined_step10
+let comb_end = combined_step100 < combined_step50
+let combined_ok = comb_grows
+if combined_ok {
+    combined_ok = comb_peak
+}
+if combined_ok {
+    combined_ok = comb_decays
+}
+if combined_ok {
+    combined_ok = comb_end
+}
+
+print("Combined scheduling working: " + to_string(combined_ok))
+print("")
+
+// ============================================
+// Section 6: Training avec scheduling adaptatif
+// ============================================
+
+print("--- Section 6: Adaptive training with scheduling ---")
+
+fn train_with_scheduling(data: Vec, epochs: int) -> float {
+    let weights = zeros(data.dim)
+    let losses = []
+    let current_lr = 0.001  // LR initial
+    
+    let epoch = 0
+    while epoch < epochs {
+        // Warmup pendant les 5 premières époques
+        if epoch < 5 {
+            current_lr = lr_warmup_linear(epoch, 5, 0.01)
+        }
+        
+        // Ensuite cosine annealing
+        if epoch >= 5 {
+            let adjusted_epoch = epoch - 5
+            current_lr = lr_cosine_annealing(adjusted_epoch, epochs - 5, 0.0001, 0.01)
+        }
+        
+        // Mise à jour avec LR adaptatif
+        weights = onlinecluster_update(weights, data, current_lr)
+        weights = normalize_plasticity(weights)
+        
+        // Calculer "loss" (distance au data)
+        let diff = data - weights
+        let loss = dot(diff, diff)  // MSE
+        losses = losses + [loss]
+        
+        // Plateau detection tous les 3 epochs après le warmup
+        if epoch > 5 {
+            let len_losses = len(losses)
+            if len_losses > 3 {
+                let plateau_factor = lr_plateau_factor(losses, 3, 0.5, 0.01)
+                current_lr = current_lr * plateau_factor
+            }
+        }
+        
+        epoch = epoch + 1
+    }
+    
+    // Retourner la loss finale
+    let final_idx = len(losses) - 1
+    return losses[final_idx]
+}
+
+let training_data = vec(4, [0.7, 0.7, 0.7, 0.7])
+let final_loss = train_with_scheduling(training_data, 20)
+
+print("Training completed")
+print("Final loss: " + to_string(final_loss))
+
+// Vérifier que la loss est faible (convergence)
+let converged = final_loss < 0.1
+print("Converged with scheduling: " + to_string(converged))
+
+print("")
+print("=== All LR Scheduling Tests Complete ===")

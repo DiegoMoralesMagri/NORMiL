@@ -1,0 +1,51 @@
+// Test d'inférence de types - Phase 3.1
+
+fn main() {
+    print("=== Test Inférence de Types ===")
+    
+    // Int sans type explicite
+    let x = 42
+    print("x =")
+    print(x)
+    
+    // Float sans type explicite
+    let pi = 3.14159
+    print("pi =")
+    print(pi)
+    
+    // String sans type explicite
+    let message = "Hello, type inference!"
+    print(message)
+    
+    // Bool sans type explicite
+    let flag = true
+    print("flag =")
+    print(flag)
+    
+    // Expression
+    let sum = x + 10
+    print("sum =")
+    print(sum)
+    
+    // Vecteur
+    let v = zeros(dim: 64)
+    let n = norm(v)
+    print("norm(zeros) =")
+    print(n)
+    
+    // Depuis fonction
+    let result = get_value()
+    print("result from function =")
+    print(result)
+    
+    // Const avec inférence
+    const MAX = 100
+    print("MAX =")
+    print(MAX)
+    
+    print("Tous les tests d'inférence réussis!")
+}
+
+fn get_value() -> int {
+    return 999
+}

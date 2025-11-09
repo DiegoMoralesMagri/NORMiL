@@ -1,0 +1,158 @@
+// ============================================
+// advanced_patterns.nor
+// Démonstration avancée du pattern matching
+// ============================================
+
+// Classificateur de nombres avec patterns
+fn classify_number(n: int) -> str {
+    match n {
+        case 0 -> {
+            return "zero"
+        }
+        case 1 -> {
+            return "un"
+        }
+        case int(x) where x < 0 -> {
+            return "negatif"
+        }
+        case int(x) where x > 0 && x <= 10 -> {
+            return "petit positif"
+        }
+        case int(x) where x > 10 && x <= 100 -> {
+            return "moyen"
+        }
+        case int(x) where x > 100 -> {
+            return "grand"
+        }
+    }
+}
+
+// Pattern matching sur floats avec précision
+fn analyze_score(score: float) -> str {
+    match score {
+        case float(s) where s >= 0.95 -> {
+            return "excellent"
+        }
+        case float(s) where s >= 0.8 -> {
+            return "tres bon"
+        }
+        case float(s) where s >= 0.6 -> {
+            return "bon"
+        }
+        case float(s) where s >= 0.4 -> {
+            return "moyen"
+        }
+        case float(s) -> {
+            return "faible"
+        }
+    }
+}
+
+// Pattern matching sur strings pour NLP
+fn detect_language(text: str) -> str {
+    match text {
+        case "bonjour" -> {
+            return "francais"
+        }
+        case "hello" -> {
+            return "anglais"
+        }
+        case "hola" -> {
+            return "espagnol"
+        }
+        case "ciao" -> {
+            return "italien"
+        }
+        case str(s) -> {
+            return "langue inconnue"
+        }
+    }
+}
+
+// Pattern matching pour validation
+fn validate_input(value: int) -> bool {
+    match value {
+        case int(x) where x >= 0 && x <= 255 -> {
+            return true
+        }
+        case _ -> {
+            return false
+        }
+    }
+}
+
+// Pattern matching complexe avec calculs
+fn fibonacci_pattern(n: int) -> int {
+    match n {
+        case 0 -> {
+            return 0
+        }
+        case 1 -> {
+            return 1
+        }
+        case int(x) where x > 1 -> {
+            // Fibonacci itératif
+            let a = 0
+            let b = 1
+            let i = 2
+            while i <= x {
+                let temp = a + b
+                a = b
+                b = temp
+                i = i + 1
+            }
+            return b
+        }
+        case _ -> {
+            return 0
+        }
+    }
+}
+
+// Fonction principale avec tests
+fn main() {
+    print("=== Pattern Matching Avance ===")
+    print("")
+    
+    // Test classification nombres
+    print("Classification de nombres:")
+    print(classify_number(0))
+    print(classify_number(-5))
+    print(classify_number(7))
+    print(classify_number(42))
+    print(classify_number(150))
+    print("")
+    
+    // Test analyse scores
+    print("Analyse de scores:")
+    print(analyze_score(0.98))
+    print(analyze_score(0.85))
+    print(analyze_score(0.65))
+    print(analyze_score(0.5))
+    print(analyze_score(0.2))
+    print("")
+    
+    // Test détection langue
+    print("Detection de langue:")
+    print(detect_language("bonjour"))
+    print(detect_language("hello"))
+    print(detect_language("hola"))
+    print(detect_language("konnichiwa"))
+    print("")
+    
+    // Test validation
+    print("Validation d'entrees:")
+    print(validate_input(128))
+    print(validate_input(300))
+    print("")
+    
+    // Test Fibonacci
+    print("Suite de Fibonacci:")
+    print(fibonacci_pattern(0))
+    print(fibonacci_pattern(1))
+    print(fibonacci_pattern(5))
+    print(fibonacci_pattern(10))
+    print("")
+    
+    print("Tous les tests reussis!")
+}

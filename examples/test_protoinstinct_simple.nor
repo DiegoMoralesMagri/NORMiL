@@ -1,0 +1,64 @@
+// Test ProtoInstinct - Phase 5.3
+// Structure: id, vec_ref, rule, weight
+
+print("=== Test ProtoInstinct - Phase 5.3 ===")
+print("")
+
+// Test 1: Création simple
+print("Test 1: Création OK")
+instinct = ProtoInstinct {
+    id: "instinct_001",
+    vec_ref: vec(4, [1.0, 0.5, 0.0, -0.5]),
+    rule: "if x > 0.5 then activate",
+    weight: 1.0
+}
+print("ID: " + instinct.id)
+print("")
+
+// Test 2: Accès aux données
+print("Test 2: Données OK")
+v = instinct.vec_ref
+dim = len(v)
+w = instinct.weight
+print("Dim: " + to_string(dim))
+print("Weight: " + to_string(w))
+print("")
+
+// Test 3: Modification
+print("Test 3: Modification OK")
+instinct.weight = 2.5
+print("Nouveau weight: " + to_string(instinct.weight))
+print("")
+
+// Test 4: Liste de ProtoInstinct
+print("Test 4: Liste OK")
+instincts = [
+    ProtoInstinct {
+        id: "i_alpha",
+        vec_ref: vec(2, [1.0, 0.0]),
+        rule: "",
+        weight: 0.8
+    },
+    ProtoInstinct {
+        id: "i_beta",
+        vec_ref: vec(2, [0.0, 1.0]),
+        rule: "",
+        weight: 1.2
+    }
+]
+print("Nombre: " + to_string(len(instincts)))
+print("Premier: " + instincts[0].id)
+print("Deuxième: " + instincts[1].id)
+print("")
+
+// Test 5: Fonction utilisant ProtoInstinct
+print("Test 5: Fonction OK")
+fn scale_weight(inst: ProtoInstinct, factor: float) -> float {
+    return inst.weight * factor
+}
+
+result = scale_weight(instinct, 2.0)
+print("Weight après scale: " + to_string(result))
+print("")
+
+print("=== Tous les tests ProtoInstinct réussis! ===")

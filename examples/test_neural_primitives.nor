@@ -1,0 +1,221 @@
+// ========================================
+// Test Neural Primitives - Phase 6
+// ========================================
+// Tests complets pour lowrankupdate, quantize, onlinecluster_update
+
+print("=== Test Neural Primitives ===\n")
+
+// ========================================
+// Section 1: lowrankupdate
+// ========================================
+
+print("--- Section 1: lowrankupdate ---")
+
+// Test 1.1: Mise à jour de rang faible basique
+let W = [[1.0, 0.0], [0.0, 1.0]]  // Matrice identité 2x2
+let u = vec(2, [1.0, 0.0])
+let v = vec(2, [0.0, 1.0])
+let W_new = lowrankupdate(W, u, v)
+
+print("Test 1.1 - Low-rank update basique:")
+print("  W (identity matrix) + u⊗v")
+print("  u = [1.0, 0.0], v = [0.0, 1.0]")
+print("  Expected: [[1.0, 1.0], [0.0, 1.0]]")
+print("  Result: ")
+print(W_new)
+print("")
+
+// Test 1.2: Mise à jour avec vecteurs plus grands
+let W2 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+let u2 = vec(3, [0.5, 0.5, 0.0])
+let v2 = vec(3, [1.0, 0.0, 0.0])
+let W2_new = lowrankupdate(W2, u2, v2)
+
+print("Test 1.2 - Low-rank update 3x3:")
+print("  u = [0.5, 0.5, 0.0], v = [1.0, 0.0, 0.0]")
+print("  Result:")
+print(W2_new)
+print("")
+
+// ========================================
+// Section 2: quantize
+// ========================================
+
+print("--- Section 2: quantize ---")
+
+// Test 2.1: Quantisation 8 bits
+let v1 = vec(5, [0.0, 0.25, 0.5, 0.75, 1.0])
+let v1_q8 = quantize(v1, 8)
+
+print("Test 2.1 - Quantization 8 bits:")
+print("  Original: [0.0, 0.25, 0.5, 0.75, 1.0]")
+print("  Quantized (8 bits):")
+print(v1_q8)
+print("")
+
+// Test 2.2: Quantisation 4 bits (plus agressive)
+let v2_q4 = quantize(v1, 4)
+
+print("Test 2.2 - Quantization 4 bits:")
+print("  Original: [0.0, 0.25, 0.5, 0.75, 1.0]")
+print("  Quantized (4 bits, higher compression):")
+print(v2_q4)
+print("")
+
+// Test 2.3: Quantisation d'un vecteur aléatoire
+let v_rand = random(8, 0.0, 1.0)
+let v_rand_q8 = quantize(v_rand, 8)
+let v_rand_q4 = quantize(v_rand, 4)
+
+print("Test 2.3 - Random vector quantization:")
+print("  Original (8 dims):")
+print(v_rand)
+print("  Quantized 8 bits:")
+print(v_rand_q8)
+print("  Quantized 4 bits:")
+print(v_rand_q4)
+print("")
+
+// Test 2.4: Vérifier que la dimension est préservée
+let dim_orig = v_rand.dim
+let dim_q8 = v_rand_q8.dim
+let dim_q4 = v_rand_q4.dim
+
+print("Test 2.4 - Dimension preservation:")
+let s_orig = to_string(dim_orig)
+let s_q8 = to_string(dim_q8)
+let s_q4 = to_string(dim_q4)
+print("  Original dim: " + s_orig)
+print("  Quantized 8-bit dim: " + s_q8)
+print("  Quantized 4-bit dim: " + s_q4)
+
+if dim_orig == dim_q8 && dim_q8 == dim_q4 {
+    print("  ✓ Dimensions preserved!")
+}
+print("")
+
+// ========================================
+// Section 3: onlinecluster_update
+// ========================================
+
+print("--- Section 3: onlinecluster_update ---")
+
+// Test 3.1: Mise à jour incrémentale basique
+let centroid = zeros(3)
+let x1 = vec(3, [1.0, 0.0, 0.0])
+let c1 = onlinecluster_update(centroid, x1, 0.5)
+
+print("Test 3.1 - Single incremental update:")
+print("  Initial centroid: [0, 0, 0]")
+print("  New point x: [1, 0, 0]")
+print("  lr = 0.5")
+print("  Updated centroid:")
+print(c1)
+print("  Expected: [0.5, 0, 0]")
+print("")
+
+// Test 3.2: Séquence de mises à jour
+let c = zeros(2)
+let x_seq1 = vec(2, [1.0, 0.0])
+let x_seq2 = vec(2, [0.0, 1.0])
+let x_seq3 = vec(2, [1.0, 1.0])
+
+let c_step1 = onlinecluster_update(c, x_seq1, 0.3)
+let c_step2 = onlinecluster_update(c_step1, x_seq2, 0.3)
+let c_step3 = onlinecluster_update(c_step2, x_seq3, 0.3)
+
+print("Test 3.2 - Sequence of updates:")
+print("  Initial: [0, 0]")
+print("  After x1=[1,0]: ")
+print(c_step1)
+print("  After x2=[0,1]: ")
+print(c_step2)
+print("  After x3=[1,1]: ")
+print(c_step3)
+print("  (lr=0.3 for all steps)")
+print("")
+
+// Test 3.3: Impact du learning rate
+let base_c = zeros(4)
+let target = ones(4)
+
+let c_lr01 = onlinecluster_update(base_c, target, 0.1)
+let c_lr05 = onlinecluster_update(base_c, target, 0.5)
+let c_lr09 = onlinecluster_update(base_c, target, 0.9)
+
+print("Test 3.3 - Learning rate impact:")
+print("  Base centroid: [0,0,0,0]")
+print("  Target: [1,1,1,1]")
+print("  lr=0.1:")
+print(c_lr01)
+print("  lr=0.5:")
+print(c_lr05)
+print("  lr=0.9:")
+print(c_lr09)
+print("")
+
+// Test 3.4: Convergence simulation
+let conv_c = zeros(3)
+let conv_target = vec(3, [2.0, 3.0, 1.0])
+let num_steps = 10
+let lr = 0.2
+
+print("Test 3.4 - Convergence over 10 steps (lr=0.2):")
+print("  Target: [2.0, 3.0, 1.0]")
+
+let i = 0
+while i < num_steps {
+    conv_c = onlinecluster_update(conv_c, conv_target, lr)
+    i = i + 1
+}
+
+print("  Final centroid after 10 updates:")
+print(conv_c)
+print("  (Should be close to target)")
+print("")
+
+// ========================================
+// Section 4: Combinaisons
+// ========================================
+
+print("--- Section 4: Combined scenarios ---")
+
+// Test 4.1: Quantization + clustering
+let cluster_center = zeros(8)
+let samples = [
+    random(8, 0.0, 1.0),
+    random(8, 0.0, 1.0),
+    random(8, 0.0, 1.0)
+]
+
+// Mettre à jour le centre avec chaque échantillon
+let j = 0
+while j < 3 {
+    cluster_center = onlinecluster_update(cluster_center, samples[j], 0.3)
+    j = j + 1
+}
+
+// Quantifier le centroïde final
+let cluster_center_q = quantize(cluster_center, 8)
+
+print("Test 4.1 - Online clustering + quantization:")
+print("  Computed cluster center (3 samples, lr=0.3):")
+print(cluster_center)
+print("  Quantized cluster center (8 bits):")
+print(cluster_center_q)
+print("")
+
+// Test 4.2: Low-rank update + quantization
+let W_init = [[1.0, 0.0], [0.0, 1.0]]
+let u_update = vec(2, [0.5, 0.5])
+let v_update = vec(2, [1.0, 0.0])
+
+let W_updated = lowrankupdate(W_init, u_update, v_update)
+// Note: quantize works on Vec, not matrices, so we skip matrix quantization
+
+print("Test 4.2 - Low-rank update (matrix learning):")
+print("  Updated matrix W:")
+print(W_updated)
+print("")
+
+print("=== All Neural Primitives Tests Complete ===")

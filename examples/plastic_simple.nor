@@ -1,0 +1,54 @@
+// ============================================
+// plastic_simple.nor
+// Démonstration simple de l'annotation @plastic
+// ============================================
+
+// Fonction avec plasticité neuronale lente
+@plastic(rate: 0.0001, mode: "hebbian")
+fn slow_learn(state: Vec, input: Vec) -> Vec {
+    let delta = scale(input, 0.0001)
+    return vec_add(state, delta)
+}
+
+// Fonction avec plasticité rapide
+@plastic(rate: 0.01, mode: "stdp")
+fn fast_adapt(state: Vec, target: Vec) -> Vec {
+    let error = vec_sub(target, state)
+    let correction = scale(error, 0.01)
+    return vec_add(state, correction)
+}
+
+// Fonction normale sans plasticité
+fn static_process(input: Vec) -> Vec {
+    return normalize(input)
+}
+
+// Point d'entrée
+fn main() {
+    print("=== Demonstration de la plasticite neuronale ===")
+    
+    // États initiaux
+    let state = random(dim: 64, mean: 0.0, std: 0.1)
+    let input = random(dim: 64, mean: 0.5, std: 0.1)
+    let target = random(dim: 64, mean: 1.0, std: 0.1)
+    
+    // Test apprentissage lent
+    print("Apprentissage lent (Hebbian)...")
+    let slow_result = slow_learn(state, input)
+    print("Norme resultante:")
+    print(norm(slow_result))
+    
+    // Test adaptation rapide
+    print("Adaptation rapide (STDP)...")
+    let fast_result = fast_adapt(state, target)
+    print("Norme resultante:")
+    print(norm(fast_result))
+    
+    // Test traitement statique
+    print("Traitement statique...")
+    let static_result = static_process(input)
+    print("Norme resultante:")
+    print(norm(static_result))
+    
+    print("Demonstration terminee!")
+}

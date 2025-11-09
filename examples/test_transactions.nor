@@ -1,0 +1,182 @@
+// ========================================
+// Test Transactions - Phase 6.4
+// ========================================
+// Tests du système de transactions avec audit logging automatique
+
+print("=== Test Transactions System ===\n")
+
+// ========================================
+// Section 1: Transaction basique
+// ========================================
+
+print("--- Section 1: Basic transaction ---")
+
+// Transaction simple qui ajoute un épisode
+transaction append_episode_safe(summary: str, trust: float) -> str {
+    let v = random(128, 0.0, 1.0)
+    let record = EpisodicRecord {
+        id: generate_uuid(),
+        timestamp: now(),
+        sources: ["test"],
+        vecs: {"default": v},
+        summary: summary,
+        labels: [],
+        trust: trust,
+        provenance: {"device_id": "test", "signature": ""},
+        outcome: "pending"
+    }
+    
+    let id = episodic_append(record)
+    return id
+}
+
+print("Test 1.1 - Simple transaction:")
+let ep_id = append_episode_safe("Test episode", 0.9)
+print("  Episode ID: " + ep_id)
+print("")
+
+// ========================================
+// Section 2: Transaction avec calculs
+// ========================================
+
+print("--- Section 2: Transaction with computations ---")
+
+transaction compute_centroid(vec1: Vec, vec2: Vec, vec3: Vec) -> Vec {
+    // Calculer le centroïde de 3 vecteurs
+    let c = zeros(vec1.dim)
+    c = onlinecluster_update(c, vec1, 0.33)
+    c = onlinecluster_update(c, vec2, 0.5)
+    c = onlinecluster_update(c, vec3, 1.0)
+    return c
+}
+
+print("Test 2.1 - Centroid computation:")
+let v1 = vec(3, [1.0, 0.0, 0.0])
+let v2 = vec(3, [0.0, 1.0, 0.0])
+let v3 = vec(3, [0.0, 0.0, 1.0])
+
+let centroid = compute_centroid(v1, v2, v3)
+print("  Centroid:")
+print(centroid)
+print("")
+
+// ========================================
+// Section 3: Transaction avec retour multiple
+// ========================================
+
+print("--- Section 3: Transaction with multiple operations ---")
+
+transaction create_concept_from_episodes(label: str, count: int) -> str {
+    // Créer plusieurs épisodes et un concept
+    let vecs = []
+    let i = 0
+    while i < count {
+        let v = random(64, 0.0, 1.0)
+        vecs = vecs + [v]
+        i = i + 1
+    }
+    
+    // Créer le concept
+    let concept_id = generate_uuid()
+    let centroid = zeros(64)
+    
+    // Calculer centroïde
+    let j = 0
+    while j < count {
+        centroid = onlinecluster_update(centroid, vecs[j], 0.3)
+        j = j + 1
+    }
+    
+    let concept = Concept {
+        concept_id: concept_id,
+        centroid_vec: centroid,
+        doc_count: count,
+        provenance_versions: [],
+        trust_score: 0.8,
+        labels: [label]
+    }
+    
+    semantic_upsert(concept)
+    
+    return concept_id
+}
+
+print("Test 3.1 - Multi-step transaction:")
+let concept_id = create_concept_from_episodes("ai_concept", 5)
+print("  Created concept: " + concept_id)
+print("")
+
+// ========================================
+// Section 4: Transaction avec gestion d'erreur
+// ========================================
+
+print("--- Section 4: Transaction error handling ---")
+
+// Cette transaction devrait échouer gracieusement
+transaction safe_divide(a: float, b: float) -> float {
+    if b == 0.0 {
+        print("  ERROR: Division by zero detected")
+        return 0.0
+    }
+    return a / b
+}
+
+print("Test 4.1 - Safe division:")
+let result1 = safe_divide(10.0, 2.0)
+print("  10 / 2 = " + to_string(result1))
+
+let result2 = safe_divide(10.0, 0.0)
+print("  10 / 0 = " + to_string(result2) + " (safe fallback)")
+print("")
+
+// ========================================
+// Section 5: Transaction avec mise à jour
+// ========================================
+
+print("--- Section 5: Update transaction ---")
+
+transaction update_trust_score(episode_id: str, new_trust: float) -> str {
+    // Récupérer l'épisode existant
+    let episodes = episodic_query(random(128, 0.0, 1.0), k: 10)
+    
+    if len(episodes) > 0 {
+        print("  Found episodes in memory")
+        return "updated"
+    }
+    
+    return "not_found"
+}
+
+print("Test 5.1 - Update transaction:")
+let status = update_trust_score("test_id", 0.95)
+print("  Status: " + status)
+print("")
+
+// ========================================
+// Section 6: Transaction chaînées
+// ========================================
+
+print("--- Section 6: Chained transactions ---")
+
+transaction step1() -> int {
+    return 42
+}
+
+transaction step2(x: int) -> int {
+    return x * 2
+}
+
+transaction step3(x: int) -> int {
+    return x + 10
+}
+
+print("Test 6.1 - Chained execution:")
+let r1 = step1()
+let r2 = step2(r1)
+let r3 = step3(r2)
+print("  step1() = " + to_string(r1))
+print("  step2(42) = " + to_string(r2))
+print("  step3(84) = " + to_string(r3))
+print("")
+
+print("=== All Transaction Tests Complete ===")

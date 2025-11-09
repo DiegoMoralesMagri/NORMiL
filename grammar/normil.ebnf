@@ -1,0 +1,255 @@
+(* ============================================= *)
+(* NORMiL Grammar - EBNF Specification v0.1     *)
+(* Extension: *.nor                              *)
+(* ============================================= *)
+
+(* ===== 1. LEXICAL STRUCTURE ===== *)
+
+(* Whitespace et commentaires *)
+WHITESPACE = " " | "\t" | "\r" | "\n" ;
+COMMENT = "//" , { ANY_CHAR - "\n" } , "\n"
+        | "/*" , { ANY_CHAR - "*/" } , "*/" ;
+
+(* Identificateurs *)
+IDENTIFIER = LETTER , { LETTER | DIGIT | "_" } ;
+LETTER = "a".."z" | "A".."Z" ;
+DIGIT = "0".."9" ;
+
+(* Littéraux *)
+INT_LITERAL = DIGIT , { DIGIT } ;
+FLOAT_LITERAL = DIGIT , { DIGIT } , "." , DIGIT , { DIGIT } 
+              | DIGIT , { DIGIT } , [ "." , { DIGIT } ] , EXPONENT ;
+EXPONENT = ( "e" | "E" ) , [ "+" | "-" ] , DIGIT , { DIGIT } ;
+
+STRING_LITERAL = '"' , { STRING_CHAR } , '"' ;
+STRING_CHAR = ANY_CHAR - ( '"' | "\\" )
+            | "\\" , ( '"' | "\\" | "n" | "t" | "r" ) ;
+
+BOOL_LITERAL = "true" | "false" ;
+
+(* Mots-clés *)
+KEYWORD = "let" | "const" | "fn" | "return" | "if" | "else" 
+        | "for" | "in" | "while" | "match" | "case" | "where"
+        | "transaction" | "atomic" | "distributed" | "compensating"
+        | "try" | "catch" | "throw" | "on_rollback"
+        | "type" | "module" | "import" | "export"
+        | "primitive" | "before_transaction" | "after_transaction" | "on_error"
+        | "permissions" | "allow" | "deny" | "read" | "write" | "delete" | "on"
+        | "optional" | "list" | "map" ;
+
+(* Opérateurs *)
+OPERATOR = "+" | "-" | "*" | "/" | "%" 
+         | "==" | "!=" | "<" | ">" | "<=" | ">="
+         | "&&" | "||" | "!"
+         | "=" | "+=" | "-=" | "*=" | "/="
+         | "." | ":" | "::" | "->" | "@"
+         | ".+" | ".-" | ".*" | "./" ;  (* Opérateurs vectoriels optionnels *)
+
+(* Délimiteurs *)
+DELIMITER = "(" | ")" | "{" | "}" | "[" | "]" 
+          | "," | ";" ;
+
+(* ===== 2. TYPES ===== *)
+
+Type = PrimitiveType 
+     | VectorType
+     | StructType
+     | ListType
+     | MapType
+     | OptionalType
+     | FunctionType
+     | IDENTIFIER ;  (* Type défini par l'utilisateur *)
+
+PrimitiveType = "int" | "float" | "bool" | "str" 
+              | "timestamp" | "uuid" ;
+
+VectorType = "Vector" , "<" , Type , "," , "dim" , "=" , INT_LITERAL 
+             , [ "," , "q" , "=" , INT_LITERAL ] , ">" ;
+
+SparseVectorType = "SparseVector" , "<" , Type , "," , "dim" , "=" , INT_LITERAL
+                  , "," , "sparsity" , "=" , FLOAT_LITERAL , ">" ;
+
+StructType = "{" , FieldDecl , { "," , FieldDecl } , "}" ;
+FieldDecl = IDENTIFIER , ":" , Type ;
+
+ListType = "list" , "<" , Type , ">" ;
+
+MapType = "map" , "<" , Type , "," , Type , ">" ;
+
+OptionalType = "optional" , "<" , Type , ">" ;
+
+FunctionType = "fn" , "(" , [ Type , { "," , Type } ] , ")" , "->" , Type ;
+
+(* ===== 3. EXPRESSIONS ===== *)
+
+Expression = AssignmentExpr ;
+
+AssignmentExpr = LogicalOrExpr , [ AssignOp , AssignmentExpr ] ;
+AssignOp = "=" | "+=" | "-=" | "*=" | "/=" ;
+
+LogicalOrExpr = LogicalAndExpr , { "||" , LogicalAndExpr } ;
+
+LogicalAndExpr = EqualityExpr , { "&&" , EqualityExpr } ;
+
+EqualityExpr = RelationalExpr , { EqualityOp , RelationalExpr } ;
+EqualityOp = "==" | "!=" ;
+
+RelationalExpr = AdditiveExpr , { RelationalOp , AdditiveExpr } ;
+RelationalOp = "<" | ">" | "<=" | ">=" ;
+
+AdditiveExpr = MultiplicativeExpr , { AdditiveOp , MultiplicativeExpr } ;
+AdditiveOp = "+" | "-" | ".+" | ".-" ;  (* .+ et .- pour vecteurs *)
+
+MultiplicativeExpr = UnaryExpr , { MultiplicativeOp , UnaryExpr } ;
+MultiplicativeOp = "*" | "/" | "%" | ".*" | "./" | "@" ;  (* @ pour dot product *)
+
+UnaryExpr = UnaryOp , UnaryExpr
+          | PostfixExpr ;
+UnaryOp = "!" | "-" ;
+
+PostfixExpr = PrimaryExpr , { PostfixOp } ;
+PostfixOp = FunctionCall 
+          | FieldAccess
+          | IndexAccess ;
+
+FunctionCall = "(" , [ Expression , { "," , Expression } ] , ")" ;
+
+FieldAccess = "." , IDENTIFIER ;
+
+IndexAccess = "[" , Expression , "]" ;
+
+PrimaryExpr = INT_LITERAL
+            | FLOAT_LITERAL
+            | STRING_LITERAL
+            | BOOL_LITERAL
+            | IDENTIFIER
+            | "(" , Expression , ")"
+            | ListLiteral
+            | MapLiteral
+            | StructLiteral ;
+
+ListLiteral = "[" , [ Expression , { "," , Expression } ] , "]" ;
+
+MapLiteral = "{" , [ MapEntry , { "," , MapEntry } ] , "}" ;
+MapEntry = Expression , ":" , Expression ;
+
+StructLiteral = "{" , [ FieldInit , { "," , FieldInit } ] , "}" ;
+FieldInit = IDENTIFIER , ":" , Expression ;
+
+(* ===== 4. STATEMENTS ===== *)
+
+Statement = VarDecl
+          | FunctionDecl
+          | TypeDecl
+          | IfStatement
+          | ForStatement
+          | WhileStatement
+          | MatchStatement
+          | TransactionDecl
+          | ReturnStatement
+          | TryCatchStatement
+          | ExpressionStatement
+          | PermissionsDecl
+          | PrimitiveDecl
+          | HookDecl ;
+
+VarDecl = ( "let" | "const" ) , IDENTIFIER , [ ":" , Type ] , "=" , Expression ;
+
+FunctionDecl = [ Annotation ] , "fn" , IDENTIFIER , "(" , [ ParamList ] , ")" 
+               , [ "->" , Type ] , Block ;
+
+ParamList = Param , { "," , Param } ;
+Param = IDENTIFIER , ":" , Type , [ "=" , Expression ] ;  (* Valeur par défaut *)
+
+TypeDecl = "type" , IDENTIFIER , "=" , Type ;
+
+Block = "{" , { Statement } , "}" ;
+
+IfStatement = "if" , Expression , Block , [ "else" , ( IfStatement | Block ) ] ;
+
+ForStatement = "for" , IDENTIFIER , "in" , Expression , Block ;
+
+WhileStatement = "while" , Expression , Block ;
+
+MatchStatement = "match" , Expression , "{" , { MatchCase } , "}" ;
+MatchCase = "case" , Pattern , [ "where" , Expression ] , "->" , Block ;
+
+Pattern = LiteralPattern
+        | IdentifierPattern
+        | StructPattern
+        | ListPattern
+        | WildcardPattern ;
+
+LiteralPattern = INT_LITERAL | FLOAT_LITERAL | STRING_LITERAL | BOOL_LITERAL ;
+
+IdentifierPattern = IDENTIFIER , [ "(" , IDENTIFIER , ")" ] ;  (* Type extraction *)
+
+StructPattern = "{" , [ FieldPattern , { "," , FieldPattern } ] , "}" ;
+FieldPattern = IDENTIFIER , ":" , Pattern ;
+
+ListPattern = "[" , Pattern , { "," , Pattern } , [ "," , "..." ] , "]" ;
+
+WildcardPattern = "_" ;
+
+TransactionDecl = [ "atomic" | "distributed" | "compensating" ] , "transaction" 
+                  , IDENTIFIER , "(" , [ ParamList ] , ")" , Block
+                  , [ "on_rollback" , Block ] ;
+
+ReturnStatement = "return" , [ Expression ] ;
+
+TryCatchStatement = "try" , Block , "catch" , IDENTIFIER , Block ;
+
+ExpressionStatement = Expression ;
+
+PermissionsDecl = "permissions" , "{" , { PermissionRule } , "}" ;
+PermissionRule = ( "allow" | "deny" ) , ( "read" | "write" | "delete" ) 
+                 , "on" , IDENTIFIER ;
+
+PrimitiveDecl = "primitive" , IDENTIFIER , "(" , [ ParamList ] , ")" 
+                , "->" , Type ;
+
+HookDecl = ( "before_transaction" | "after_transaction" | "on_error" )
+           , "fn" , IDENTIFIER , "(" , [ ParamList ] , ")" , Block ;
+
+(* ===== 5. ANNOTATIONS ===== *)
+
+Annotation = "@" , IDENTIFIER , [ "(" , AnnotationArgs , ")" ] ;
+
+AnnotationArgs = AnnotationArg , { "," , AnnotationArg } ;
+AnnotationArg = IDENTIFIER , ":" , Expression ;
+
+(* Annotations prédéfinies *)
+(* @plastic(rate: float = 0.001, mode: str = "lowrank", stability_threshold: float = 0.95) *)
+(* @audit(level: str = "full") *)
+(* @sandbox(allow_io: bool = false, allow_network: bool = false, max_memory_mb: int = 100, max_time_ms: int = 1000) *)
+(* @cache(ttl_ms: int = 60000) *)
+(* @parallel(threads: int = 4) *)
+(* @profile *)
+(* @signed(public_key: str = "...", signature: str = "...") *)
+(* @memory_access(allow: list<str>, deny: list<str>) *)
+(* @rate_limit(max_calls_per_second: int = 100) *)
+(* @quota(max_memory_mb: int = 500, max_cpu_percent: int = 50) *)
+
+(* ===== 6. MODULE STRUCTURE ===== *)
+
+Module = { ImportDecl } , { TopLevelDecl } ;
+
+ImportDecl = "import" , IDENTIFIER , [ "as" , IDENTIFIER ] ;
+
+TopLevelDecl = FunctionDecl
+             | TypeDecl
+             | VarDecl
+             | PrimitiveDecl
+             | HookDecl
+             | PermissionsDecl
+             | ModuleDecl ;
+
+ModuleDecl = [ Annotation ] , "module" , IDENTIFIER , "{" , { TopLevelDecl } , "}" ;
+
+(* ===== 7. PROGRAM ===== *)
+
+Program = Module ;
+
+(* ============================================= *)
+(* Fin de la grammaire NORMiL                   *)
+(* ============================================= *)

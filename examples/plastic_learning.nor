@@ -1,0 +1,121 @@
+// ============================================
+// plastic_learning.nor
+// Démonstration de l'annotation @plastic
+// ============================================
+
+// Fonction avec plasticité neuronale lente
+@plastic(rate: 0.0001, mode: "hebbian")
+fn slow_learn(state: Vec, input: Vec) -> Vec {
+    // Apprentissage lent type Hebb
+    let delta = vec_mul_scalar(input, 0.0001)
+    return vec_add(state, delta)
+}
+
+// Fonction avec plasticité rapide
+@plastic(rate: 0.01, mode: "stdp")
+fn fast_adapt(state: Vec, target: Vec) -> Vec {
+    // Apprentissage rapide type STDP
+    let error = vec_sub(target, state)
+    let correction = vec_mul_scalar(error, 0.01)
+    return vec_add(state, correction)
+}
+
+// Fonction avec plasticité anti-Hebb (désapprentissage)
+@plastic(rate: 0.005, mode: "anti_hebbian")
+fn forget(memory_vec: Vec, noise: Vec) -> Vec {
+    // Désapprentissage : réduire l'activation
+    let decay = vec_mul_scalar(noise, 0.005)
+    return vec_sub(memory_vec, decay)
+}
+
+// Fonction normale sans plasticité
+fn static_process(input: Vec) -> Vec {
+    // Traitement fixe, pas d'adaptation
+    return vec_normalize(input)
+}
+
+// Simulation d'apprentissage incrémental
+fn learn_sequence() {
+    print("=== Simulation d'apprentissage ===")
+    
+    // État initial
+    let state = random(dim: 128, mean: 0.0, std: 0.1)
+    
+    // Séquence d'entrées
+    let input1 = random(dim: 128, mean: 0.5, std: 0.1)
+    let input2 = random(dim: 128, mean: -0.5, std: 0.1)
+    let input3 = random(dim: 128, mean: 0.0, std: 0.2)
+    
+    // Apprentissage lent (phase 1)
+    print("Phase 1: Apprentissage lent...")
+    let state1 = slow_learn(state, input1)
+    let state2 = slow_learn(state1, input2)
+    let state3 = slow_learn(state2, input3)
+    
+    // Adaptation rapide (phase 2)
+    print("Phase 2: Adaptation rapide...")
+    let target = random(dim: 128, mean: 1.0, std: 0.1)
+    let adapted = fast_adapt(state3, target)
+    
+    // Oubli sélectif (phase 3)
+    print("Phase 3: Oubli sélectif...")
+    let noise = random(dim: 128, mean: 0.0, std: 0.5)
+    let final_state = forget(adapted, noise)
+    
+    print("Apprentissage terminé!")
+    print("Norme finale: " + str(norm(final_state)))
+}
+
+// Comparaison plastique vs statique
+fn compare_plasticity() {
+    print("")
+    print("=== Comparaison Plastique vs Statique ===")
+    
+    let input = random(dim: 64, mean: 0.0, std: 1.0)
+    let state = random(dim: 64, mean: 0.0, std: 0.1)
+    
+    // Traitement statique
+    let static_result = static_process(input)
+    print("Résultat statique - norme: " + str(norm(static_result)))
+    
+    // Traitement plastique
+    let plastic_result = fast_adapt(state, input)
+    print("Résultat plastique - norme: " + str(norm(plastic_result)))
+}
+
+// Démonstration de modes différents
+fn test_plasticity_modes() {
+    print("")
+    print("=== Test des modes de plasticité ===")
+    
+    let vec = random(dim: 32, mean: 0.5, std: 0.2)
+    let input = random(dim: 32, mean: 1.0, std: 0.1)
+    let noise = random(dim: 32, mean: 0.0, std: 0.3)
+    
+    // Mode Hebbian (renforcement)
+    let hebbian_result = slow_learn(vec, input)
+    print("Mode Hebbian - norme: " + str(norm(hebbian_result)))
+    
+    // Mode STDP (adaptation temporelle)
+    let stdp_result = fast_adapt(vec, input)
+    print("Mode STDP - norme: " + str(norm(stdp_result)))
+    
+    // Mode Anti-Hebbian (oubli)
+    let anti_hebb_result = forget(vec, noise)
+    print("Mode Anti-Hebbian - norme: " + str(norm(anti_hebb_result)))
+}
+
+// Point d'entrée
+fn main() {
+    print("╔════════════════════════════════════════════╗")
+    print("║  NORMiL - Démonstration Plasticité        ║")
+    print("╚════════════════════════════════════════════╝")
+    print("")
+    
+    learn_sequence()
+    compare_plasticity()
+    test_plasticity_modes()
+    
+    print("")
+    print("Démonstration terminée avec succès!")
+}

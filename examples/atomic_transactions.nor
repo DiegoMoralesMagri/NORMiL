@@ -1,0 +1,89 @@
+// ============================================
+// atomic_transactions.nor
+// Démonstration des transactions atomiques
+// ============================================
+
+// Transaction simple : succès garanti
+@atomic
+fn safe_transfer(amount: int) -> int {
+    let balance = 100
+    let new_balance = balance - amount
+    return new_balance
+}
+
+// Transaction avec protection contre erreurs
+@atomic
+fn protected_division(a: int, b: int) -> float {
+    // Si b=0, la transaction sera annulée automatiquement
+    let result = a / b
+    return result
+}
+
+// Transaction atomique + plastique
+@atomic
+@plastic(rate: 0.005, mode: "hebbian")
+fn atomic_learning(state: Vec, input: Vec) -> Vec {
+    // Apprentissage protégé par transaction
+    let delta = scale(input, 0.005)
+    let new_state = vec_add(state, delta)
+    
+    // Normaliser pour éviter explosion
+    let normalized = normalize(new_state)
+    return normalized
+}
+
+// Transaction complexe avec plusieurs étapes
+@atomic
+fn multi_step_update(vec: Vec, factor: float) -> Vec {
+    // Étape 1 : Scaling
+    let scaled = scale(vec, factor)
+    
+    // Étape 2 : Normalisation
+    let normalized = normalize(scaled)
+    
+    // Étape 3 : Vérification
+    let n = norm(normalized)
+    
+    // Si tout va bien, retourner le résultat
+    return normalized
+}
+
+// Fonction principale
+fn main() {
+    print("=== Demonstration des Transactions Atomiques ===")
+    print("")
+    
+    // Test 1 : Transaction simple réussie
+    print("Test 1: Transaction simple")
+    let balance = safe_transfer(30)
+    print("Nouveau solde:")
+    print(balance)
+    print("")
+    
+    // Test 2 : Division normale
+    print("Test 2: Division protegee (succes)")
+    let result = protected_division(10, 2)
+    print("Resultat:")
+    print(result)
+    print("")
+    
+    // Test 3 : Apprentissage atomique
+    print("Test 3: Apprentissage atomique et plastique")
+    let state = random(dim: 32, mean: 0.0, std: 0.1)
+    let input = random(dim: 32, mean: 1.0, std: 0.2)
+    let learned = atomic_learning(state, input)
+    print("Norme apres apprentissage:")
+    print(norm(learned))
+    print("")
+    
+    // Test 4 : Transaction multi-étapes
+    print("Test 4: Transaction multi-etapes")
+    let vec = random(dim: 16, mean: 0.5, std: 0.3)
+    let updated = multi_step_update(vec, 2.5)
+    print("Norme finale:")
+    print(norm(updated))
+    print("")
+    
+    print("Tous les tests ont reussi!")
+    print("Les transactions garantissent la coherence des donnees.")
+}

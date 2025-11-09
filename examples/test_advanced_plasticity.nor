@@ -1,0 +1,232 @@
+// ========================================
+// Test Advanced Plasticity - Phase 7.4
+// ========================================
+// Tests de la gestion automatique de la plasticité
+
+print("=== Test Advanced Plasticity Management ===\n")
+
+// ========================================
+// Section 1: Fonction avec plasticité auto
+// ========================================
+
+print("--- Section 1: Auto-managed plasticity ---")
+
+@plastic(rate: 0.5, mode: "hebbian", stability_threshold: 0.001)
+fn adaptive_learn(input: Vec) -> Vec {
+    let weights = zeros(input.dim)
+    let lr = 0.5
+    
+    // Apprentissage sur plusieurs itérations
+    let i = 0
+    while i < 10 {
+        weights = onlinecluster_update(weights, input, lr)
+        lr = decay_learning_rate(lr, 0.9)
+        i = i + 1
+    }
+    
+    return weights
+}
+
+print("Test 1.1 - Auto-managed plastic function:")
+let input1 = random(16, 0.0, 1.0)
+let w1 = adaptive_learn(input1)
+
+print("  Learned weights (automatically normalized):")
+print("  Norm: " + to_string(norm(w1)))
+print("  (Should be ≈1.0 due to auto-normalization)")
+print("")
+
+// ========================================
+// Section 2: Modes de plasticité
+// ========================================
+
+print("--- Section 2: Different plasticity modes ---")
+
+@plastic(rate: 0.1, mode: "hebbian")
+fn hebbian_learn(x: Vec, y: Vec) -> Vec {
+    // Apprentissage Hebbien: renforcer connexions actives ensemble
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 0.5)
+    return w
+}
+
+@plastic(rate: 0.1, mode: "stdp")
+fn stdp_learn(x: Vec, y: Vec) -> Vec {
+    // STDP: Spike-Timing Dependent Plasticity
+    // Approximation simple pour la démo
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 0.3)
+    return w
+}
+
+@plastic(rate: 0.1, mode: "anti_hebbian")
+fn anti_hebbian_learn(x: Vec, y: Vec) -> Vec {
+    // Anti-Hebbien: réduire connexions actives ensemble
+    let w = ones(x.dim)
+    let inv_x = scale(x, -1.0)
+    w = onlinecluster_update(w, inv_x, 0.1)
+    return w
+}
+
+print("Test 2.1 - Hebbian mode:")
+let x = random(8, 0.0, 1.0)
+let y = random(8, 0.0, 1.0)
+let w_hebb = hebbian_learn(x, y)
+print("  Hebbian weights norm: " + to_string(norm(w_hebb)))
+print("")
+
+print("Test 2.2 - STDP mode:")
+let w_stdp = stdp_learn(x, y)
+print("  STDP weights norm: " + to_string(norm(w_stdp)))
+print("")
+
+print("Test 2.3 - Anti-Hebbian mode:")
+let w_anti = anti_hebbian_learn(x, y)
+print("  Anti-Hebbian weights norm: " + to_string(norm(w_anti)))
+print("")
+
+// ========================================
+// Section 3: Stabilité progressive
+// ========================================
+
+print("--- Section 3: Progressive stability ---")
+
+@plastic(rate: 0.8, mode: "hebbian", stability_threshold: 0.005)
+fn converge_to_target(target: Vec) -> Vec {
+    let w = zeros(target.dim)
+    let lr = 0.8
+    
+    let step = 0
+    while step < 50 {
+        let w_old = w
+        w = onlinecluster_update(w, target, lr)
+        
+        // Vérifier si stable
+        let is_stable = compute_stability(w_old, w, 0.005)
+        if is_stable == true {
+            print("  Converged at step " + to_string(step))
+            return w
+        }
+        
+        lr = decay_learning_rate(lr, 0.95)
+        step = step + 1
+    }
+    
+    print("  Max steps reached (50)")
+    return w
+}
+
+print("Test 3.1 - Convergence to target:")
+let target = vec(12, [1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0])
+let w_converged = converge_to_target(target)
+print("  Final weights norm: " + to_string(norm(w_converged)))
+print("")
+
+// ========================================
+// Section 4: Multi-layer plasticity
+// ========================================
+
+print("--- Section 4: Multi-layer learning ---")
+
+@plastic(rate: 0.3, mode: "hebbian")
+fn layer1(input: Vec) -> Vec {
+    let w = random(input.dim, -0.1, 0.1)
+    w = onlinecluster_update(w, input, 0.3)
+    return normalize_plasticity(w)
+}
+
+@plastic(rate: 0.2, mode: "hebbian")
+fn layer2(hidden: Vec) -> Vec {
+    let w = random(hidden.dim, -0.1, 0.1)
+    w = onlinecluster_update(w, hidden, 0.2)
+    return normalize_plasticity(w)
+}
+
+print("Test 4.1 - Two-layer plastic network:")
+let input_data = random(20, 0.0, 1.0)
+let hidden = layer1(input_data)
+let output = layer2(hidden)
+
+print("  Input dim: " + to_string(input_data.dim))
+print("  Hidden dim: " + to_string(hidden.dim))
+print("  Hidden norm: " + to_string(norm(hidden)))
+print("  Output dim: " + to_string(output.dim))
+print("  Output norm: " + to_string(norm(output)))
+print("")
+
+// ========================================
+// Section 5: Adaptive learning rate
+// ========================================
+
+print("--- Section 5: Adaptive learning rate decay ---")
+
+@plastic(rate: 1.0, mode: "hebbian", stability_threshold: 0.01)
+fn adaptive_lr_learn(pattern: Vec, iterations: int) -> Vec {
+    let w = zeros(pattern.dim)
+    let lr = 1.0
+    
+    let i = 0
+    while i < iterations {
+        w = onlinecluster_update(w, pattern, lr)
+        lr = decay_learning_rate(lr, 0.9)
+        
+        if i == 0 {
+            print("  Step 0: LR = " + to_string(lr))
+        }
+        if i == 4 {
+            print("  Step 5: LR = " + to_string(lr))
+        }
+        if i == 9 {
+            print("  Step 10: LR = " + to_string(lr))
+        }
+        
+        i = i + 1
+    }
+    
+    return w
+}
+
+print("Test 5.1 - Learning rate decay over time:")
+let pattern = ones(10)
+let w_adaptive = adaptive_lr_learn(pattern, 10)
+print("  Final weights norm: " + to_string(norm(w_adaptive)))
+print("")
+
+// ========================================
+// Section 6: Stability detection
+// ========================================
+
+print("--- Section 6: Automatic stability detection ---")
+
+@plastic(rate: 0.5, mode: "hebbian", stability_threshold: 0.001)
+fn learn_until_stable(data: Vec) -> Vec {
+    let w = zeros(data.dim)
+    let lr = 0.5
+    let max_iter = 100
+    
+    let i = 0
+    while i < max_iter {
+        let w_before = w
+        w = onlinecluster_update(w, data, lr)
+        
+        let stable = compute_stability(w_before, w, 0.001)
+        if stable == true {
+            print("  Stability reached at iteration " + to_string(i))
+            return w
+        }
+        
+        lr = decay_learning_rate(lr, 0.98)
+        i = i + 1
+    }
+    
+    print("  Did not converge in " + to_string(max_iter) + " iterations")
+    return w
+}
+
+print("Test 6.1 - Learn until stable:")
+let training_data = random(32, 0.0, 1.0)
+let stable_weights = learn_until_stable(training_data)
+print("  Final norm: " + to_string(norm(stable_weights)))
+print("")
+
+print("=== All Advanced Plasticity Tests Complete ===")

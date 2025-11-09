@@ -1,0 +1,133 @@
+// Test des modes de plasticité personnalisables (Phase 7.6)
+// Validation du registry et de l'enregistrement de modes custom
+
+print("=== Test Custom Plasticity Modes ===")
+print("")
+
+// ============================================
+// Section 1: Lister les modes built-in
+// ============================================
+
+print("--- Section 1: Built-in modes ---")
+let modes = list_plasticity_modes()
+print("Built-in modes: " + to_string(len(modes)))
+// Devrait afficher: hebbian, stdp, anti_hebbian
+print("")
+
+// ============================================
+// Section 2: Enregistrer un mode custom
+// ============================================
+
+print("--- Section 2: Register custom mode ---")
+
+// Enregistrer un mode Oja's rule (normalisation automatique)
+let success1 = register_plasticity_mode("oja", true, "Oja's learning rule")
+print("Oja mode registered: " + to_string(success1))
+
+// Enregistrer un mode BCM (pas de normalisation)
+let success2 = register_plasticity_mode("bcm", false, "BCM rule")
+print("BCM mode registered: " + to_string(success2))
+
+// Tenter de ré-enregistrer (devrait échouer)
+let fail = register_plasticity_mode("oja", true, "Duplicate")
+print("Re-register Oja (should fail): " + to_string(fail))
+
+print("")
+
+// ============================================
+// Section 3: Utiliser un mode custom avec normalisation
+// ============================================
+
+print("--- Section 3: Custom mode with auto-normalization ---")
+
+@plastic(rate: 0.01, mode: "oja", stability_threshold: 0.01)
+fn oja_learn(input: Vec) -> Vec {
+    // Implémentation simplifiée d'Oja's rule
+    let weights = random(input.dim, 0.0, 0.1)
+    
+    // Update (ici simplifié avec onlinecluster)
+    weights = onlinecluster_update(weights, input, 0.01)
+    
+    return weights
+    // Devrait être auto-normalisé car mode "oja" a normalize=true
+}
+
+let test_input = vec(5, [0.5, 0.3, 0.7, 0.2, 0.9])
+let learned_weights = oja_learn(test_input)
+
+print("Learned weights norm: " + to_string(norm(learned_weights)))
+// Devrait être ≈1.0 grâce à la normalisation automatique
+
+print("")
+
+// ============================================
+// Section 4: Utiliser un mode custom sans normalisation
+// ============================================
+
+print("--- Section 4: Custom mode without normalization ---")
+
+@plastic(rate: 0.02, mode: "bcm", stability_threshold: 0.01)
+fn bcm_learn(input: Vec) -> Vec {
+    // BCM rule simplifié
+    let weights = vec(input.dim, [1.0, 1.0, 1.0, 1.0, 1.0])
+    
+    // Update
+    weights = onlinecluster_update(weights, input, 0.02)
+    
+    return weights
+    // PAS de normalisation automatique (mode bcm a normalize=false)
+}
+
+let bcm_input = vec(5, [2.0, 3.0, 1.0, 4.0, 2.5])
+let bcm_weights = bcm_learn(bcm_input)
+
+print("BCM weights norm: " + to_string(norm(bcm_weights)))
+// Peut être différent de 1.0 (pas de normalisation auto)
+
+print("")
+
+// ============================================
+// Section 5: Modes multiples dans le même programme
+// ============================================
+
+print("--- Section 5: Multiple custom modes ---")
+
+// Enregistrer mode competitive learning
+let comp_registered = register_plasticity_mode("competitive", true, "Competitive learning")
+print("Competitive mode registered: " + to_string(comp_registered))
+
+@plastic(rate: 0.03, mode: "competitive")
+fn competitive_learn(input: Vec) -> Vec {
+    let w = zeros(input.dim)
+    w = onlinecluster_update(w, input, 0.03)
+    return w  // Auto-normalisé
+}
+
+@plastic(rate: 0.015, mode: "hebbian")
+fn standard_hebbian(input: Vec) -> Vec {
+    let w = zeros(input.dim)
+    w = onlinecluster_update(w, input, 0.015)
+    return w  // Auto-normalisé (built-in mode)
+}
+
+let data = vec(4, [0.8, 0.6, 0.4, 0.2])
+
+let comp_result = competitive_learn(data)
+let hebb_result = standard_hebbian(data)
+
+print("Competitive norm: " + to_string(norm(comp_result)))  // ≈1.0
+print("Hebbian norm: " + to_string(norm(hebb_result)))      // ≈1.0
+
+print("")
+
+// ============================================
+// Section 6: Liste finale des modes
+// ============================================
+
+print("--- Section 6: Final mode list ---")
+let final_modes = list_plasticity_modes()
+print("Total modes available: " + to_string(len(final_modes)))
+// Devrait inclure: hebbian, stdp, anti_hebbian, oja, bcm, competitive
+
+print("")
+print("=== All Custom Mode Tests Complete ===")

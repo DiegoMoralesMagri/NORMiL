@@ -1,0 +1,477 @@
+// ============================================
+// O-RedMind Hybrid Reasoner
+// ============================================
+//
+// Exemple complet d'un reasoner hybride neural + symbolique
+// pour l'architecture O-RedMind :
+// - Meta-controller pour décision shortpass/longpass
+// - Reasoner neural rapide (shortpass)
+// - Reasoner neural profond avec retrieval (longpass)
+// - Matching symbolique avec règles instinct
+// - Scoring de prototypes instinct
+// - Fusion des résultats neural + symbolique
+//
+// Ce module démontre :
+// - Plasticité contrôlée (@plastic)
+// - Retrieval depuis index vectoriel
+// - Reasoner hybride adaptatif
+// - Audit des traces de raisonnement
+
+type ReasoningPath = String  // "shortpass" ou "longpass"
+
+type NeuralModel = {
+    name: String,
+    layers: Int,
+    latency_ms: Int
+}
+
+type InstinctPackage = {
+    package_id: String,
+    version: String,
+    core: InstinctCore,
+    overlay: InstinctOverlay
+}
+
+type InstinctCore = {
+    prototypes: List<ProtoInstinct>,
+    rules: List<Rule>,
+    meta_params: Map<String, Float>
+}
+
+type InstinctOverlay = {
+    prototypes: List<ProtoInstinct>,
+    rules: List<Rule>,
+    provenance: String
+}
+
+type TraceLog = {
+    steps: List<TraceStep>,
+    total_latency_ms: Float,
+    path_taken: String
+}
+
+type TraceStep = {
+    step_id: Int,
+    description: String,
+    latency_ms: Float,
+    result_type: String
+}
+
+// ============================================
+// Meta-Controller
+// ============================================
+
+fn meta_controller_decide(
+    input: Vec,
+    cost_budget: Float,
+    latency_target_ms: Int,
+    context_size: Int
+) -> ReasoningPath {
+    
+    // Décision basée sur :
+    // 1. Complexité de l'input (norm)
+    // 2. Budget compute disponible
+    // 3. Latence target
+    // 4. Taille du contexte
+    
+    let input_norm = norm(input)
+    let complexity_score = input_norm / 10.0
+    
+    // Seuils adaptatifs
+    let complexity_threshold = 0.5
+    let latency_threshold = 200
+    
+    if complexity_score < complexity_threshold and latency_target_ms < latency_threshold {
+        return "shortpass"
+    } else {
+        return "longpass"
+    }
+}
+
+// ============================================
+// Neural Shortpass (Fast Reasoning)
+// ============================================
+
+fn neural_shortpass(input: Vec, model: NeuralModel, context: Vec) -> (Vec, Float) {
+    // Reasoner neural rapide avec contexte minimal
+    
+    print(f"[Shortpass] Using {model.name} model")
+    
+    // 1. Merge input + context
+    let merged = add(
+        mul(input, 0.7),
+        mul(context, 0.3)
+    )
+    
+    // 2. Simulation inférence neural (projection simple)
+    // En production : appel à un model neural quantized
+    let output = mul(merged, 0.8)
+    
+    // 3. Calcul confidence (basé sur norm)
+    let confidence = 0.5 + 0.5 * (1.0 / (1.0 + norm(sub(output, input))))
+    
+    print(f"[Shortpass] Confidence: {confidence}")
+    
+    return (output, confidence)
+}
+
+// ============================================
+// Neural Longpass (Deep Reasoning)
+// ============================================
+
+fn neural_longpass(
+    input: Vec,
+    model: NeuralModel,
+    retrieved: List<EpisodicRecord>
+) -> (Vec, TraceLog) {
+    
+    print(f"[Longpass] Using {model.name} model with {len(retrieved)} retrieved records")
+    
+    let trace_steps = []
+    let start_time = now()
+    
+    // 1. Agrégation retrieval
+    let step1_start = now()
+    let context_vecs = []
+    let i = 0
+    while i < len(retrieved) {
+        let record = retrieved[i]
+        context_vecs = context_vecs + [record.vecs["fused"]]
+        i = i + 1
+    }
+    
+    let context_aggregated = if len(context_vecs) > 0 {
+        aggregate_vecs(context_vecs)
+    } else {
+        zeros(len(input.data))
+    }
+    
+    trace_steps = trace_steps + [TraceStep {
+        step_id: 1,
+        description: "Context aggregation",
+        latency_ms: (now() - step1_start) * 1000.0,
+        result_type: "Vec"
+    }]
+    
+    // 2. Deep neural processing
+    let step2_start = now()
+    let merged = add(
+        mul(input, 0.6),
+        mul(context_aggregated, 0.4)
+    )
+    
+    // Simulation layers profonds
+    let hidden1 = mul(merged, 0.9)
+    let hidden2 = mul(hidden1, 0.85)
+    let output = mul(hidden2, 0.8)
+    
+    trace_steps = trace_steps + [TraceStep {
+        step_id: 2,
+        description: "Deep neural layers",
+        latency_ms: (now() - step2_start) * 1000.0,
+        result_type: "Vec"
+    }]
+    
+    // 3. Trace complète
+    let total_latency = (now() - start_time) * 1000.0
+    let trace = TraceLog {
+        steps: trace_steps,
+        total_latency_ms: total_latency,
+        path_taken: "longpass"
+    }
+    
+    print(f"[Longpass] Total latency: {total_latency}ms")
+    
+    return (output, trace)
+}
+
+// ============================================
+// Symbolic Matching
+// ============================================
+
+fn symbolic_match(
+    context: Map<String, Any>,
+    rules: List<Rule>
+) -> List<Rule> {
+    
+    print(f"[Symbolic] Matching {len(rules)} rules")
+    
+    // Filtre rules selon conditions
+    let matched_rules = []
+    let i = 0
+    while i < len(rules) {
+        let rule = rules[i]
+        
+        // Évaluation condition (simplifiée ici)
+        // En production : parser + évaluateur d'expressions
+        let condition_met = symbolic_eval_condition(rule.condition, context)
+        
+        if condition_met {
+            matched_rules = matched_rules + [rule]
+        }
+        
+        i = i + 1
+    }
+    
+    print(f"[Symbolic] {len(matched_rules)} rules matched")
+    
+    return matched_rules
+}
+
+fn symbolic_eval_condition(condition: String, context: Map<String, Any>) -> Bool {
+    // Simulation évaluation symbolique
+    // En production : AST walker + unification
+    
+    // Pour l'exemple : true si condition contient "always"
+    return condition == "always" or condition == "context.trust > 0.5"
+}
+
+// ============================================
+// Instinct Scoring
+// ============================================
+
+fn score_prototypes(input: Vec, prototypes: List<ProtoInstinct>) -> List<(String, Float)> {
+    
+    print(f"[Instinct] Scoring {len(prototypes)} prototypes")
+    
+    let scores = []
+    let i = 0
+    while i < len(prototypes) {
+        let proto = prototypes[i]
+        
+        // Score = similarité cosinus avec centroid
+        let similarity = dot(input, proto.centroid_vec) / (norm(input) * norm(proto.centroid_vec))
+        
+        scores = scores + [(proto.proto_id, similarity)]
+        
+        i = i + 1
+    }
+    
+    return scores
+}
+
+// ============================================
+// Helper Functions
+// ============================================
+
+fn aggregate_vecs(vecs: List<Vec>) -> Vec {
+    // Moyenne des vecteurs
+    if len(vecs) == 0 {
+        return zeros(512)
+    }
+    
+    let sum_vec = vecs[0]
+    let i = 1
+    while i < len(vecs) {
+        sum_vec = add(sum_vec, vecs[i])
+        i = i + 1
+    }
+    
+    return mul(sum_vec, 1.0 / len(vecs))
+}
+
+fn context_vec_from_records(records: List<EpisodicRecord>) -> Vec {
+    if len(records) == 0 {
+        return zeros(512)
+    }
+    
+    let vecs = []
+    let i = 0
+    while i < len(records) {
+        vecs = vecs + [records[i].vecs["fused"]]
+        i = i + 1
+    }
+    
+    return aggregate_vecs(vecs)
+}
+
+// ============================================
+// Main Hybrid Reasoner
+// ============================================
+
+@plastic(rate=0.001, mode="lowrank")
+fn oredmind_reasoner(
+    input: Vec,
+    index: FastIndex,
+    instinct_pkg: InstinctPackage,
+    cost_budget: Float,
+    latency_target_ms: Int
+) -> Vec {
+    
+    print("=== O-RedMind Hybrid Reasoner ===")
+    print(f"Input dimension: {len(input.data)}")
+    print(f"Cost budget: {cost_budget}")
+    print(f"Latency target: {latency_target_ms}ms")
+    print("")
+    
+    // 1. Retrieval depuis index
+    print("[Retrieval] Querying index...")
+    let candidates = fastindex_query(index, input, k=16)
+    print(f"[Retrieval] Found {len(candidates)} candidates")
+    
+    // 2. Instinct scoring
+    let proto_scores = score_prototypes(input, instinct_pkg.core.prototypes)
+    print(f"[Instinct] Top prototype: {proto_scores[0].0} (score: {proto_scores[0].1})")
+    print("")
+    
+    // 3. Meta-controller décision
+    let path = meta_controller_decide(
+        input,
+        cost_budget,
+        latency_target_ms,
+        len(candidates)
+    )
+    
+    print(f"[Meta-Controller] Path selected: {path}")
+    print("")
+    
+    // 4. Reasoner selon path
+    let output = if path == "shortpass" {
+        // Shortpass : rapide, contexte minimal
+        let context = context_vec_from_records(candidates)
+        
+        let tiny_net = NeuralModel {
+            name: "TinyNet",
+            layers: 3,
+            latency_ms: 50
+        }
+        
+        let (out, confidence) = neural_shortpass(input, tiny_net, context)
+        
+        print(f"[Shortpass] Confidence: {confidence}")
+        out
+        
+    } else {
+        // Longpass : profond, contexte riche + symbolic
+        
+        // 4a. Symbolic matching
+        let context_map = {
+            "trust": "0.8",
+            "input_norm": str(norm(input))
+        }
+        
+        let symbolic_hits = symbolic_match(
+            context_map,
+            instinct_pkg.core.rules
+        )
+        
+        print(f"[Symbolic] {len(symbolic_hits)} rules activated")
+        
+        // 4b. Neural longpass
+        let deep_net = NeuralModel {
+            name: "DeepNet",
+            layers: 12,
+            latency_ms: 300
+        }
+        
+        let (out, trace) = neural_longpass(input, deep_net, candidates)
+        
+        print(f"[Longpass] Latency: {trace.total_latency_ms}ms")
+        
+        // TODO: Audit trace logging
+        // audit_append(trace)
+        
+        out
+    }
+    
+    print("")
+    print(f"[Output] Dimension: {len(output.data)}")
+    print(f"[Output] Norm: {norm(output)}")
+    
+    return output
+}
+
+// ============================================
+// Demo Usage
+// ============================================
+
+fn main() {
+    // 1. Création input
+    let input = random_vec(512)
+    print(f"Generated random input: norm={norm(input)}")
+    print("")
+    
+    // 2. Mock index avec quelques entries
+    let mock_entries = [
+        IndexEntry {
+            id: "entry1",
+            vec: random_vec(512),
+            metadata: {"type": "perception"},
+            neighbors: [],
+            layer: 0,
+            timestamp: now()
+        },
+        IndexEntry {
+            id: "entry2",
+            vec: random_vec(512),
+            metadata: {"type": "action"},
+            neighbors: [],
+            layer: 0,
+            timestamp: now()
+        }
+    ]
+    
+    let index = FastIndex {
+        entries: mock_entries,
+        dimension: 512,
+        max_neighbors: 16
+    }
+    
+    // 3. Mock instinct package
+    let proto1 = ProtoInstinct {
+        proto_id: "curiosity",
+        centroid_vec: random_vec(512),
+        exemplars: [],
+        trust: 0.9,
+        provenance: "core_instinct"
+    }
+    
+    let rule1 = Rule {
+        id: "safety_check",
+        condition: "always",
+        action: "verify_consent",
+        priority: 100
+    }
+    
+    let instinct_pkg = InstinctPackage {
+        package_id: "core_v1",
+        version: "1.0.0",
+        core: InstinctCore {
+            prototypes: [proto1],
+            rules: [rule1],
+            meta_params: {"temperature": 0.7}
+        },
+        overlay: InstinctOverlay {
+            prototypes: [],
+            rules: [],
+            provenance: "user_overlay"
+        }
+    }
+    
+    // 4. Exécution reasoner (shortpass)
+    print("=== Test 1: Shortpass (low complexity) ===")
+    let output1 = oredmind_reasoner(
+        input=mul(input, 0.3),  // Low norm → shortpass
+        index=index,
+        instinct_pkg=instinct_pkg,
+        cost_budget=1.0,
+        latency_target_ms=100
+    )
+    print("")
+    
+    // 5. Exécution reasoner (longpass)
+    print("=== Test 2: Longpass (high complexity) ===")
+    let output2 = oredmind_reasoner(
+        input=mul(input, 2.0),  // High norm → longpass
+        index=index,
+        instinct_pkg=instinct_pkg,
+        cost_budget=5.0,
+        latency_target_ms=500
+    )
+    print("")
+    
+    print("=== Reasoner Tests Complete ===")
+}
+
+// Lancement
+main()

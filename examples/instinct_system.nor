@@ -1,0 +1,212 @@
+// ============================================
+// instinct_system.nor
+// Système d'instincts avec règles et politiques
+// ============================================
+
+import memory
+import vectors
+import instinct
+
+// Définir un instinct de survie (privacy)
+type PrivacyInstinct = ProtoInstinct {
+    id: "privacy_guard",
+    vec_ref: create_privacy_vector(),
+    rule: optional.some(Rule {
+        id: "block_sensitive_data",
+        condition: "contains_sensitive_info(input)",
+        action: "block_and_alert()",
+        priority: 100
+    }),
+    weight: 1.0
+}
+
+// Créer un vecteur représentant la vie privée
+fn create_privacy_vector() -> Vec {
+    // Vecteur appris ou prédéfini représentant le concept de "privacy"
+    let vec = zeros(256)
+    // En pratique, ce vecteur serait appris ou chargé
+    // Ici on le simule
+    return random(256, mean: 0.5, std: 0.1)
+}
+
+// Vérifier si l'input contient des infos sensibles
+fn contains_sensitive_info(input: str) -> bool {
+    // Mots-clés sensibles (simplification)
+    let sensitive_keywords = ["password", "ssn", "credit_card", "secret"]
+    
+    for keyword in sensitive_keywords {
+        if contains(input, keyword) {
+            return true
+        }
+    }
+    
+    return false
+}
+
+// Vérifier si input contient substring
+fn contains(text: str, substring: str) -> bool {
+    // Primitive ou implémentation simple
+    // Pour l'exemple, on suppose que c'est une primitive
+    return str_contains(text, substring)
+}
+
+// Bloquer et alerter
+fn block_and_alert() {
+    audit_log("privacy_violation_blocked", {
+        "timestamp": now(),
+        "action": "blocked"
+    }, level: "warning")
+    
+    print("⚠️ Tentative d'accès à des données sensibles bloquée !")
+}
+
+// Définir une politique de confiance
+type TrustPolicy = Policy {
+    name: "trust_management",
+    rules: [
+        Rule {
+            id: "boost_trusted",
+            condition: "memory.trust > 0.9",
+            action: "increase_relevance(1.2)",
+            priority: 80
+        },
+        Rule {
+            id: "demote_untrusted",
+            condition: "memory.trust < 0.5",
+            action: "decrease_relevance(0.5)",
+            priority: 70
+        }
+    ],
+    activation_threshold: 0.6
+}
+
+// Appliquer les instincts à un input
+@audit(level: "full")
+fn apply_instincts(input: str, input_vec: Vec) -> bool {
+    // 1. Vérifier l'instinct de privacy
+    if contains_sensitive_info(input) {
+        block_and_alert()
+        return false  // Bloqué
+    }
+    
+    // 2. Vérifier la similarité avec le vecteur d'instinct
+    let privacy_sim = similarity(input_vec, PrivacyInstinct.vec_ref)
+    
+    if privacy_sim > 0.8 {
+        audit_log("high_privacy_similarity", {
+            "similarity": privacy_sim,
+            "action": "flagged"
+        })
+    }
+    
+    // 3. Appliquer les règles si activées
+    if PrivacyInstinct.weight * privacy_sim > 0.7 {
+        // Instinct activé
+        audit_log("instinct_activated", {
+            "instinct": PrivacyInstinct.id,
+            "weight": PrivacyInstinct.weight,
+            "similarity": privacy_sim
+        })
+    }
+    
+    return true  // Autorisé
+}
+
+// Fonction de similarité
+fn similarity(v1: Vec, v2: Vec) -> float {
+    return dot(v1, v2) / (norm(v1) * norm(v2))
+}
+
+// Appliquer une politique à un souvenir
+fn apply_trust_policy(record: EpisodicRecord) -> EpisodicRecord {
+    let modified_record = record
+    
+    // Parcourir les règles de la politique
+    for rule in TrustPolicy.rules {
+        // Simplification : évaluer les conditions
+        if rule.id == "boost_trusted" && record.trust > 0.9 {
+            // Augmenter la pertinence (conceptuel)
+            audit_log("trust_policy_applied", {
+                "rule": rule.id,
+                "old_trust": record.trust,
+                "action": "boosted"
+            })
+        } else if rule.id == "demote_untrusted" && record.trust < 0.5 {
+            // Diminuer la pertinence
+            audit_log("trust_policy_applied", {
+                "rule": rule.id,
+                "old_trust": record.trust,
+                "action": "demoted"
+            })
+        }
+    }
+    
+    return modified_record
+}
+
+// Gestion adaptative du poids d'un instinct
+@plastic(rate: 0.005, mode: "lowrank", stability_threshold: 0.95)
+fn adapt_instinct_weight(instinct_id: str, feedback: float) {
+    // feedback : -1.0 (mauvais) à +1.0 (bon)
+    
+    // Ajuster le poids en fonction du feedback
+    if instinct_id == PrivacyInstinct.id {
+        let old_weight = PrivacyInstinct.weight
+        let new_weight = old_weight + (0.01 * feedback)
+        
+        // Clamp entre 0.0 et 2.0
+        if new_weight < 0.0 {
+            new_weight = 0.0
+        } else if new_weight > 2.0 {
+            new_weight = 2.0
+        }
+        
+        // Mettre à jour (conceptuel)
+        // PrivacyInstinct.weight = new_weight
+        
+        audit_log("instinct_weight_adapted", {
+            "instinct": instinct_id,
+            "old_weight": old_weight,
+            "new_weight": new_weight,
+            "feedback": feedback
+        })
+    }
+}
+
+// Point d'entrée
+fn main() {
+    // Test 1 : Input sans données sensibles
+    let input1 = "Bonjour, comment allez-vous ?"
+    let vec1 = random(256)
+    let allowed1 = apply_instincts(input1, vec1)
+    print("Input 1 autorisé : " + str(allowed1))
+    
+    // Test 2 : Input avec données sensibles
+    let input2 = "Mon password est 123456"
+    let vec2 = random(256)
+    let allowed2 = apply_instincts(input2, vec2)
+    print("Input 2 autorisé : " + str(allowed2))
+    
+    // Test 3 : Adaptation de l'instinct
+    adapt_instinct_weight("privacy_guard", 0.5)  // Feedback positif
+    
+    // Test 4 : Appliquer politique de confiance
+    let test_record = EpisodicRecord {
+        id: generate_uuid(),
+        timestamp: now(),
+        sources: ["test"],
+        vecs: {"default": random(256)},
+        summary: "Test",
+        labels: [],
+        trust: 0.95,
+        provenance: Provenance {
+            device_id: "test_device",
+            signature: "test_sig",
+            timestamp: now()
+        },
+        outcome: optional.none()
+    }
+    
+    let processed = apply_trust_policy(test_record)
+    print("Politique appliquée au souvenir")
+}

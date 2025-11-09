@@ -1,0 +1,35 @@
+fn main() {
+    // Test 1: Struct anonyme avec syntaxe propre (sans guillemets)
+    print("=== Test 1: Struct anonyme ===")
+    let point = {x: 3.0, y: 4.0}
+    print(point)
+    
+    // Test 2: Accès aux champs avec dot notation
+    print("=== Test 2: Accès champs ===")
+    print(point.x)
+    print(point.y)
+    
+    // Test 3: Utilisation dans expressions
+    print("=== Test 3: Calcul avec champs ===")
+    let distance = point.x * point.x + point.y * point.y
+    print(distance)  // 25.0
+    
+    // Test 4: Struct avec différents types
+    print("=== Test 4: Types mixtes ===")
+    let person = {name: "Alice", age: 30, score: 95.5}
+    print(person.name)
+    print(person.age)
+    print(person.score)
+    
+    // Test 5: Struct imbriqué
+    print("=== Test 5: Struct imbriqu\u00e9 ===")
+    let rect = {
+        top_left: {x: 0.0, y: 10.0},
+        bottom_right: {x: 20.0, y: 0.0}
+    }
+    print(rect.top_left.x)
+    print(rect.bottom_right.y)
+    
+    print("Tous les tests structs r\u00e9ussis!")
+}
+

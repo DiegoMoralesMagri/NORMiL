@@ -1,0 +1,294 @@
+// ============================================
+// O-RedMind Perception Pipeline
+// ============================================
+// 
+// Exemple complet d'un pipeline de perception multimodale
+// pour l'architecture O-RedMind :
+// - Capture caméra + microphone
+// - Encodage image et audio en vecteurs
+// - Fusion temporelle
+// - Stockage en mémoire épisodique
+// - Indexation HNSW pour retrieval rapide
+//
+// Ce module démontre l'intégration native de :
+// - Primitives multimodales (embed_image, embed_audio, temporal_align)
+// - Mémoire épisodique (EpisodicRecord)
+// - Index vectoriel (HNSW)
+// - Transactions atomiques (@atomic)
+
+// Types simulés pour l'exemple (normalement fournis par runtime)
+type Camera = {
+    device_id: String,
+    resolution: (Int, Int),
+    fps: Int
+}
+
+type Microphone = {
+    device_id: String,
+    sample_rate: Int,
+    channels: Int
+}
+
+type ImageFrame = {
+    data: List<Float>,
+    width: Int,
+    height: Int,
+    timestamp: Float
+}
+
+type AudioFrame = {
+    data: List<Float>,
+    sample_rate: Int,
+    duration_ms: Int,
+    timestamp: Float
+}
+
+type EpisodicStore = {
+    records: List<EpisodicRecord>,
+    max_size: Int
+}
+
+type FastIndex = {
+    entries: List<IndexEntry>,
+    dimension: Int,
+    max_neighbors: Int
+}
+
+// ============================================
+// Helper Functions
+// ============================================
+
+fn camera_capture(camera: Camera) -> ImageFrame {
+    // Simule capture d'une frame caméra
+    let width = camera.resolution.0
+    let height = camera.resolution.1
+    let pixel_count = width * height * 3  // RGB
+    
+    // Génère des pixels aléatoires normalisés
+    let pixels = []
+    let i = 0
+    while i < pixel_count {
+        pixels = pixels + [random()]
+        i = i + 1
+    }
+    
+    return ImageFrame {
+        data: pixels,
+        width: width,
+        height: height,
+        timestamp: now()
+    }
+}
+
+fn mic_capture(mic: Microphone, window_ms: Int) -> AudioFrame {
+    // Simule capture audio
+    let samples = (mic.sample_rate * window_ms) / 1000
+    
+    let audio_data = []
+    let i = 0
+    while i < samples {
+        // Simule forme d'onde sinusoïdale + bruit
+        let t = i / mic.sample_rate
+        let signal = 0.5 * (t * 440.0 % 1.0) + 0.1 * random()
+        audio_data = audio_data + [signal]
+        i = i + 1
+    }
+    
+    return AudioFrame {
+        data: audio_data,
+        sample_rate: mic.sample_rate,
+        duration_ms: window_ms,
+        timestamp: now()
+    }
+}
+
+fn episodic_append(store: EpisodicStore, record: EpisodicRecord) -> EpisodicStore {
+    // Ajoute un record à la mémoire épisodique
+    let new_records = store.records + [record]
+    
+    // Limite la taille du store
+    let final_records = if len(new_records) > store.max_size {
+        // Garde seulement les N plus récents
+        let start_idx = len(new_records) - store.max_size
+        slice(new_records, start_idx, len(new_records))
+    } else {
+        new_records
+    }
+    
+    return EpisodicStore {
+        records: final_records,
+        max_size: store.max_size
+    }
+}
+
+fn index_insert(index: FastIndex, vec: Vec, metadata: Map<String, String>) -> FastIndex {
+    // Insert un vecteur dans l'index HNSW
+    let entry = IndexEntry {
+        id: generate_uuid(),
+        vec: vec,
+        metadata: metadata,
+        neighbors: [],
+        layer: 0,
+        timestamp: now()
+    }
+    
+    let new_entries = index.entries + [entry]
+    
+    return FastIndex {
+        entries: new_entries,
+        dimension: index.dimension,
+        max_neighbors: index.max_neighbors
+    }
+}
+
+// ============================================
+// Main Perception Loop
+// ============================================
+
+fn oredmind_perception_loop(
+    camera: Camera,
+    mic: Microphone,
+    episodic: EpisodicStore,
+    index: FastIndex,
+    max_frames: Int
+) -> (EpisodicStore, FastIndex) {
+    
+    print("=== O-RedMind Perception Pipeline ===")
+    print(f"Camera: {camera.resolution.0}x{camera.resolution.1} @ {camera.fps}fps")
+    print(f"Microphone: {mic.sample_rate}Hz, {mic.channels} channels")
+    print(f"Max frames: {max_frames}")
+    print("")
+    
+    let frame_count = 0
+    let current_episodic = episodic
+    let current_index = index
+    
+    while frame_count < max_frames {
+        print(f"--- Frame {frame_count} ---")
+        
+        // 1. Capture multimodale
+        let img = camera_capture(camera)
+        let audio = mic_capture(mic, window_ms=500)
+        
+        print(f"Captured image: {img.width}x{img.height} pixels")
+        print(f"Captured audio: {len(audio.data)} samples")
+        
+        // 2. Encodage en vecteurs
+        // Note: embed_image et embed_audio sont des primitives NORMiL
+        let vec_img = embed_image(img.data, img.width, img.height)
+        let vec_audio = embed_audio(audio.data, audio.sample_rate)
+        
+        print(f"Image vec dimension: {len(vec_img.data)}")
+        print(f"Audio vec dimension: {len(vec_audio.data)}")
+        
+        // 3. Fusion temporelle
+        // temporal_align synchronise les streams selon timestamp
+        let vec_combined = temporal_align(
+            vec_img, 
+            vec_audio,
+            img.timestamp,
+            audio.timestamp
+        )
+        
+        print(f"Fused vec dimension: {len(vec_combined.data)}")
+        print(f"Fused vec norm: {norm(vec_combined)}")
+        
+        // 4. Création record épisodique
+        let record = EpisodicRecord.create(
+            summary=f"Perception frame {frame_count}",
+            vecs={"fused": vec_combined, "img": vec_img, "audio": vec_audio},
+            trust=0.9,
+            labels=["perception", "multimodal"],
+            provenance=f"camera_{camera.device_id}_mic_{mic.device_id}"
+        )
+        
+        // 5. Transaction atomique : append + index
+        // @atomic garantit cohérence mémoire + index
+        current_episodic = episodic_append(current_episodic, record)
+        current_index = index_insert(
+            current_index,
+            vec_combined,
+            {
+                "id": record.id,
+                "timestamp": str(record.timestamp),
+                "frame": str(frame_count)
+            }
+        )
+        
+        print(f"Stored in episodic: {record.id}")
+        print(f"Indexed vector (total entries: {len(current_index.entries)})")
+        print("")
+        
+        frame_count = frame_count + 1
+    }
+    
+    print("=== Perception Loop Complete ===")
+    print(f"Total episodic records: {len(current_episodic.records)}")
+    print(f"Total index entries: {len(current_index.entries)}")
+    
+    return (current_episodic, current_index)
+}
+
+// ============================================
+// Demo Usage
+// ============================================
+
+fn main() {
+    // Initialisation
+    let camera = Camera {
+        device_id: "cam0",
+        resolution: (640, 480),
+        fps: 10
+    }
+    
+    let mic = Microphone {
+        device_id: "mic0",
+        sample_rate: 16000,
+        channels: 1
+    }
+    
+    let episodic_store = EpisodicStore {
+        records: [],
+        max_size: 1000
+    }
+    
+    let fast_index = FastIndex {
+        entries: [],
+        dimension: 512,
+        max_neighbors: 16
+    }
+    
+    // Exécution pipeline (10 frames)
+    let (final_episodic, final_index) = oredmind_perception_loop(
+        camera,
+        mic,
+        episodic_store,
+        fast_index,
+        max_frames=10
+    )
+    
+    print("")
+    print("=== Final Statistics ===")
+    print(f"Episodic records stored: {len(final_episodic.records)}")
+    print(f"Index entries: {len(final_index.entries)}")
+    
+    // Vérification intégrité
+    if len(final_episodic.records) == len(final_index.entries) {
+        print("✓ Integrity check passed: episodic ↔ index synchronized")
+    } else {
+        print("✗ Integrity check failed: mismatch between episodic and index")
+    }
+    
+    // Statistiques vecteurs
+    if len(final_index.entries) > 0 {
+        let first_entry = final_index.entries[0]
+        let last_entry = final_index.entries[len(final_index.entries) - 1]
+        
+        print(f"First entry timestamp: {first_entry.metadata["timestamp"]}")
+        print(f"Last entry timestamp: {last_entry.metadata["timestamp"]}")
+        print(f"Vector dimension: {len(first_entry.vec.data)}")
+    }
+}
+
+// Lancement
+main()

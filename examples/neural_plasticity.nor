@@ -1,0 +1,168 @@
+// ============================================
+// neural_plasticity.nor
+// Exemple complet de plasticité neuronale
+// avec patterns et transactions
+// ============================================
+
+// Réseau neuronal simple avec plasticité Hebbienne
+@plastic(rate: 0.001, mode: "hebbian")
+fn hebbian_update(weights: Vec, pre: Vec, post: Vec) -> Vec {
+    // Règle de Hebb : Δw = η * pre * post
+    let correlation = vec_mul(pre, post)
+    let delta = scale(correlation, 0.001)
+    return vec_add(weights, delta)
+}
+
+// Plasticité STDP (Spike-Timing Dependent Plasticity)
+@plastic(rate: 0.01, mode: "stdp")
+fn stdp_update(weights: Vec, pre_spike: float, post_spike: float) -> Vec {
+    // Si pre avant post : renforcement
+    // Si post avant pre : affaiblissement
+    let time_diff = post_spike - pre_spike
+    
+    let learning_rate = 0.01
+    
+    // Fonction exponentielle simplifiée
+    let sign = 1.0
+    if time_diff < 0.0 {
+        sign = -1.0
+    }
+    
+    let magnitude = learning_rate * sign
+    let delta = fill(dim: weights.dim, value: magnitude)
+    
+    return vec_add(weights, delta)
+}
+
+// Anti-Hebb pour désapprentissage
+@plastic(rate: 0.005, mode: "anti_hebbian")
+fn anti_hebb_forget(weights: Vec, activity: Vec) -> Vec {
+    // Réduire les poids proportionnellement à l'activité
+    let decay = scale(activity, 0.005)
+    return vec_sub(weights, decay)
+}
+
+// Normalisation homéostatique (maintien stabilité)
+@atomic
+fn homeostatic_normalization(weights: Vec, target_norm: float) -> Vec {
+    let current_norm = norm(weights)
+    let scale_factor = target_norm / current_norm
+    return scale(weights, scale_factor)
+}
+
+// Apprentissage compétitif (Winner-Take-All)
+@atomic
+@plastic(rate: 0.02, mode: "competitive")
+fn competitive_learning(weights: Vec, input: Vec, winner_id: int) -> Vec {
+    // Seul le neurone gagnant apprend
+    let similarity = dot(weights, input)
+    
+    // Si ce neurone gagne, renforcer
+    let delta = scale(input, 0.02)
+    return vec_add(weights, delta)
+}
+
+// Métaplasticité : taux d'apprentissage adaptatif
+fn metaplastic_rate(activity_history: Vec) -> float {
+    // Plus d'activité récente = taux plus faible (saturation)
+    let avg_activity = norm(activity_history) / 100.0
+    
+    let base_rate = 0.01
+    let adjusted_rate = base_rate / (1.0 + avg_activity)
+    
+    return adjusted_rate
+}
+
+// Consolidation synaptique
+@atomic
+fn synaptic_consolidation(short_term: Vec, long_term: Vec, consolidation_rate: float) -> Vec {
+    // Transfert graduel de mémoire court terme vers long terme
+    let transfer = scale(short_term, consolidation_rate)
+    let new_long_term = vec_add(long_term, transfer)
+    
+    // Normaliser pour éviter explosion
+    return normalize(new_long_term)
+}
+
+// Simulation d'apprentissage séquentiel
+fn learn_sequence() {
+    print("=== Simulation d'apprentissage sequentiel ===")
+    
+    // Initialisation
+    let weights = random(dim: 64, mean: 0.0, std: 0.1)
+    let target_norm = 1.0
+    
+    // Séquence d'entrées
+    let input1 = random(dim: 64, mean: 0.5, std: 0.2)
+    let input2 = random(dim: 64, mean: -0.3, std: 0.2)
+    let input3 = random(dim: 64, mean: 0.8, std: 0.1)
+    
+    // Phase 1 : Apprentissage Hebbien
+    print("Phase 1: Apprentissage Hebbien")
+    let post1 = normalize(input1)
+    let w1 = hebbian_update(weights, input1, post1)
+    print("Norme apres Hebb:")
+    print(norm(w1))
+    
+    // Phase 2 : Normalisation homéostatique
+    print("Phase 2: Normalisation homeostatique")
+    let w2 = homeostatic_normalization(w1, target_norm)
+    print("Norme apres normalisation:")
+    print(norm(w2))
+    
+    // Phase 3 : STDP
+    print("Phase 3: STDP")
+    let w3 = stdp_update(w2, 0.0, 10.0)
+    print("Norme apres STDP:")
+    print(norm(w3))
+    
+    // Phase 4 : Consolidation
+    print("Phase 4: Consolidation")
+    let short_term = w3
+    let long_term = random(dim: 64, mean: 0.0, std: 0.05)
+    let consolidated = synaptic_consolidation(short_term, long_term, 0.1)
+    print("Norme consolidee:")
+    print(norm(consolidated))
+    
+    print("Apprentissage termine!")
+}
+
+// Détection de patterns appris
+fn detect_learned_pattern(weights: Vec, input: Vec) -> str {
+    let similarity = dot(weights, input)
+    
+    match similarity {
+        case float(s) where s > 0.9 -> {
+            return "pattern fortement reconnu"
+        }
+        case float(s) where s > 0.7 -> {
+            return "pattern reconnu"
+        }
+        case float(s) where s > 0.5 -> {
+            return "pattern partiellement reconnu"
+        }
+        case _ -> {
+            return "pattern non reconnu"
+        }
+    }
+}
+
+// Fonction principale
+fn main() {
+    print("╔════════════════════════════════════════════╗")
+    print("║  Plasticite Neuronale Avancee             ║")
+    print("╚════════════════════════════════════════════╝")
+    print("")
+    
+    learn_sequence()
+    
+    print("")
+    print("Test de reconnaissance:")
+    let trained_weights = random(dim: 32, mean: 1.0, std: 0.1)
+    let test_input = random(dim: 32, mean: 0.9, std: 0.1)
+    let result = detect_learned_pattern(trained_weights, test_input)
+    print(result)
+    
+    print("")
+    print("Simulation terminee avec succes!")
+}

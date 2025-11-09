@@ -1,0 +1,168 @@
+// Test du paramètre decay_factor configurable (Phase 7.7)
+// Validation de différentes stratégies de decay
+
+print("=== Test Configurable Decay Factor ===")
+print("")
+
+// ============================================
+// Section 1: Decay par défaut (0.99)
+// ============================================
+
+print("--- Section 1: Default decay (0.99) ---")
+
+@plastic(rate: 1.0, mode: "hebbian", stability_threshold: 0.001)
+fn default_decay(x: Vec) -> Vec {
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 1.0)
+    return w
+}
+
+let data1 = vec(3, [0.5, 0.5, 0.5])
+
+// Plusieurs itérations pour voir le decay
+default_decay(data1)  // step 1
+default_decay(data1)  // step 2
+default_decay(data1)  // step 3
+default_decay(data1)  // step 4
+let result1 = default_decay(data1)  // step 5
+
+print("After 5 iterations with default 0.99 decay")
+print("Expected LR: ~0.95 (1.0 * 0.99^4)")
+print("")
+
+// ============================================
+// Section 2: Decay rapide (0.90)
+// ============================================
+
+print("--- Section 2: Fast decay (0.90) ---")
+
+@plastic(rate: 1.0, mode: "hebbian", stability_threshold: 0.001, decay_factor: 0.90)
+fn fast_decay(x: Vec) -> Vec {
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 1.0)
+    return w
+}
+
+let data2 = vec(3, [0.5, 0.5, 0.5])
+
+// 5 itérations
+fast_decay(data2)
+fast_decay(data2)
+fast_decay(data2)
+fast_decay(data2)
+let result2 = fast_decay(data2)
+
+print("After 5 iterations with 0.90 decay")
+print("Expected LR: ~0.66 (1.0 * 0.90^4)")
+print("")
+
+// ============================================
+// Section 3: Decay lent (0.995)
+// ============================================
+
+print("--- Section 3: Slow decay (0.995) ---")
+
+@plastic(rate: 1.0, mode: "hebbian", stability_threshold: 0.001, decay_factor: 0.995)
+fn slow_decay(x: Vec) -> Vec {
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 1.0)
+    return w
+}
+
+let data3 = vec(3, [0.5, 0.5, 0.5])
+
+// 5 itérations
+slow_decay(data3)
+slow_decay(data3)
+slow_decay(data3)
+slow_decay(data3)
+let result3 = slow_decay(data3)
+
+print("After 5 iterations with 0.995 decay")
+print("Expected LR: ~0.98 (1.0 * 0.995^4)")
+print("")
+
+// ============================================
+// Section 4: Pas de decay (1.0)
+// ============================================
+
+print("--- Section 4: No decay (1.0) ---")
+
+@plastic(rate: 0.5, mode: "hebbian", stability_threshold: 0.001, decay_factor: 1.0)
+fn no_decay(x: Vec) -> Vec {
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 0.5)
+    return w
+}
+
+let data4 = vec(3, [0.5, 0.5, 0.5])
+
+// 10 itérations
+let i = 0
+while i < 10 {
+    no_decay(data4)
+    i = i + 1
+}
+let result4 = no_decay(data4)
+
+print("After 10 iterations with no decay (factor=1.0)")
+print("Expected LR: 0.5 (constant)")
+print("")
+
+// ============================================
+// Section 5: Comparaison de convergence
+// ============================================
+
+print("--- Section 5: Convergence comparison ---")
+
+@plastic(rate: 0.1, mode: "hebbian", stability_threshold: 0.01, decay_factor: 0.95)
+fn moderate_decay(x: Vec) -> Vec {
+    let w = zeros(x.dim)
+    w = onlinecluster_update(w, x, 0.1)
+    return w
+}
+
+let training_data = vec(5, [1.0, 0.8, 0.6, 0.4, 0.2])
+
+// Entraînement progressif
+let step = 0
+while step < 20 {
+    moderate_decay(training_data)
+    step = step + 1
+}
+
+print("Training with moderate decay (0.95)")
+print("Completed 20 steps")
+print("Final weights should be normalized (≈1.0)")
+print("")
+
+// ============================================
+// Section 6: Différents modes avec decay personnalisé
+// ============================================
+
+print("--- Section 6: Different modes with custom decay ---")
+
+@plastic(rate: 0.2, mode: "stdp", decay_factor: 0.92)
+fn stdp_custom_decay(x: Vec) -> Vec {
+    let w = ones(x.dim)
+    w = onlinecluster_update(w, x, 0.2)
+    return w
+}
+
+@plastic(rate: 0.15, mode: "anti_hebbian", decay_factor: 0.98)
+fn anti_hebb_custom_decay(x: Vec) -> Vec {
+    let w = ones(x.dim)
+    w = onlinecluster_update(w, x, 0.15)
+    return w
+}
+
+let test_data = vec(4, [0.7, 0.5, 0.3, 0.1])
+
+let stdp_out = stdp_custom_decay(test_data)
+let anti_out = anti_hebb_custom_decay(test_data)
+
+print("STDP with decay 0.92: norm = " + to_string(norm(stdp_out)))
+print("Anti-Hebbian with decay 0.98: norm = " + to_string(norm(anti_out)))
+print("")
+
+print("=== All Decay Factor Tests Complete ===")

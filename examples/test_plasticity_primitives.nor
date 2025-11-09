@@ -1,0 +1,209 @@
+// ========================================
+// Test Plasticity Primitives - Phase 7
+// ========================================
+// Tests des primitives de gestion de la plasticité
+
+print("=== Test Plasticity Primitives ===\n")
+
+// ========================================
+// Section 1: normalize_plasticity
+// ========================================
+
+print("--- Section 1: normalize_plasticity ---")
+
+// Test 1.1: Normalisation basique
+let w1 = vec(3, [3.0, 4.0, 0.0])
+let w1_norm = normalize_plasticity(w1)
+
+print("Test 1.1 - Basic normalization:")
+print("  Original: [3.0, 4.0, 0.0]")
+print("  Normalized:")
+print(w1_norm)
+let norm_val = norm(w1_norm)
+print("  Norm: " + to_string(norm_val) + " (should be ≈1.0)")
+print("")
+
+// Test 1.2: Normalisation d'un vecteur aléatoire
+let w2 = random(8, 0.0, 1.0)
+let w2_norm = normalize_plasticity(w2)
+
+print("Test 1.2 - Random vector normalization:")
+print("  Original norm: " + to_string(norm(w2)))
+print("  Normalized norm: " + to_string(norm(w2_norm)))
+print("")
+
+// Test 1.3: Normalisation préserve la direction
+let w3 = vec(2, [1.0, 1.0])
+let w3_norm = normalize_plasticity(w3)
+
+print("Test 1.3 - Direction preservation:")
+print("  Original: [1.0, 1.0]")
+print("  Normalized:")
+print(w3_norm)
+print("  (Direction should be preserved, only magnitude changes)")
+print("")
+
+// ========================================
+// Section 2: decay_learning_rate
+// ========================================
+
+print("--- Section 2: decay_learning_rate ---")
+
+// Test 2.1: Decay simple
+let lr = 0.1
+let lr_decayed = decay_learning_rate(lr, 0.9)
+
+print("Test 2.1 - Simple decay:")
+print("  Initial LR: 0.1")
+print("  After decay (factor=0.9): " + to_string(lr_decayed))
+print("  Expected: 0.09")
+print("")
+
+// Test 2.2: Decay progressif
+let lr2 = 0.5
+print("Test 2.2 - Progressive decay (10 steps, factor=0.95):")
+print("  Initial: " + to_string(lr2))
+
+let i = 0
+while i < 10 {
+    lr2 = decay_learning_rate(lr2, 0.95)
+    i = i + 1
+}
+
+print("  After 10 steps: " + to_string(lr2))
+print("  (Should be ≈0.2994)")
+print("")
+
+// Test 2.3: Decay avec différents facteurs
+let lr_base = 1.0
+let lr_fast = decay_learning_rate(lr_base, 0.5)
+let lr_slow = decay_learning_rate(lr_base, 0.99)
+
+print("Test 2.3 - Different decay rates:")
+print("  Base: 1.0")
+print("  Fast decay (0.5): " + to_string(lr_fast))
+print("  Slow decay (0.99): " + to_string(lr_slow))
+print("")
+
+// ========================================
+// Section 3: compute_stability
+// ========================================
+
+print("--- Section 3: compute_stability ---")
+
+// Test 3.1: Poids stables (changement minime)
+let w_old = vec(3, [1.0, 2.0, 3.0])
+let w_new_stable = vec(3, [1.001, 2.001, 3.001])
+let is_stable = compute_stability(w_old, w_new_stable, 0.01)
+
+print("Test 3.1 - Stable weights:")
+print("  Old: [1.0, 2.0, 3.0]")
+print("  New: [1.001, 2.001, 3.001]")
+print("  Threshold: 0.01")
+print("  Is stable: " + to_string(is_stable) + " (should be 1.0/True)")
+print("")
+
+// Test 3.2: Poids instables (changement important)
+let w_new_unstable = vec(3, [1.5, 2.5, 3.5])
+let is_unstable = compute_stability(w_old, w_new_unstable, 0.01)
+
+print("Test 3.2 - Unstable weights:")
+print("  Old: [1.0, 2.0, 3.0]")
+print("  New: [1.5, 2.5, 3.5]")
+print("  Threshold: 0.01")
+print("  Is stable: " + to_string(is_unstable) + " (should be 0.0/False)")
+print("")
+
+// Test 3.3: Stabilité avec différents seuils
+let w_test = vec(2, [1.0, 1.0])
+let w_changed = vec(2, [1.02, 1.02])
+
+let stable_loose = compute_stability(w_test, w_changed, 0.05)
+let stable_strict = compute_stability(w_test, w_changed, 0.01)
+
+print("Test 3.3 - Different thresholds:")
+print("  Change: 2%")
+print("  Threshold 5%: stable = " + to_string(stable_loose))
+print("  Threshold 1%: stable = " + to_string(stable_strict))
+print("")
+
+// ========================================
+// Section 4: Scénario combiné
+// ========================================
+
+print("--- Section 4: Combined plasticity scenario ---")
+
+// Simulation d'entraînement avec plasticité
+let weights = random(16, 0.0, 1.0)
+let learning_rate = 0.5
+let target = ones(16)
+
+print("Test 4.1 - Training simulation:")
+print("  Initial LR: " + to_string(learning_rate))
+
+let step = 0
+let max_steps = 20
+let stable = 0.0
+
+while step < max_steps && stable == 0.0 {
+    // Sauvegarder anciens poids
+    let w_before = weights
+    
+    // Update (simulation: rapprocher de target)
+    weights = onlinecluster_update(weights, target, learning_rate)
+    
+    // Normaliser
+    weights = normalize_plasticity(weights)
+    
+    // Vérifier stabilité
+    stable = compute_stability(w_before, weights, 0.001)
+    
+    // Decay LR
+    learning_rate = decay_learning_rate(learning_rate, 0.9)
+    
+    step = step + 1
+}
+
+print("  Converged after " + to_string(step) + " steps")
+print("  Final LR: " + to_string(learning_rate))
+print("  Weights are stable: " + to_string(stable))
+print("")
+
+// ========================================
+// Section 5: Fonction avec @plastic
+// ========================================
+
+print("--- Section 5: Function with @plastic annotation ---")
+
+// Note: @plastic annotation déjà testée dans plastic_learning.nor
+// Ici on teste les primitives qui supportent @plastic
+
+@plastic(rate: 0.1, mode: "hebbian", stability_threshold: 0.01)
+fn learn_pattern(input: Vec, output: Vec) -> Vec {
+    // Simulation d'apprentissage Hebbien
+    let weights = zeros(input.dim)
+    let lr = 0.1
+    
+    let i = 0
+    while i < 5 {
+        weights = onlinecluster_update(weights, input, lr)
+        weights = normalize_plasticity(weights)
+        lr = decay_learning_rate(lr, 0.9)
+        i = i + 1
+    }
+    
+    return weights
+}
+
+print("Test 5.1 - Plastic function:")
+let inp = random(8, 0.0, 1.0)
+let out = random(8, 0.0, 1.0)
+let learned_weights = learn_pattern(inp, out)
+
+print("  Input dim: " + to_string(inp.dim))
+print("  Learned weights:")
+print(learned_weights)
+print("  Weights norm: " + to_string(norm(learned_weights)))
+print("")
+
+print("=== All Plasticity Primitives Tests Complete ===")

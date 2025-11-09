@@ -1,0 +1,523 @@
+// ============================================
+// O-RedMind Consolidation Worker
+// ============================================
+//
+// Exemple complet d'un worker de consolidation pour O-RedMind :
+// - Replay priorisé avec priority sampling
+// - Distillation épisodique → sémantique
+// - Clustering de concepts
+// - Forgetting policy (gestion oubli)
+// - Transactions atomiques pour cohérence
+//
+// Ce module démontre :
+// - Consolidation asynchrone en background
+// - Priority replay comme DeepMind (DQN)
+// - Compression de mémoire épisodique
+// - Politique d'oubli adaptatif
+// - Preservation de concepts importants
+
+type SemanticStore = {
+    concepts: List<Concept>,
+    max_concepts: Int
+}
+
+type ConsolidationMetrics = {
+    episodes_processed: Int,
+    concepts_created: Int,
+    episodes_forgotten: Int,
+    total_latency_ms: Float
+}
+
+// ============================================
+// Priority Sampling (Replay Buffer)
+// ============================================
+
+fn priority_sample(
+    episodes: List<EpisodicRecord>,
+    k: Int,
+    priority_fn: Fn(EpisodicRecord) -> Float
+) -> List<EpisodicRecord> {
+    
+    print(f"[Priority Sampling] Sampling {k} from {len(episodes)} episodes")
+    
+    // 1. Calcul priorités
+    let priorities = []
+    let i = 0
+    while i < len(episodes) {
+        let priority = priority_fn(episodes[i])
+        priorities = priorities + [(i, priority)]
+        i = i + 1
+    }
+    
+    // 2. Tri par priorité (descending)
+    let sorted_priorities = sort_by_priority(priorities)
+    
+    // 3. Sélection top-k
+    let sampled = []
+    let j = 0
+    while j < k and j < len(sorted_priorities) {
+        let (idx, priority) = sorted_priorities[j]
+        sampled = sampled + [episodes[idx]]
+        j = j + 1
+    }
+    
+    print(f"[Priority Sampling] Sampled {len(sampled)} episodes")
+    
+    return sampled
+}
+
+fn sort_by_priority(priorities: List<(Int, Float)>) -> List<(Int, Float)> {
+    // Tri à bulles simple (pour l'exemple)
+    // En production : quicksort ou heapsort
+    
+    let sorted = priorities
+    let n = len(sorted)
+    
+    let i = 0
+    while i < n {
+        let j = 0
+        while j < n - i - 1 {
+            let (idx1, p1) = sorted[j]
+            let (idx2, p2) = sorted[j + 1]
+            
+            if p2 > p1 {
+                // Swap
+                let temp = sorted[j]
+                sorted[j] = sorted[j + 1]
+                sorted[j + 1] = temp
+            }
+            
+            j = j + 1
+        }
+        i = i + 1
+    }
+    
+    return sorted
+}
+
+// ============================================
+// Priority Functions
+// ============================================
+
+fn compute_novelty(record: EpisodicRecord) -> Float {
+    // Novelty basée sur norm du vecteur
+    // En production : distance à centroïdes connus
+    
+    let vec = record.vecs["fused"]
+    let vec_norm = norm(vec)
+    
+    // Normalise entre 0 et 1
+    return 1.0 / (1.0 + vec_norm)
+}
+
+fn compute_recency(record: EpisodicRecord, current_time: Float) -> Float {
+    // Recency = inverse de l'âge
+    let age = current_time - record.timestamp
+    return 1.0 / (age + 1.0)
+}
+
+fn priority_novelty_recency(record: EpisodicRecord) -> Float {
+    // Priorité = moyenne de novelty et recency
+    let novelty = compute_novelty(record)
+    let recency = compute_recency(record, now())
+    
+    return 0.5 * novelty + 0.5 * recency
+}
+
+fn priority_trust_weighted(record: EpisodicRecord) -> Float {
+    // Priorité pondérée par trust score
+    let base_priority = priority_novelty_recency(record)
+    return base_priority * record.trust
+}
+
+// ============================================
+// Distillation (Episodic → Semantic)
+// ============================================
+
+fn distill_to_semantic(episodes: List<EpisodicRecord>) -> Concept {
+    
+    print(f"[Distillation] Distilling {len(episodes)} episodes into concept")
+    
+    // 1. Agrégation vecteurs
+    let all_vecs = []
+    let i = 0
+    while i < len(episodes) {
+        all_vecs = all_vecs + [episodes[i].vecs["fused"]]
+        i = i + 1
+    }
+    
+    let centroid = aggregate_vecs(all_vecs)
+    
+    // 2. Extraction labels
+    let all_labels = []
+    let j = 0
+    while j < len(episodes) {
+        let labels = episodes[j].labels
+        all_labels = merge_labels(all_labels, labels)
+        j = j + 1
+    }
+    
+    // 3. Trust score moyen
+    let total_trust = 0.0
+    let k = 0
+    while k < len(episodes) {
+        total_trust = total_trust + episodes[k].trust
+        k = k + 1
+    }
+    let avg_trust = total_trust / len(episodes)
+    
+    // 4. Création concept
+    let concept = Concept {
+        concept_id: generate_uuid(),
+        centroid_vec: centroid,
+        labels: all_labels,
+        trust_score: avg_trust,
+        doc_count: len(episodes),
+        provenance_versions: []
+    }
+    
+    print(f"[Distillation] Created concept: {concept.concept_id}")
+    print(f"[Distillation] Labels: {concept.labels}")
+    print(f"[Distillation] Trust: {concept.trust_score}")
+    
+    return concept
+}
+
+fn aggregate_vecs(vecs: List<Vec>) -> Vec {
+    // Moyenne des vecteurs
+    if len(vecs) == 0 {
+        return zeros(512)
+    }
+    
+    let sum_vec = vecs[0]
+    let i = 1
+    while i < len(vecs) {
+        sum_vec = add(sum_vec, vecs[i])
+        i = i + 1
+    }
+    
+    return mul(sum_vec, 1.0 / len(vecs))
+}
+
+fn merge_labels(labels1: List<String>, labels2: List<String>) -> List<String> {
+    // Union de labels (sans doublons)
+    let merged = labels1
+    
+    let i = 0
+    while i < len(labels2) {
+        let label = labels2[i]
+        
+        // Check si déjà présent
+        let already_present = false
+        let j = 0
+        while j < len(merged) {
+            if merged[j] == label {
+                already_present = true
+            }
+            j = j + 1
+        }
+        
+        if !already_present {
+            merged = merged + [label]
+        }
+        
+        i = i + 1
+    }
+    
+    return merged
+}
+
+// ============================================
+// Forgetting Policy
+// ============================================
+
+fn forgetting_policy(
+    memory: EpisodicRecord,
+    age: Float,
+    utility: Float,
+    threshold: Float
+) -> Bool {
+    
+    // Décision d'oubli basée sur :
+    // - Âge (vieux = oubli)
+    // - Utilité (peu utile = oubli)
+    // - Trust score (peu fiable = oubli)
+    
+    let age_factor = age / (86400.0 * 30.0)  // Normalise par 30 jours
+    let utility_factor = 1.0 - utility
+    let trust_factor = 1.0 - memory.trust
+    
+    let forget_score = 0.4 * age_factor + 0.3 * utility_factor + 0.3 * trust_factor
+    
+    return forget_score > threshold
+}
+
+fn compute_utility(record: EpisodicRecord) -> Float {
+    // Utilité = fréquence d'accès récente
+    // En production : tracking des accès réels
+    
+    // Pour l'exemple : basé sur trust
+    return record.trust
+}
+
+// ============================================
+// Semantic Store Operations
+// ============================================
+
+fn semantic_upsert(store: SemanticStore, concept: Concept) -> SemanticStore {
+    // Cherche concept similaire ou insère nouveau
+    
+    let similar_idx = -1
+    let max_similarity = 0.0
+    let i = 0
+    
+    while i < len(store.concepts) {
+        let existing = store.concepts[i]
+        let similarity = dot(concept.centroid_vec, existing.centroid_vec) / 
+                        (norm(concept.centroid_vec) * norm(existing.centroid_vec))
+        
+        if similarity > max_similarity {
+            max_similarity = similarity
+            similar_idx = i
+        }
+        
+        i = i + 1
+    }
+    
+    // Seuil de similarité pour merge
+    let similarity_threshold = 0.85
+    
+    let new_concepts = if max_similarity > similarity_threshold and similar_idx >= 0 {
+        // Merge avec concept existant
+        print(f"[Semantic] Merging with existing concept (similarity: {max_similarity})")
+        
+        let existing = store.concepts[similar_idx]
+        let merged = Concept {
+            concept_id: existing.concept_id,
+            centroid_vec: aggregate_vecs([existing.centroid_vec, concept.centroid_vec]),
+            labels: merge_labels(existing.labels, concept.labels),
+            trust_score: (existing.trust_score + concept.trust_score) / 2.0,
+            doc_count: existing.doc_count + concept.doc_count,
+            provenance_versions: existing.provenance_versions
+        }
+        
+        replace_at_index(store.concepts, similar_idx, merged)
+    } else {
+        // Nouveau concept
+        print("[Semantic] Inserting new concept")
+        store.concepts + [concept]
+    }
+    
+    return SemanticStore {
+        concepts: new_concepts,
+        max_concepts: store.max_concepts
+    }
+}
+
+fn replace_at_index(list: List<Concept>, idx: Int, new_item: Concept) -> List<Concept> {
+    let result = []
+    let i = 0
+    while i < len(list) {
+        if i == idx {
+            result = result + [new_item]
+        } else {
+            result = result + [list[i]]
+        }
+        i = i + 1
+    }
+    return result
+}
+
+// ============================================
+// Main Consolidation Worker
+// ============================================
+
+fn oredmind_consolidation_worker(
+    episodic: EpisodicStore,
+    semantic: SemanticStore,
+    num_iterations: Int,
+    batch_size: Int
+) -> (EpisodicStore, SemanticStore, ConsolidationMetrics) {
+    
+    print("=== O-RedMind Consolidation Worker ===")
+    print(f"Initial episodic records: {len(episodic.records)}")
+    print(f"Initial semantic concepts: {len(semantic.concepts)}")
+    print(f"Batch size: {batch_size}")
+    print(f"Iterations: {num_iterations}")
+    print("")
+    
+    let current_episodic = episodic
+    let current_semantic = semantic
+    let total_processed = 0
+    let total_concepts = 0
+    let total_forgotten = 0
+    let start_time = now()
+    
+    let iter = 0
+    while iter < num_iterations {
+        print(f"--- Iteration {iter} ---")
+        
+        // 1. Priority sampling (replay)
+        let sampled_episodes = priority_sample(
+            current_episodic.records,
+            k=batch_size,
+            priority_fn=priority_trust_weighted
+        )
+        
+        total_processed = total_processed + len(sampled_episodes)
+        
+        // 2. Distillation → semantic
+        if len(sampled_episodes) > 0 {
+            let concept = distill_to_semantic(sampled_episodes)
+            
+            // 3. Upsert semantic store
+            current_semantic = semantic_upsert(current_semantic, concept)
+            total_concepts = total_concepts + 1
+        }
+        
+        // 4. Marquer épisodes comme consolidés
+        let updated_records = []
+        let i = 0
+        while i < len(current_episodic.records) {
+            let record = current_episodic.records[i]
+            
+            // Check si record dans sampled
+            let was_sampled = false
+            let j = 0
+            while j < len(sampled_episodes) {
+                if sampled_episodes[j].id == record.id {
+                    was_sampled = true
+                }
+                j = j + 1
+            }
+            
+            if was_sampled {
+                // Mark as consolidated (simulation)
+                updated_records = updated_records + [record]
+            } else {
+                updated_records = updated_records + [record]
+            }
+            
+            i = i + 1
+        }
+        
+        // 5. Forgetting policy
+        let remaining_records = []
+        let k = 0
+        while k < len(updated_records) {
+            let record = updated_records[k]
+            let age = now() - record.timestamp
+            let utility = compute_utility(record)
+            
+            let should_forget = forgetting_policy(
+                record,
+                age,
+                utility,
+                threshold=0.7
+            )
+            
+            if !should_forget {
+                remaining_records = remaining_records + [record]
+            } else {
+                total_forgotten = total_forgotten + 1
+            }
+            
+            k = k + 1
+        }
+        
+        current_episodic = EpisodicStore {
+            records: remaining_records,
+            max_size: current_episodic.max_size
+        }
+        
+        print(f"Processed: {len(sampled_episodes)} episodes")
+        print(f"Semantic concepts: {len(current_semantic.concepts)}")
+        print(f"Forgotten: {total_forgotten} total")
+        print(f"Remaining episodic: {len(current_episodic.records)}")
+        print("")
+        
+        iter = iter + 1
+    }
+    
+    let total_latency = (now() - start_time) * 1000.0
+    
+    let metrics = ConsolidationMetrics {
+        episodes_processed: total_processed,
+        concepts_created: total_concepts,
+        episodes_forgotten: total_forgotten,
+        total_latency_ms: total_latency
+    }
+    
+    print("=== Consolidation Complete ===")
+    print(f"Episodes processed: {metrics.episodes_processed}")
+    print(f"Concepts created: {metrics.concepts_created}")
+    print(f"Episodes forgotten: {metrics.episodes_forgotten}")
+    print(f"Total latency: {metrics.total_latency_ms}ms")
+    
+    return (current_episodic, current_semantic, metrics)
+}
+
+// ============================================
+// Demo Usage
+// ============================================
+
+fn main() {
+    // 1. Création mémoire épisodique avec 20 records
+    let episodic_records = []
+    let i = 0
+    while i < 20 {
+        let record = EpisodicRecord.create(
+            summary=f"Episode {i}",
+            vecs={"fused": random_vec(512)},
+            trust=0.5 + 0.5 * random(),
+            labels=["test", "consolidation"],
+            provenance="test_source"
+        )
+        episodic_records = episodic_records + [record]
+        i = i + 1
+    }
+    
+    let episodic_store = EpisodicStore {
+        records: episodic_records,
+        max_size: 1000
+    }
+    
+    // 2. Semantic store vide
+    let semantic_store = SemanticStore {
+        concepts: [],
+        max_concepts: 100
+    }
+    
+    // 3. Exécution consolidation (5 iterations, batch=5)
+    let (final_episodic, final_semantic, metrics) = oredmind_consolidation_worker(
+        episodic=episodic_store,
+        semantic=semantic_store,
+        num_iterations=5,
+        batch_size=5
+    )
+    
+    // 4. Vérification résultats
+    print("")
+    print("=== Final State ===")
+    print(f"Episodic records: {len(final_episodic.records)}")
+    print(f"Semantic concepts: {len(final_semantic.concepts)}")
+    print(f"Compression ratio: {len(episodic_records)} episodes → {len(final_semantic.concepts)} concepts")
+    
+    // 5. Affichage concepts créés
+    if len(final_semantic.concepts) > 0 {
+        print("")
+        print("=== Created Concepts ===")
+        let j = 0
+        while j < len(final_semantic.concepts) {
+            let concept = final_semantic.concepts[j]
+            print(f"Concept {j}: {concept.concept_id}")
+            print(f"  Labels: {concept.labels}")
+            print(f"  Trust: {concept.trust_score}")
+            print(f"  Docs: {concept.doc_count}")
+            j = j + 1
+        }
+    }
+}
+
+// Lancement
+main()
