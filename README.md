@@ -300,10 +300,5 @@ Nous développons actuellement les aspects suivants :
 
 ---
 
-## 📝 License
-
-MIT - Conformément au projet OpenRed
-
----
-
 **NORMiL : Le langage qui parle le cerveau de l'IA** 🧠
+
