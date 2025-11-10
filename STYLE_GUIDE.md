@@ -1,7 +1,8 @@
 # 📐 NORMiL Style Guide
 
-**Version** : 0.2.0  
-**Date** : Janvier 2025  
+**Version** : 0.2.0
+**Date** : Novembre 2025
+**Auteur :** Diego Morales Magri
 **Public** : Développeurs NORMiL
 
 ---
@@ -9,6 +10,7 @@
 ## 🎯 Philosophie
 
 NORMiL privilégie :
+
 - **Clarté** > Concision
 - **Explicite** > Implicite
 - **Sécurité** > Performance
@@ -19,6 +21,7 @@ NORMiL privilégie :
 ## 📝 Conventions de Nommage
 
 ### Variables
+
 ```normil
 // ✅ Bon : snake_case, descriptif
 let user_count: int = 42
@@ -32,6 +35,7 @@ let a: bool = true
 ```
 
 ### Fonctions
+
 ```normil
 // ✅ Bon : snake_case, verbes d'action
 fn calculate_similarity(v1: Vec, v2: Vec) -> float {
@@ -48,6 +52,7 @@ fn do_stuff(x: EpisodicRecord) -> Concept { ... }
 ```
 
 ### Types Personnalisés
+
 ```normil
 // ✅ Bon : PascalCase
 type UserProfile = {
@@ -66,6 +71,7 @@ type user_profile = { ... }
 ```
 
 ### Constantes
+
 ```normil
 // ✅ Bon : UPPER_SNAKE_CASE
 let MAX_VECTOR_DIM: int = 1024
@@ -81,17 +87,18 @@ let max_dim: int = 1024
 ## 🔤 Indentation et Formatage
 
 ### Espacement
+
 ```normil
 // ✅ Bon : 4 espaces (ou 1 tab)
 fn compute_average(values: list<float>) -> float {
     let sum = 0.0
     let count = 0
-    
+  
     for value in values {
         sum = sum + value
         count = count + 1
     }
-    
+  
     return sum / count
 }
 
@@ -107,6 +114,7 @@ fn compute_average(values: list<float>) -> float {
 ```
 
 ### Espaces autour des opérateurs
+
 ```normil
 // ✅ Bon
 let x = 42 + 10
@@ -120,15 +128,16 @@ if x>10&&y<20{ ... }
 ```
 
 ### Lignes vides
+
 ```normil
 // ✅ Bon : séparer les blocs logiques
 fn process_data(input: Vec) -> Vec {
     // Normaliser
     let normalized = normalize(input)
-    
+  
     // Appliquer transformation
     let transformed = scale(normalized, 2.0)
-    
+  
     // Retourner résultat
     return transformed
 }
@@ -146,6 +155,7 @@ fn process_data(input: Vec) -> Vec {
 ## 💬 Commentaires
 
 ### Commentaires de ligne
+
 ```normil
 // ✅ Bon : expliquer le "pourquoi"
 let threshold = 0.85  // Seuil empirique après tests
@@ -156,6 +166,7 @@ let threshold = 0.85  // Assigner 0.85 à threshold
 ```
 
 ### Commentaires de bloc
+
 ```normil
 // ✅ Bon : documenter les fonctions complexes
 /*
@@ -174,6 +185,7 @@ fn consolidate_episodes(episodes: list<EpisodicRecord>, threshold: float) -> Con
 ```
 
 ### En-têtes de fichier
+
 ```normil
 // ============================================
 // memory_system.nor
@@ -190,6 +202,7 @@ fn consolidate_episodes(episodes: list<EpisodicRecord>, threshold: float) -> Con
 ## 🏗️ Structure du Code
 
 ### Ordre des déclarations
+
 ```normil
 // 1. Imports (quand supportés)
 import memory
@@ -210,6 +223,7 @@ fn main() { ... }
 ```
 
 ### Longueur des fonctions
+
 ```normil
 // ✅ Bon : fonctions courtes (< 50 lignes)
 fn process_episode(e: EpisodicRecord) -> Concept {
@@ -229,6 +243,7 @@ fn do_everything() {
 ## 🎨 Patterns Recommandés
 
 ### Arguments Nommés
+
 ```normil
 // ✅ Bon : clarifier les paramètres
 let v = random(dim: 256, mean: 0.0, std: 1.0)
@@ -240,17 +255,18 @@ let results = query_memory(query_vec, 10, 0.7)
 ```
 
 ### Early Return
+
 ```normil
 // ✅ Bon : retourner tôt pour éviter nesting
 fn validate_vector(v: Vec) -> bool {
     if v.dim < 1 {
         return false
     }
-    
+  
     if v.dim > MAX_DIM {
         return false
     }
-    
+  
     return true
 }
 
@@ -269,6 +285,7 @@ fn validate_vector(v: Vec) -> bool {
 ```
 
 ### Gestion d'Erreurs
+
 ```normil
 // ✅ Bon : vérifier les conditions d'erreur d'abord
 fn divide(a: float, b: float) -> float {
@@ -276,7 +293,7 @@ fn divide(a: float, b: float) -> float {
         print("Erreur: division par zéro")
         return 0.0
     }
-    
+  
     return a / b
 }
 ```
@@ -286,6 +303,7 @@ fn divide(a: float, b: float) -> float {
 ## 🔒 Bonnes Pratiques
 
 ### Types Explicites
+
 ```normil
 // ✅ Bon : types explicites pour clarté
 fn calculate_score(features: Vec, weights: Vec) -> float {
@@ -302,6 +320,7 @@ fn calculate_score(features, weights) {
 ```
 
 ### Immutabilité
+
 ```normil
 // ✅ Bon : préférer let (immutable)
 let x = 42
@@ -313,6 +332,7 @@ x = x + 10  // Mutation = risque d'erreur
 ```
 
 ### Noms Significatifs
+
 ```normil
 // ✅ Bon
 let user_query_vector = random(256)
@@ -330,6 +350,7 @@ let k = 10
 ## 📊 Organisation de Projet
 
 ### Structure Recommandée
+
 ```
 project/
 ├── main.nor                # Point d'entrée
@@ -347,6 +368,7 @@ project/
 ```
 
 ### Fichiers Modulaires
+
 ```normil
 // ✅ Bon : 1 fichier = 1 responsabilité
 // memory_operations.nor - Opérations mémoire uniquement
@@ -361,6 +383,7 @@ project/
 ## 🧪 Tests et Documentation
 
 ### Fonctions Testables
+
 ```normil
 // ✅ Bon : fonction pure, testable
 fn cosine_similarity(v1: Vec, v2: Vec) -> float {
@@ -371,6 +394,7 @@ fn cosine_similarity(v1: Vec, v2: Vec) -> float {
 ```
 
 ### Documentation Fonction
+
 ```normil
 /*
  * Calcule la similarité cosinus entre deux vecteurs.
@@ -396,6 +420,7 @@ fn cosine_similarity(v1: Vec, v2: Vec) -> float {
 ## ⚡ Performance
 
 ### Éviter les Calculs Répétés
+
 ```normil
 // ✅ Bon : calculer une fois
 let v_norm = norm(v)
@@ -407,6 +432,7 @@ let similarity = dot(v1_normalized, v2) / norm(v)  // norm(v) recalculé
 ```
 
 ### Préférer les Primitives
+
 ```normil
 // ✅ Bon : utiliser primitives optimisées
 let sum_vec = vec_add(v1, v2)
@@ -423,6 +449,7 @@ for i in range(256) {
 ## 🚫 Anti-Patterns
 
 ### Magic Numbers
+
 ```normil
 // ❌ Mauvais
 let v = random(256)
@@ -437,6 +464,7 @@ if similarity > SIMILARITY_THRESHOLD { ... }
 ```
 
 ### Noms Trop Courts
+
 ```normil
 // ❌ Mauvais
 let a = random(256)
@@ -450,6 +478,7 @@ let adjusted_query = vec_add(query_vector, bias_vector)
 ```
 
 ### Commentaires Obsolètes
+
 ```normil
 // ❌ Mauvais : commentaire ne correspond plus au code
 // Calculer la moyenne
@@ -487,4 +516,3 @@ Avant de commiter du code NORMiL :
 ---
 
 **Ce guide évolue avec NORMiL. Vos suggestions sont bienvenues !** 🚀
-

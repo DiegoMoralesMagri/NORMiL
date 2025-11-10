@@ -2,6 +2,8 @@
 NORMiL Executor
 ===============
 
+Auteur : Diego Morales Magri
+
 Exécuteur d'AST NORMiL.
 
 L'executor parcourt l'arbre syntaxique abstrait (AST) et exécute le code.

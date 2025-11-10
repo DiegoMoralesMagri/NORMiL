@@ -1,5 +1,6 @@
 // Test SparseVec - Phase 5.4
 // Structure: indices (positions non-nulles), values (valeurs), dim (dimension totale)
+// Auteur : Diego Morales Magri
 
 print("=== Test SparseVec - Phase 5.4 ===")
 print("")

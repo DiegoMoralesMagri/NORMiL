@@ -1,3 +1,5 @@
+// Auteur : Diego Morales Magri
+
 fn main() {
     // Créer un vecteur
     let v = fill(dim: 5, value: 3.0)

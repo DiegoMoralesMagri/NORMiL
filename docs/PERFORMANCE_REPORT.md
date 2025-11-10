@@ -1,8 +1,10 @@
 # Rapport de Performance NORMiL
+
 ## Analyse et Benchmarks - Version 0.7.0+
 
-**Date** : Novembre 2025  
-**Status** : ✅ COMPLET  
+**Date** : Novembre 2025
+**Auteur :** Diego Morales Magri
+**Status** : ✅ COMPLET
 **Temps d'exécution benchmark** : 0.49 secondes
 
 ---
@@ -10,6 +12,7 @@
 ## 📊 Résultats des Benchmarks
 
 ### Configuration de Test
+
 - **Plateforme** : Windows (PowerShell)
 - **Python** : 3.13.5
 - **Fichier** : `examples/benchmark_performance.nor`
@@ -17,20 +20,21 @@
 
 ### Métriques Globales
 
-| Métrique | Valeur |
-|----------|--------|
-| **Temps total d'exécution** | 0.4877 secondes |
-| **Tests exécutés** | 6 benchmarks |
-| **Opérations vectorielles** | 1000 itérations |
-| **Apprentissage plastique** | 100 itérations |
-| **Classifications** | 5000 classifications |
-| **LR scheduling** | 100 epochs |
-| **Vérifications stabilité** | 50 itérations |
-| **Workflow combiné** | 50 epochs |
+| Métrique                           | Valeur               |
+| ----------------------------------- | -------------------- |
+| **Temps total d'exécution**  | 0.4877 secondes      |
+| **Tests exécutés**          | 6 benchmarks         |
+| **Opérations vectorielles**  | 1000 itérations     |
+| **Apprentissage plastique**   | 100 itérations      |
+| **Classifications**           | 5000 classifications |
+| **LR scheduling**             | 100 epochs           |
+| **Vérifications stabilité** | 50 itérations       |
+| **Workflow combiné**         | 50 epochs            |
 
 ### Performance par Benchmark
 
 #### 1. Opérations Vectorielles
+
 - **Itérations** : 1000
 - **Opérations** : Addition, soustraction, scaling, norm
 - **Dimension** : 128
@@ -38,6 +42,7 @@
 - **Performance** : ✅ Excellente
 
 **Code** :
+
 ```normil
 let v1 = random(128, 0.0, 1.0)
 let v2 = random(128, 0.0, 1.0)
@@ -52,6 +57,7 @@ while iter < 1000 {
 ```
 
 #### 2. Plasticité avec @plastic
+
 - **Itérations** : 100
 - **Mode** : Hebbian
 - **Learning rate** : 0.01
@@ -60,6 +66,7 @@ while iter < 1000 {
 - **Performance** : ✅ Excellente
 
 **Code** :
+
 ```normil
 @plastic(rate: 0.01, mode: "hebbian")
 fn plastic_learn(input: Vec) -> Vec {
@@ -70,12 +77,14 @@ fn plastic_learn(input: Vec) -> Vec {
 ```
 
 #### 3. Logique Conditionnelle
+
 - **Classifications** : 5000
 - **Conditions** : 6 cas + 1 défaut
 - **Performance** : ✅ Excellente
 - **Observation** : Les conditions if/else sont très rapides
 
 #### 4. LR Scheduling
+
 - **Epochs** : 100
 - **Stratégies** : Warmup (10) + Cosine annealing (90)
 - **LR initial** : 0.01
@@ -84,6 +93,7 @@ fn plastic_learn(input: Vec) -> Vec {
 - **Observation** : Calculs mathématiques (cosinus) très rapides
 
 #### 5. Multi-Critères de Stabilité
+
 - **Itérations** : 50
 - **Dimension** : 32
 - **Historique** : 10 derniers poids
@@ -92,6 +102,7 @@ fn plastic_learn(input: Vec) -> Vec {
 - **Observation** : `compute_stability_window()` et `compute_weight_variance()` efficaces
 
 #### 6. Workflow Combiné
+
 - **Epochs** : 50
 - **Early stopping** : Epoch 11
 - **Features utilisées** :
@@ -110,26 +121,27 @@ fn plastic_learn(input: Vec) -> Vec {
 ### Points Forts
 
 1. **Opérations NumPy** ⚡
+
    - Les opérations vectorielles utilisent NumPy (float16)
    - Très performantes même avec 1000 itérations
    - Addition, soustraction, scaling : quasi-instantanés
-
 2. **Gestion de la Plasticité** 🧠
+
    - @plastic avec metadata : overhead minimal
    - Normalisation automatique : rapide
    - Pas de bottleneck détecté
-
 3. **LR Scheduling** 📈
+
    - Calculs de warmup/cosine : négligeables
    - Pas d'impact sur performance globale
    - Très efficace pour convergence (early stop epoch 11)
-
 4. **Multi-Critères** ✅
+
    - `compute_stability_window()` : O(n) avec n petit
    - `compute_weight_variance()` : utilise np.var() optimisé
    - Overhead acceptable pour bénéfice robustesse
-
 5. **Early Stopping** 🎯
+
    - Détection rapide de convergence
    - Économie de 78% des epochs (11/50)
    - Gain significatif en production
@@ -137,9 +149,11 @@ fn plastic_learn(input: Vec) -> Vec {
 ### Zones d'Amélioration Potentielles
 
 #### 1. Allocation Mémoire (Impact: FAIBLE)
+
 **Observation** : Création fréquente de nouveaux Vec dans les boucles
 
 **Code actuel** :
+
 ```normil
 while iter < iterations {
     let v3 = v1 + v2  // Nouvelle allocation
@@ -149,15 +163,18 @@ while iter < iterations {
 ```
 
 **Optimisation possible** :
+
 - Pool de vecteurs réutilisables
 - Opérations in-place si supportées
 
 **Priorité** : BASSE (performance déjà excellente)
 
 #### 2. Liste d'Historique (Impact: FAIBLE)
+
 **Observation** : Reconstruction de liste pour garder 10 derniers éléments
 
 **Code actuel** :
+
 ```normil
 if len_hist > 10 {
     let new_history = []
@@ -171,15 +188,18 @@ if len_hist > 10 {
 ```
 
 **Optimisation possible** :
+
 - Utiliser deque (collections.deque) en Python
 - Implémenter un buffer circulaire
 
 **Priorité** : BASSE (50 itérations = overhead négligeable)
 
 #### 3. Parsing (Impact: NON MESURÉ)
+
 **Observation** : Le benchmark ne mesure que l'exécution
 
 **À investiguer** :
+
 - Temps de parsing du fichier .nor
 - Temps de construction de l'AST
 - Cache du parsing ?
@@ -192,12 +212,12 @@ if len_hist > 10 {
 
 ### NORMiL vs Python Pur (estimation)
 
-| Opération | NORMiL | Python Pur | Ratio |
-|-----------|--------|------------|-------|
-| Vec operations (NumPy) | ✅ Rapide | ✅ Rapide | ~1x |
-| Plasticité automatique | ✅ Built-in | ❌ Manuel | N/A |
-| LR scheduling | ✅ Primitives | ⚠️ A coder | N/A |
-| Early stopping | ✅ Auto | ⚠️ A coder | N/A |
+| Opération              | NORMiL        | Python Pur   | Ratio |
+| ----------------------- | ------------- | ------------ | ----- |
+| Vec operations (NumPy)  | ✅ Rapide     | ✅ Rapide    | ~1x   |
+| Plasticité automatique | ✅ Built-in   | ❌ Manuel    | N/A   |
+| LR scheduling           | ✅ Primitives | ⚠️ A coder | N/A   |
+| Early stopping          | ✅ Auto       | ⚠️ A coder | N/A   |
 
 **Conclusion** : NORMiL offre les **mêmes performances** que Python pour les calculs numériques, mais avec **beaucoup moins de code** et **plus de features automatiques**.
 
@@ -208,6 +228,7 @@ if len_hist > 10 {
 ### Performance Actuelle : EXCELLENTE ✅
 
 **Verdict** : Avec **0.49 secondes** pour un benchmark complet incluant :
+
 - 1000 opérations vectorielles
 - 100 itérations de plasticité
 - 5000 classifications
@@ -220,27 +241,30 @@ if len_hist > 10 {
 ### Optimisations Recommandées (par priorité)
 
 #### Priorité 1 : MONITORING (avant optimisation)
+
 1. ✅ **Benchmark créé** : `benchmark_performance.nor`
 2. ⏳ **Profiling détaillé** : Utiliser cProfile sur runtime Python
 3. ⏳ **Métriques mémoire** : Mesurer usage RAM
 4. ⏳ **Benchmark de parsing** : Séparer parsing vs exécution
 
 #### Priorité 2 : OPTIMISATIONS QUICK WINS
+
 1. ⏳ **Cache de parsing** : Parser une seule fois les imports
 2. ⏳ **Pool de Vec** : Réutiliser vecteurs temporaires (si impact mesurable)
 3. ⏳ **Deque pour historique** : Remplacer liste par buffer circulaire
 
 #### Priorité 3 : OPTIMISATIONS AVANCÉES (si besoin)
+
 1. ⏳ **JIT compilation** : PyPy ou Numba pour hot paths
 2. ⏳ **Parallel execution** : Multiprocessing pour gros workloads
 3. ⏳ **C extensions** : Pour primitives critiques (si profiling montre besoin)
 
 ### Ce qu'il NE FAUT PAS faire
 
-❌ **Optimiser prématurément** : Performance actuelle déjà excellente  
-❌ **Réécrire en C** : NumPy déjà optimisé  
-❌ **Complexifier le code** : Simplicité > micro-optimisations  
-❌ **Ignorer la lisibilité** : Code maintenable > 5% de gain  
+❌ **Optimiser prématurément** : Performance actuelle déjà excellente
+❌ **Réécrire en C** : NumPy déjà optimisé
+❌ **Complexifier le code** : Simplicité > micro-optimisations
+❌ **Ignorer la lisibilité** : Code maintenable > 5% de gain
 
 ---
 
@@ -268,6 +292,7 @@ stats.print_stats(20)  # Top 20 fonctions
 ### Étape 2 : Identifier les Hot Spots
 
 **Questions à répondre** :
+
 1. Quel % du temps dans le parsing vs exécution ?
 2. Quelle primitive est la plus coûteuse ?
 3. Y a-t-il des allocations excessives ?
@@ -276,6 +301,7 @@ stats.print_stats(20)  # Top 20 fonctions
 ### Étape 3 : Mesurer l'Impact
 
 **Avant toute optimisation** :
+
 - Mesurer baseline actuelle : ✅ 0.49s
 - Identifier bottleneck précis : ⏳
 - Optimiser UNE chose à la fois : ⏳
@@ -286,11 +312,11 @@ stats.print_stats(20)  # Top 20 fonctions
 
 ## ✅ Checklist Performance
 
-- [x] Benchmark créé et fonctionnel
-- [x] Temps d'exécution mesuré (0.49s)
-- [x] Toutes les features testées
-- [x] Early stopping validé
-- [x] Rapport de performance rédigé
+- [X] Benchmark créé et fonctionnel
+- [X] Temps d'exécution mesuré (0.49s)
+- [X] Toutes les features testées
+- [X] Early stopping validé
+- [X] Rapport de performance rédigé
 - [ ] Profiling Python détaillé
 - [ ] Métriques mémoire collectées
 - [ ] Optimisations identifiées et priorisées
@@ -303,6 +329,7 @@ stats.print_stats(20)  # Top 20 fonctions
 ### État Actuel : PRODUCTION READY ✅
 
 **NORMiL v0.7.0+ est performant** avec :
+
 - ⚡ 0.49s pour benchmark complet
 - 🧠 Plasticité automatique efficace
 - 📈 LR scheduling sans overhead
@@ -318,14 +345,15 @@ stats.print_stats(20)  # Top 20 fonctions
 
 ### Verdict Final
 
-**Pas d'optimisation urgente nécessaire.**  
-Performance actuelle largement suffisante pour :
+**Pas d'optimisation urgente nécessaire.**Performance actuelle largement suffisante pour :
+
 - ✅ Prototypage rapide
 - ✅ Expérimentation recherche
 - ✅ Production à échelle moyenne
 - ✅ Apprentissage et enseignement
 
 **L'effort doit se concentrer sur** :
+
 - 🎯 Nouvelles features (Phase 8)
 - 📚 Documentation et exemples
 - 🧪 Tests et validation
@@ -333,7 +361,7 @@ Performance actuelle largement suffisante pour :
 
 ---
 
-**Auteur** : GitHub Copilot  
-**Date** : Novembre 2025  
-**Version** : NORMiL v0.7.0+  
+**Auteur** : GitHub Copilot
+**Date** : Novembre 2025
+**Version** : NORMiL v0.7.0+
 **Status** : ✅ PERFORMANCE VALIDATED

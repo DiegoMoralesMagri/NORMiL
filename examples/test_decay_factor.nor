@@ -1,5 +1,6 @@
 // Test du paramètre decay_factor configurable (Phase 7.7)
 // Validation de différentes stratégies de decay
+// Auteur : Diego Morales Magri
 
 print("=== Test Configurable Decay Factor ===")
 print("")

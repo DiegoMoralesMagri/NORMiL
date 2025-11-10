@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Tests pour les opérations sur strings (Phase 3.3)
+=========================================
+Auteur : Diego Morales Magri
 """
 
 import sys

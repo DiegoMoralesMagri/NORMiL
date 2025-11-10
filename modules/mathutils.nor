@@ -1,4 +1,5 @@
 // Module math - Fonctions mathématiques utilitaires
+// Auteur : Diego Morales Magri
 // Peut être importé avec: import math
 
 fn abs(x: int) -> int {

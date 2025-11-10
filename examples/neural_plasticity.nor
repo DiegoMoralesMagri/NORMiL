@@ -2,6 +2,7 @@
 // neural_plasticity.nor
 // Exemple complet de plasticité neuronale
 // avec patterns et transactions
+// Auteur : Diego Morales Magri
 // ============================================
 
 // Réseau neuronal simple avec plasticité Hebbienne

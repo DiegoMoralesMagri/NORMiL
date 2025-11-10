@@ -1,5 +1,7 @@
 """
 Tests pour Phase 3.5 - Structures de données
+=========================================
+Auteur : Diego Morales Magri
 """
 import sys
 import os

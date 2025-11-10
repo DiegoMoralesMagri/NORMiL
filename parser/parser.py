@@ -2,6 +2,8 @@
 NORMiL Parser (Analyseur Syntaxique)
 =====================================
 
+Auteur : Diego Morales Magri
+
 Parse les tokens en AST (Abstract Syntax Tree).
 Utilise un parseur récursif descendant.
 

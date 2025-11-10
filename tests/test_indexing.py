@@ -1,5 +1,7 @@
 """
 Tests pour Phase 3.4 - Indexation de vecteurs
+====================================
+Auteur : Diego Morales Magri
 """
 import sys
 import os

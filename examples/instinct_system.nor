@@ -1,6 +1,7 @@
 // ============================================
 // instinct_system.nor
 // Système d'instincts avec règles et politiques
+// Auteur : Diego Morales Magri
 // ============================================
 
 import memory

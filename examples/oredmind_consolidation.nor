@@ -1,5 +1,6 @@
 // ============================================
 // O-RedMind Consolidation Worker
+// Auteur : Diego Morales Magri
 // ============================================
 //
 // Exemple complet d'un worker de consolidation pour O-RedMind :

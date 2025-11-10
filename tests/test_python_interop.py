@@ -1,5 +1,7 @@
 """
 Tests pour la Phase 4.1 - Interopérabilité Python (Importation de modules)
+=========================================
+Auteur : Diego Morales Magri
 """
 
 import sys

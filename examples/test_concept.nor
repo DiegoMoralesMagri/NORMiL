@@ -1,5 +1,6 @@
 // Test du type Concept pour NORMiL
 // Phase 5.2 - Mémoire sémantique
+// Auteur : Diego Morales Magri
 
 // Test 1: Création basique
 print("=== Test 1: Création basique ===")

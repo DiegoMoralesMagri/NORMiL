@@ -1,5 +1,6 @@
 // Test des multi-critères de stabilité (Phase 7.8)
 // Validation de la stabilité sur fenêtre et variance
+// Auteur : Diego Morales Magri
 
 print("=== Test Multi-Criteria Stability ===")
 print("")

@@ -1,8 +1,10 @@
 # Phase 8 - NORMiL pour O-RedMind
+
 ## Compléter le Langage pour l'Architecture IA Humanoïde
 
-**Date** : Novembre 2025  
-**Status** : 🎯 PLANIFICATION ORIENTÉE O-REDMIND  
+**Date** : Novembre 2025
+**Auteur :** Diego Morales Magri
+**Status** : 🎯 PLANIFICATION ORIENTÉE O-REDMIND
 **Contexte** : NORMiL doit servir à ÉCRIRE O-RedMind (INDICATIONS_TECHNIQUES.md)
 
 ---
@@ -12,6 +14,7 @@
 **NORMiL n'est PAS un langage généraliste pour adoption grand public.**
 
 **NORMiL est LE LANGAGE pour implémenter l'architecture O-RedMind** :
+
 - IA humanoïde avec mémoire épisodique/sémantique
 - Perception multimodale (caméra, micro, capteurs)
 - Reasoner hybride (neural + symbolique)
@@ -20,6 +23,7 @@
 - Safety & Sandbox obligatoires
 
 **Critère de succès Phase 8** :
+
 > *"Peut-on ÉCRIRE les modules O-RedMind en NORMiL de manière NATIVE et ÉLÉGANTE ?"*
 
 ---
@@ -29,6 +33,7 @@
 ### ✅ Déjà Implémenté (Phase 1-7)
 
 **Langage Core** :
+
 - ✅ Types : `Vec`, `SparseVec`, `EpisodicRecord`, `Concept`, `WorkingMemoryEntry`, `ProtoInstinct`, `Policy`
 - ✅ Fonctions, pattern matching, imports
 - ✅ Transactions `@atomic` avec audit logging
@@ -38,6 +43,7 @@
 - ✅ Interop Python : Import modules, appel fonctions
 
 **Tests & Docs** :
+
 - ✅ 273 tests pytest
 - ✅ TUTORIAL.md complet
 - ✅ Performance : 0.49s benchmark
@@ -47,17 +53,18 @@
 #### 1. **Types Manquants**
 
 | Type INDICATIONS_TECHNIQUES.md | Status NORMiL | Priorité |
-|-------------------------------|---------------|----------|
-| `InstinctPackage` | ❌ Manquant | CRITIQUE |
-| `IndexEntry` (HNSW-like) | ❌ Manquant | ÉLEVÉE |
-| `ValidationManifest` | ❌ Manquant | MOYENNE |
-| `MetaParams` | ❌ Manquant | MOYENNE |
-| `SafetyGuardrail` | ❌ Manquant | CRITIQUE |
-| `AuditLogEntry` | ❌ Manquant | ÉLEVÉE |
+| ------------------------------ | ------------- | --------- |
+| `InstinctPackage`            | ❌ Manquant   | CRITIQUE  |
+| `IndexEntry` (HNSW-like)     | ❌ Manquant   | ÉLEVÉE  |
+| `ValidationManifest`         | ❌ Manquant   | MOYENNE   |
+| `MetaParams`                 | ❌ Manquant   | MOYENNE   |
+| `SafetyGuardrail`            | ❌ Manquant   | CRITIQUE  |
+| `AuditLogEntry`              | ❌ Manquant   | ÉLEVÉE  |
 
 #### 2. **Primitives Manquantes**
 
 **Index & Retrieval** :
+
 - ❌ `fastindex_query(vec, k, filters)` - Top-k retrieval
 - ❌ `hnsw_insert(vec, metadata)` - Insert dans index
 - ❌ `bloom_contains(filter, key)` - Bloom filter check
@@ -65,18 +72,21 @@
 - ❌ `rerank_neural(candidates, query)` - Re-scoring
 
 **Consolidation** :
+
 - ❌ `priority_sample(episodes, k)` - Replay priorisé
 - ❌ `distill_to_semantic(episodes)` - Compression épisodique → sémantique
 - ❌ `cluster_centroids(vecs, k)` - K-means online
 - ❌ `forgetting_policy(memory, age, utility)` - Gestion oubli
 
 **Instinct Core** :
+
 - ❌ `validate_overlay(overlay, tests)` - Validation overlay
 - ❌ `sign_package(package, private_key)` - Signature crypto
 - ❌ `verify_signature(package, public_key)` - Vérification
 - ❌ `score_prototypes(vec, protos)` - Matching instinct
 
 **Safety & Governance** :
+
 - ❌ `check_guardrail(action, context)` - Vérification sécurité
 - ❌ `require_consent(action, user)` - Consentement obligatoire
 - ❌ `audit_append(log, entry)` - Append-only logging
@@ -84,6 +94,7 @@
 - ❌ `rollback_to_snapshot(state, snapshot_id)` - Rollback
 
 **Multimodal** :
+
 - ❌ `embed_image(image, encoder)` - Encodage image → Vec
 - ❌ `embed_audio(audio, encoder)` - Encodage audio → Vec
 - ❌ `temporal_align(streams, window_ms)` - Synchro temporelle
@@ -92,6 +103,7 @@
 #### 3. **Syntaxe Manquante**
 
 **Pattern Matching Temporel** :
+
 ```normil
 // ❌ PAS ENCORE IMPLÉMENTÉ
 match sequence_of_events {
@@ -102,6 +114,7 @@ match sequence_of_events {
 ```
 
 **Hooks Runtime** :
+
 ```normil
 // ❌ PAS ENCORE IMPLÉMENTÉ
 @before_transaction(fn_name) {
@@ -114,6 +127,7 @@ match sequence_of_events {
 ```
 
 **Sandbox Déclaratif** :
+
 ```normil
 // ❌ PAS ENCORE IMPLÉMENTÉ
 @sandboxed(
@@ -146,6 +160,7 @@ fn untrusted_plugin(input: Vec) -> Vec {
 #### A. Nouveaux Types
 
 **1. InstinctPackage** (CRITIQUE)
+
 ```normil
 type InstinctPackage = {
     package_id: String,
@@ -172,6 +187,7 @@ type InstinctOverlay = {
 ```
 
 **2. SafetyGuardrail** (CRITIQUE)
+
 ```normil
 type SafetyGuardrail = {
     id: String,
@@ -190,6 +206,7 @@ type ConsentRequest = {
 ```
 
 **3. AuditLogEntry** (ÉLEVÉE)
+
 ```normil
 type AuditLogEntry = {
     id: String,
@@ -204,6 +221,7 @@ type AuditLogEntry = {
 ```
 
 **4. IndexEntry** (ÉLEVÉE)
+
 ```normil
 type IndexEntry = {
     id: String,
@@ -218,6 +236,7 @@ type IndexEntry = {
 #### B. Primitives Critiques
 
 **Index & Retrieval** :
+
 ```normil
 // Top-k retrieval avec filtres
 fn fastindex_query(vec: Vec, k: Int, filters: Map<String, String>) -> List<IndexEntry>
@@ -230,6 +249,7 @@ fn rerank_neural(candidates: List<IndexEntry>, query: Vec, model: RerankModel) -
 ```
 
 **Safety & Governance** :
+
 ```normil
 // Vérification guardrail
 fn check_guardrail(action: String, context: Map<String, Any>) -> Result<(), GuardrailViolation>
@@ -245,6 +265,7 @@ fn hash_chain_verify(log: AuditLog) -> Result<(), IntegrityError>
 ```
 
 **Instinct Core** :
+
 ```normil
 // Signature cryptographique
 fn sign_package(package: InstinctPackage, private_key: String) -> InstinctPackage
@@ -257,6 +278,7 @@ fn score_prototypes(vec: Vec, protos: List<ProtoInstinct>) -> List<(String, Floa
 ```
 
 **Consolidation** :
+
 ```normil
 // Replay priorisé
 fn priority_sample(episodes: List<EpisodicRecord>, k: Int, 
@@ -312,14 +334,14 @@ import normil.perception as perc
 fn perception_pipeline(camera: Camera, mic: Microphone) -> Vec {
     let img_frame = camera.capture()
     let audio_frame = mic.capture(window_ms=500)
-    
+  
     // Encodage
     let vec_img = perc.embed_image(img_frame, perc.MobileNetQ8)
     let vec_audio = perc.embed_audio(audio_frame, perc.TinyWavenet)
-    
+  
     // Fusion
     let vec_combined = perc.fusion_concat([vec_img, vec_audio])
-    
+  
     return vec_combined
 }
 ```
@@ -370,7 +392,7 @@ fn hybrid_reasoner(input: Vec, context: List<EpisodicRecord>) -> Vec {
         cost_budget=1.0, 
         latency_target_ms=200
     )
-    
+  
     let result = if path == "shortpass" {
         let (output, confidence) = reason.neural_shortpass(
             input, 
@@ -384,17 +406,17 @@ fn hybrid_reasoner(input: Vec, context: List<EpisodicRecord>) -> Vec {
             context_to_map(context),
             instinct_rules()
         )
-        
+      
         let (output, trace) = reason.neural_longpass(
             input,
             reason.DeepNet,
             context
         )
-        
+      
         audit_append(trace)
         output
     }
-    
+  
     return result
 }
 ```
@@ -427,6 +449,7 @@ EpisodicRecord(id=a1b2c3d4..., timestamp=1730419200.0, trust=0.90)
 ```
 
 **Features** :
+
 - Exécution interactive ligne par ligne
 - Historique de commandes (readline)
 - Introspection de variables (`inspect(v)`)
@@ -451,6 +474,7 @@ for trace in traces {
 ```
 
 **Features** :
+
 - Annotation `@trace` pour logging automatique
 - `get_execution_traces(fn_name)` pour récupérer traces
 - Profiling par fonction (CPU, mémoire)
@@ -473,6 +497,7 @@ viz.plot_metrics("loss", "run_001")
 ```
 
 **Features** :
+
 - `log_metric(name, value, step)` - Logging scalaire
 - `log_histogram(name, vec, step)` - Distribution
 - Export CSV/JSON pour analyse externe
@@ -495,6 +520,7 @@ normil run --debug --breakpoints="train_step,update_weights" examples/debug.nor
 ```
 
 **Features** :
+
 - `--profile` : Profiling CPU/mémoire
 - `--export-metrics` : Export JSON automatique
 - `--debug` : Mode debug avec breakpoints
@@ -518,6 +544,7 @@ normil run --debug --breakpoints="train_step,update_weights" examples/debug.nor
 #### A. Exemples Complets
 
 **1. Perception Pipeline** (`examples/oredmind_perception.nor`)
+
 ```normil
 import normil.perception as perc
 import normil.index as idx
@@ -526,31 +553,31 @@ fn oredmind_perception_loop(camera: Camera, mic: Mic,
                             episodic: EpisodicStore, 
                             index: FastIndex) {
     let frame_count = 0
-    
+  
     while true {
         // 1. Capture multimodale
         let img = camera.capture()
         let audio = mic.capture(window_ms=500)
-        
+      
         // 2. Encodage
         let vec_img = perc.embed_image(img, perc.MobileNetQ8)
         let vec_audio = perc.embed_audio(audio, perc.TinyWavenet)
-        
+      
         // 3. Fusion temporelle
         let aligned = perc.temporal_align({
             "img": vec_img,
             "audio": vec_audio
         }, window_ms=500)
-        
+      
         let vec_combined = perc.fusion_concat([aligned.img, aligned.audio])
-        
+      
         // 4. Append episodic
         let record = EpisodicRecord.create(
             summary=f"Frame {frame_count}",
             vec=vec_combined,
             trust=0.9
         )
-        
+      
         @atomic {
             episodic.append(record)
             idx.hnsw_insert(index, vec_combined, {
@@ -558,9 +585,9 @@ fn oredmind_perception_loop(camera: Camera, mic: Mic,
                 "timestamp": record.timestamp
             })
         }
-        
+      
         frame_count = frame_count + 1
-        
+      
         // 5. Sleep 100ms (10 FPS)
         sleep_ms(100)
     }
@@ -568,6 +595,7 @@ fn oredmind_perception_loop(camera: Camera, mic: Mic,
 ```
 
 **2. Hybrid Reasoner** (`examples/oredmind_reasoner.nor`)
+
 ```normil
 import normil.reasoner as reason
 import normil.index as idx
@@ -579,13 +607,13 @@ fn oredmind_reasoner(input: Vec,
                      instinct_pkg: InstinctPackage) -> Vec {
     // 1. Retrieval
     let candidates = idx.fastindex_query(input, k=16, {})
-    
+  
     // 2. Instinct scoring
     let proto_scores = inst.score_prototypes(input, instinct_pkg.core.prototypes)
-    
+  
     // 3. Meta-controller
     let path = reason.meta_controller_decide(input, cost_budget=1.0, latency_target_ms=200)
-    
+  
     // 4. Shortpass ou longpass
     let output = if path == "shortpass" {
         let (out, confidence) = reason.neural_shortpass(
@@ -600,22 +628,23 @@ fn oredmind_reasoner(input: Vec,
             context_from_candidates(candidates),
             instinct_pkg.core.rules
         )
-        
+      
         let (out, trace) = reason.neural_longpass(
             input,
             reason.DeepNet,
             candidates
         )
-        
+      
         audit_append(trace)
         out
     }
-    
+  
     return output
 }
 ```
 
 **3. Consolidation Worker** (`examples/oredmind_consolidation.nor`)
+
 ```normil
 import normil.consolidation as cons
 import normil.index as idx
@@ -625,7 +654,7 @@ fn oredmind_consolidation_worker(episodic: EpisodicStore,
                                  schedule_interval_ms: Int) {
     while true {
         sleep_ms(schedule_interval_ms)
-        
+      
         // 1. Priority sampling (replay)
         let priority_fn = fn(record: EpisodicRecord) -> Float {
             // Priorité = f(reward, novelty, recency)
@@ -633,26 +662,26 @@ fn oredmind_consolidation_worker(episodic: EpisodicStore,
             let recency = 1.0 / (now() - record.timestamp + 1.0)
             return novelty * 0.5 + recency * 0.5
         }
-        
+      
         let episodes = cons.priority_sample(
             episodic.get_all(),
             k=100,
             priority_fn
         )
-        
+      
         // 2. Distillation → sémantique
         let concept = cons.distill_to_semantic(episodes)
-        
+      
         // 3. Upsert semantic store
         @atomic {
             semantic.upsert(concept)
-            
+          
             // 4. Marquer épisodes comme consolidés
             for ep in episodes {
                 ep.metadata["consolidated"] = true
             }
         }
-        
+      
         // 5. Forgetting policy
         let old_episodes = episodic.get_older_than(days=30)
         for ep in old_episodes {
@@ -662,7 +691,7 @@ fn oredmind_consolidation_worker(episodic: EpisodicStore,
                 utility=compute_utility(ep),
                 threshold=0.1
             )
-            
+          
             if should_forget {
                 episodic.remove(ep.id)
             }
@@ -672,6 +701,7 @@ fn oredmind_consolidation_worker(episodic: EpisodicStore,
 ```
 
 **4. Safety Layer** (`examples/oredmind_safety.nor`)
+
 ```normil
 import normil.safety as safe
 
@@ -699,7 +729,7 @@ fn oredmind_safe_action(action: Action, user: User, audit_log: AuditLog) -> Resu
             action.type,
             {"action": action, "user": user}
         )
-        
+      
         if violation.is_err() {
             if guardrail.require_consent {
                 // 2. Requête consentement
@@ -709,9 +739,9 @@ fn oredmind_safe_action(action: Action, user: User, audit_log: AuditLog) -> Resu
                     data_accessed: action.data_paths,
                     expiry_ttl: 3600000  // 1h
                 }
-                
+              
                 let consent = safe.require_consent(consent_req, user)
-                
+              
                 if consent.is_err() {
                     // Audit refus
                     safe.audit_append(audit_log, AuditLogEntry {
@@ -724,7 +754,7 @@ fn oredmind_safe_action(action: Action, user: User, audit_log: AuditLog) -> Resu
                         prev_hash: audit_log.last_hash(),
                         signature: sign(user.private_key, action)
                     })
-                    
+                  
                     return Err("Consent denied")
                 }
             } else {
@@ -732,10 +762,10 @@ fn oredmind_safe_action(action: Action, user: User, audit_log: AuditLog) -> Resu
             }
         }
     }
-    
+  
     // 3. Execute action
     let result = execute_action(action)
-    
+  
     // 4. Audit success
     safe.audit_append(audit_log, AuditLogEntry {
         id: generate_uuid(),
@@ -747,12 +777,13 @@ fn oredmind_safe_action(action: Action, user: User, audit_log: AuditLog) -> Resu
         prev_hash: audit_log.last_hash(),
         signature: sign(user.private_key, action)
     })
-    
+  
     return result
 }
 ```
 
 **5. Instinct Governance** (`examples/oredmind_instinct.nor`)
+
 ```normil
 import normil.instinct as inst
 import normil.safety as safe
@@ -763,21 +794,21 @@ fn oredmind_instinct_governance(
     tests: List<ValidationTest>,
     audit_log: AuditLog
 ) -> Result<InstinctPackage, Error> {
-    
+  
     // 1. Sandbox tests
     let test_results = []
     for test in tests {
         let result = inst.run_test_sandboxed(overlay_candidate, test)
         test_results.push(result)
     }
-    
+  
     // 2. Vérifier tous tests passent
     let all_passed = test_results.all(fn(r) { r.passed })
-    
+  
     if !all_passed {
         return Err("Overlay tests failed")
     }
-    
+  
     // 3. Validation signature
     let validation_manifest = ValidationManifest {
         tests_passed: test_results.map(fn(r) { r.test_id }),
@@ -786,14 +817,14 @@ fn oredmind_instinct_governance(
         validators: ["validator_1", "validator_2"],
         timestamp: now()
     }
-    
+  
     // 4. Signature overlay
     let signed_overlay = inst.sign_overlay(
         overlay_candidate,
         validation_manifest,
         private_key="org_private_key"
     )
-    
+  
     // 5. Créer package
     let package = InstinctPackage {
         package_id: generate_uuid(),
@@ -804,7 +835,7 @@ fn oredmind_instinct_governance(
         overlay: signed_overlay,
         validation_manifest: validation_manifest
     }
-    
+  
     // 6. Audit
     safe.audit_append(audit_log, AuditLogEntry {
         id: generate_uuid(),
@@ -816,7 +847,7 @@ fn oredmind_instinct_governance(
         prev_hash: audit_log.last_hash(),
         signature: sign("org_private_key", package)
     })
-    
+  
     return Ok(package)
 }
 ```
@@ -835,6 +866,7 @@ fn oredmind_instinct_governance(
 #### C. Guide Architecture
 
 **`docs/OREDMIND_ARCHITECTURE.md`** :
+
 - Mapping INDICATIONS_TECHNIQUES.md → NORMiL
 - Modules NORMiL pour chaque brique O-RedMind
 - Patterns recommandés
@@ -846,15 +878,16 @@ fn oredmind_instinct_governance(
 
 ### Livrables
 
-| Semaine | Focus | Livrables | Tests |
-|---------|-------|-----------|-------|
-| 1-2 | Types & Primitives | 4 types + 15 primitives | +110 |
-| 3 | Multimodal | Module perception | +50 |
-| 4 | Reasoner | Module reasoner | +60 |
-| 5-6 | Dev Tools | REPL + Viz + CLI | +40 |
-| 7 | Documentation | 5 exemples + 8 leçons | - |
+| Semaine | Focus              | Livrables               | Tests |
+| ------- | ------------------ | ----------------------- | ----- |
+| 1-2     | Types & Primitives | 4 types + 15 primitives | +110  |
+| 3       | Multimodal         | Module perception       | +50   |
+| 4       | Reasoner           | Module reasoner         | +60   |
+| 5-6     | Dev Tools          | REPL + Viz + CLI        | +40   |
+| 7       | Documentation      | 5 exemples + 8 leçons  | -     |
 
-**Total** : 
+**Total** :
+
 - ✅ 4 nouveaux types complexes
 - ✅ ~25 nouvelles primitives
 - ✅ 3 nouveaux modules (`perception`, `reasoner`, `safety`)
@@ -866,6 +899,7 @@ fn oredmind_instinct_governance(
 ### Critère de Succès
 
 **Phase 8 réussie si** :
+
 1. ✅ Tous les types INDICATIONS_TECHNIQUES.md sont implémentés
 2. ✅ Pipeline perception multimodale fonctionne nativement en NORMiL
 3. ✅ Reasoner hybride (neural + symbolique) est codable élégamment
@@ -876,9 +910,10 @@ fn oredmind_instinct_governance(
 8. ✅ 5 exemples O-RedMind complets fonctionnent
 
 **Validation finale** :
+
 > *"Peut-on ÉCRIRE le système O-RedMind complet en NORMiL pur, de manière NATIVE et ÉLÉGANTE, sans hacks Python ?"*
 
-Si **OUI** → Phase 8 succès ✅  
+Si **OUI** → Phase 8 succès ✅
 Si **NON** → Identifier gaps et itérer
 
 ---
@@ -895,7 +930,7 @@ Si **NON** → Identifier gaps et itérer
 
 ---
 
-**Auteur** : GitHub Copilot  
-**Date** : Novembre 2025  
-**Version** : NORMiL Phase 8 - O-RedMind Focus  
+**Auteur** : GitHub Copilot
+**Date** : Novembre 2025
+**Version** : NORMiL Phase 8 - O-RedMind Focus
 **Status** : 🎯 PRÊT POUR VALIDATION

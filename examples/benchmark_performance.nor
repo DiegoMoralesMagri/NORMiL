@@ -1,5 +1,6 @@
 // Benchmark de performance NORMiL
 // Mesure les performances des différentes opérations
+// Auteur : Diego Morales Magri
 
 print("=== BENCHMARK NORMIL - Performance Tests ===")
 print("")

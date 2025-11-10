@@ -1,8 +1,8 @@
 # NORMiL - Neuro OpenRed Mind Language
 
-**Version** : 0.1.0 MVP ✅  
-**Date** : Janvier 2025  
-**Auteur** : Diego Morales Magri  
+**Version** : 0.1.0 MVP ✅
+**Date** : Novembre 2025
+**Auteur** : Diego Morales Magri
 **Statut** : **FONCTIONNEL** - MVP complet, hello.nor exécutable
 
 ---
@@ -54,92 +54,105 @@ normil/
 ## 🚀 Roadmap de Développement
 
 ### Phase 1 : Fondations ✅ **TERMINÉ**
-- [x] Structure du projet
-- [x] Grammaire formale et AST (40+ types de nœuds)
-- [x] Lexer complet (60+ types de tokens)
-- [x] Parser récursif descendant
-- [x] Executor fonctionnel
-- [x] CLI (run, parse, tokenize)
-- [x] Types natifs de base (int, float, str, bool, Vec)
+
+- [X] Structure du projet
+- [X] Grammaire formale et AST (40+ types de nœuds)
+- [X] Lexer complet (60+ types de tokens)
+- [X] Parser récursif descendant
+- [X] Executor fonctionnel
+- [X] CLI (run, parse, tokenize)
+- [X] Types natifs de base (int, float, str, bool, Vec)
 
 ### Phase 2 : Pattern Matching & Annotations ✅ **TERMINÉ**
-- [x] Pattern matching complet (literals, wildcards, type extraction, where conditions)
-- [x] Annotations @plastic et @atomic (parsing + métadonnées)
-- [x] 45+ Primitives vectorielles essentielles
-- [x] Arguments nommés
-- [x] Tests unitaires complets (155+ tests)
+
+- [X] Pattern matching complet (literals, wildcards, type extraction, where conditions)
+- [X] Annotations @plastic et @atomic (parsing + métadonnées)
+- [X] 45+ Primitives vectorielles essentielles
+- [X] Arguments nommés
+- [X] Tests unitaires complets (155+ tests)
 
 ### Phase 3 : Modularité & Interopérabilité Python ✅ **TERMINÉ**
-- [x] Inférence de types automatique (Phase 3.1)
-- [x] Système de modules et imports (Phase 3.2)
-- [x] Opérations sur chaînes (Phase 3.3)
-- [x] Interopérabilité Python complète (Phase 4):
+
+- [X] Inférence de types automatique (Phase 3.1)
+- [X] Système de modules et imports (Phase 3.2)
+- [X] Opérations sur chaînes (Phase 3.3)
+- [X] Interopérabilité Python complète (Phase 4):
   - Import de modules Python
   - Appel de fonctions Python
   - Accès aux objets et méthodes Python
   - Conversions de types automatiques
 
 ### Phase 5 : Types O-RedMind ✅ **TERMINÉ**
-- [x] EpisodicRecord : Mémoire épisodique horodatée (Phase 5.1)
-- [x] Concept : Mémoire sémantique compressée (Phase 5.2)
-- [x] ProtoInstinct : Comportements instinctifs (Phase 5.3)
-- [x] SparseVec : Vecteurs creux optimisés (Phase 5.4)
-- [x] Documentation complète (Phase 5.5)
-- [x] **178 tests passent (100% succès)**
+
+- [X] EpisodicRecord : Mémoire épisodique horodatée (Phase 5.1)
+- [X] Concept : Mémoire sémantique compressée (Phase 5.2)
+- [X] ProtoInstinct : Comportements instinctifs (Phase 5.3)
+- [X] SparseVec : Vecteurs creux optimisés (Phase 5.4)
+- [X] Documentation complète (Phase 5.5)
+- [X] **178 tests passent (100% succès)**
 
 ### Phase 6 : Primitives Neurales & Transactions ✅ **TERMINÉ**
-- [x] lowrankupdate(W, u, v) - Mise à jour low-rank W' = W + u⊗v (Phase 6.1)
-- [x] quantize(vec, bits) - Quantisation 8/4 bits pour compression (Phase 6.2)
-- [x] onlinecluster_update(centroid, x, lr) - Clustering incrémental (Phase 6.3)
-- [x] Système de transactions avec audit logging automatique (Phase 6.4)
-- [x] 25 tests pytest + 6 tests NORMiL validés (Phase 6.5)
-- [x] **203 tests passent avant Phase 7 (100% succès)**
+
+- [X] lowrankupdate(W, u, v) - Mise à jour low-rank W' = W + u⊗v (Phase 6.1)
+- [X] quantize(vec, bits) - Quantisation 8/4 bits pour compression (Phase 6.2)
+- [X] onlinecluster_update(centroid, x, lr) - Clustering incrémental (Phase 6.3)
+- [X] Système de transactions avec audit logging automatique (Phase 6.4)
+- [X] 25 tests pytest + 6 tests NORMiL validés (Phase 6.5)
+- [X] **203 tests passent avant Phase 7 (100% succès)**
 
 ### Phase 7 : Plasticité Neuronale Avancée ✅ TERMINÉE
-- [x] @plastic enrichie avec `stability_threshold` (détection convergence)
-- [x] Modes de plasticité : `hebbian`, `stdp`, `anti_hebbian`
-- [x] Primitives : `normalize_plasticity()`, `decay_learning_rate()`, `compute_stability()`
-- [x] Gestion automatique : normalisation, decay LR, vérification stabilité
-- [x] 27 tests pytest + 11 sections NORMiL validés (Phase 7.5)
-- [x] Documentation complète (TUTORIAL Niveau 7, API_REFERENCE, PHASE_7_SUMMARY)
-- [x] **230 tests passent (100% succès)**
+
+- [X] @plastic enrichie avec `stability_threshold` (détection convergence)
+- [X] Modes de plasticité : `hebbian`, `stdp`, `anti_hebbian`
+- [X] Primitives : `normalize_plasticity()`, `decay_learning_rate()`, `compute_stability()`
+- [X] Gestion automatique : normalisation, decay LR, vérification stabilité
+- [X] 27 tests pytest + 11 sections NORMiL validés (Phase 7.5)
+- [X] Documentation complète (TUTORIAL Niveau 7, API_REFERENCE, PHASE_7_SUMMARY)
+- [X] **230 tests passent (100% succès)**
 
 ### Phase 8 : NORMiL pour O-RedMind ⏳ EN COURS
+
 **Objectif** : Compléter NORMiL pour écrire l'architecture O-RedMind
 
 #### Phase 8.1 : Types & Primitives Critiques ✅ TERMINÉE
-- [x] Types O-RedMind : `InstinctPackage`, `SafetyGuardrail`, `IndexEntry`, `AuditLogEntry`
-- [x] Primitives Index & Retrieval (7) : `fastindex_query`, `hnsw_insert`, `bloom_*`, `lru_cache_*`, `rerank_neural`
-- [x] Primitives Safety & Governance (6) : `check_guardrail`, `require_consent`, `audit_append`, `hash_chain_verify`, etc.
-- [x] Primitives Instinct Core (4) : `score_prototypes`, `sign_package`, `verify_signature`, `validate_overlay`
-- [x] Primitives Consolidation (4) : `priority_sample`, `distill_to_semantic`, `cluster_centroids`, `forgetting_policy`
-- [x] 17 nouveaux tests pytest - **290 tests passent (100% succès)**
+
+- [X] Types O-RedMind : `InstinctPackage`, `SafetyGuardrail`, `IndexEntry`, `AuditLogEntry`
+- [X] Primitives Index & Retrieval (7) : `fastindex_query`, `hnsw_insert`, `bloom_*`, `lru_cache_*`, `rerank_neural`
+- [X] Primitives Safety & Governance (6) : `check_guardrail`, `require_consent`, `audit_append`, `hash_chain_verify`, etc.
+- [X] Primitives Instinct Core (4) : `score_prototypes`, `sign_package`, `verify_signature`, `validate_overlay`
+- [X] Primitives Consolidation (4) : `priority_sample`, `distill_to_semantic`, `cluster_centroids`, `forgetting_policy`
+- [X] 17 nouveaux tests pytest - **290 tests passent (100% succès)**
 
 #### Phase 8.2 : Multimodal & Perception ✅ TERMINÉE
-- [x] Types : `ImageTensor`, `AudioSegment`, `ModalityFusion`
-- [x] Primitives multimodales (8) : `embed_image`, `embed_audio`, `temporal_align`, `cross_attention`, `fusion_concat`, `fusion_weighted`, `vision_patch_extract`, `audio_spectrogram`
-- [x] 49 nouveaux tests pytest - **339 tests passent (100% succès)**
+
+- [X] Types : `ImageTensor`, `AudioSegment`, `ModalityFusion`
+- [X] Primitives multimodales (8) : `embed_image`, `embed_audio`, `temporal_align`, `cross_attention`, `fusion_concat`, `fusion_weighted`, `vision_patch_extract`, `audio_spectrogram`
+- [X] 49 nouveaux tests pytest - **339 tests passent (100% succès)**
 
 #### Phase 8.3 : Reasoner Hybride (Planifiée)
+
 - [ ] Primitives reasoning : `symbolic_match`, `neural_shortpass`, `neural_longpass`, `meta_controller_decide`
 - [ ] Module `normil.reasoner`
 - [ ] ~60 nouveaux tests
 
 #### Phase 8.4 : Dev Tools (Planifiée)
+
 - [ ] REPL amélioré avec introspection
 - [ ] Annotation `@trace` pour debugging
 - [ ] Visualisation (`normil.viz`)
 - [ ] CLI enrichi (`--profile`, `--debug`)
 
 #### Phase 8.5 : Documentation & Exemples (Planifiée)
+
 - [ ] 5 exemples O-RedMind complets (perception, reasoner, consolidation, safety, instinct)
 - [ ] 8 nouvelles leçons TUTORIAL
 - [ ] Guide architecture `OREDMIND_ARCHITECTURE.md`
 
 **Sécurité & Gouvernance** (déjà partiellement implémenté en 8.1) :
-- [x] Signatures cryptographiques de modules (`sign_package`, `verify_signature`)
-- [x] Audit logs automatiques avec hash chaining (`AuditLogEntry`, `audit_append`, `hash_chain_verify`)
-- [x] Rollback et versioning (`rollback_to_snapshot`)
+
+- [X] Signatures cryptographiques de modules (`sign_package`, `verify_signature`)
+- [X] Audit logs automatiques avec hash chaining (`AuditLogEntry`, `audit_append`, `hash_chain_verify`)
+- [X] Rollback et versioning (`rollback_to_snapshot`)
 - [ ] Sandbox I/O (whitelist/blacklist) - À compléter
 
 **Cible Phase 8 complète** : 533 tests total
@@ -167,6 +180,7 @@ fn main() {
 ```
 
 ### REPL Interactif
+
 ```
 ╔═══════════════════════════════════════════════════════╗
 ║         NORMiL REPL v0.1.0                            ║
@@ -190,38 +204,45 @@ fn main() {
 ## 🔧 Installation et Utilisation
 
 ### Installation
+
 ```bash
 cd openredNetwork/modules/ia2/normil
 pip install numpy
 ```
 
 ### REPL Interactif (Nouveau ! ✨)
+
 ```bash
 python normil_repl.py
 ```
 
 Le REPL offre :
+
 - Exécution interactive ligne par ligne
 - Historique des commandes (`history`)
 - Mode multi-lignes pour fonctions/blocs
 - Commandes : `help`, `clear`, `reset`, `exit`
 
 ### Exécuter un script NORMiL
+
 ```bash
 python normil_cli.py run examples/hello.nor
 ```
 
 ### Parser et afficher l'AST
+
 ```bash
 python normil_cli.py parse examples/hello.nor
 ```
 
 ### Tokenizer un fichier
+
 ```bash
 python normil_cli.py tokenize examples/hello.nor
 ```
 
 ### Tests unitaires
+
 ```bash
 python test_lexer.py
 python test_parser.py
@@ -234,35 +255,41 @@ python test_named_args.py
 
 ## � Phase 8 - NORMiL pour O-RedMind ✅
 
-**Status** : ✅ **TERMINÉ** (Novembre 2025)  
-**Tests** : 416/416 passent (100%)  
-**Exemples** : 5 modules O-RedMind complets  
+**Status** : ✅ **TERMINÉ** (Novembre 2025)
+**Tests** : 416/416 passent (100%)
+**Exemples** : 5 modules O-RedMind complets
 
 ### Nouveautés Phase 8
 
 **Types O-RedMind** :
+
 - `InstinctPackage`, `SafetyGuardrail`, `AuditLogEntry`, `IndexEntry`
 - `Rule`, `ImageTensor`, `AudioSegment`, `ModalityFusion`
 
 **Primitives Multimodales** :
+
 - `embed_image()`, `embed_audio()`, `temporal_align()`
 - `cross_attention()`, `fusion_concat()`
 
 **Reasoner Hybride** :
+
 - `neural_shortpass()`, `neural_longpass()`
 - `symbolic_match()`, `meta_controller_decide()`
 
 **Safety & Governance** :
+
 - `check_guardrail()`, `require_consent()`
 - `audit_append()`, `verify_hash_chain()`
 
 **DevTools** :
+
 - `introspect_type()`, `trace_execution()`
 - `viz_vec_space()`, `viz_attention()`
 
 ### Exemples O-RedMind
 
 Consultez `examples/` pour 5 modules complets :
+
 1. **Perception Pipeline** (`oredmind_perception.nor`) - 280 lignes
 2. **Hybrid Reasoner** (`oredmind_reasoner.nor`) - 350 lignes
 3. **Consolidation Worker** (`oredmind_consolidation.nor`) - 420 lignes
@@ -292,7 +319,9 @@ Consultez `examples/` pour 5 modules complets :
 NORMiL est un langage vivant qui évoluera avec O-RedMind. Les contributions sont bienvenues !
 
 ### Brainstorming en cours
+
 Nous développons actuellement les aspects suivants :
+
 - Syntaxe optimale pour la manipulation de vecteurs
 - Système de types avec inférence
 - Mécanismes de plasticité et apprentissage
@@ -301,4 +330,3 @@ Nous développons actuellement les aspects suivants :
 ---
 
 **NORMiL : Le langage qui parle le cerveau de l'IA** 🧠
-

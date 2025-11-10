@@ -1,5 +1,7 @@
 """
 Tests pour les primitives de Learning Rate Scheduling (Phase 7.9)
+=============================================
+Auteur : Diego Morales Magri
 """
 import pytest
 from runtime.primitives import (

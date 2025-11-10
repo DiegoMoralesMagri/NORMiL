@@ -1,5 +1,6 @@
 // Test ProtoInstinct - Phase 5.3
 // Structure: id, vec_ref, rule, weight
+// Auteur : Diego Morales Magri
 
 print("=== Test ProtoInstinct - Phase 5.3 ===")
 print("")

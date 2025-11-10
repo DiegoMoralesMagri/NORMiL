@@ -1,5 +1,9 @@
 """
 Tests pour les primitives de plasticité (Phase 7.3)
+=========================================
+
+Auteur : Diego Morales Magri
+
 Tests unitaires pour normalize_plasticity, decay_learning_rate, compute_stability
 """
 

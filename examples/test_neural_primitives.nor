@@ -1,5 +1,6 @@
 // ========================================
 // Test Neural Primitives - Phase 6
+// Auteur : Diego Morales Magri
 // ========================================
 // Tests complets pour lowrankupdate, quantize, onlinecluster_update
 

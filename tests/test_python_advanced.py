@@ -1,5 +1,7 @@
 """
 Tests pour la Phase 4.2 - Appels avancés de fonctions Python
+=========================================
+Auteur : Diego Morales Magri
 """
 
 import sys

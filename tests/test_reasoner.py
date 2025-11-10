@@ -1,5 +1,7 @@
 """
 Tests pour les primitives de reasoner hybride Phase 8.3
+============================================
+Auteur : Diego Morales Magri
 """
 
 import pytest

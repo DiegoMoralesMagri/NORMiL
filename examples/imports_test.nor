@@ -1,4 +1,5 @@
 // Test d'imports - Phase 3.2
+// Auteur : Diego Morales Magri
 
 import math
 import vectors as vec

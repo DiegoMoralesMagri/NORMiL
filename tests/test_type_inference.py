@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Tests pour l'inférence de types (Phase 3.1)
+=========================================
+Auteur : Diego Morales Magri
 """
 
 import sys

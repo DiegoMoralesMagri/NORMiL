@@ -1,5 +1,7 @@
 """
 Tests pour la Phase 4.3 - Conversions automatiques de types Python
+=========================================
+Auteur : Diego Morales Magri
 """
 
 import sys

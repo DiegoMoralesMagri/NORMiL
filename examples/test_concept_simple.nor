@@ -1,4 +1,5 @@
 // Test simple du type Concept pour NORMiL - Phase 5.2
+// Auteur : Diego Morales Magri
 
 print("=== Test Concept - Phase 5.2 ===")
 print("")

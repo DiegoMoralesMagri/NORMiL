@@ -1,5 +1,11 @@
 # NORMiL - Spécification du Langage v0.1
 
+
+**Date** : Novembre 2025
+**Auteur** : Diego Morales Magri
+
+---
+
 **Extension de fichier : `*.nor`**
 
 ## 📋 Table des Matières
@@ -12,7 +18,7 @@
 6. [Pattern Matching](#pattern-matching)
 7. [Transactions](#transactions)
 8. [Sandbox et Sécurité](#sandbox-et-sécurité)
-9. [Système d'Audit](#système-daudit)
+9. [Système d&#39;Audit](#système-daudit)
 
 ---
 
@@ -560,7 +566,7 @@ distributed transaction sync_with_peer(peer_id: str, data: list<EpisodicRecord>)
 # Transactions avec compensation ?
 compensating transaction process_with_undo(data: any) {
     let result = process(data)
-    
+  
     on_rollback {
         unprocess(result)  // Action de compensation
     }
@@ -680,18 +686,22 @@ audit_query("SELECT * FROM audit_log WHERE level='error' AND timestamp > ?", [ye
 ## 10. BRAINSTORM : Fonctionnalités Futures
 
 ### 10.1. Compilation ?
+
 - Compiler NORMiL vers bytecode pour performance ?
 - JIT compilation pour hot paths ?
 
 ### 10.2. Interopérabilité ?
+
 - Appeler du Python depuis NORMiL ?
 - Exporter des fonctions NORMiL pour Python ?
 
 ### 10.3. Debugging ?
+
 - Debugger avec breakpoints ?
 - Stepping et inspection de variables ?
 
 ### 10.4. IDE Support ?
+
 - Syntax highlighting ?
 - Autocomplétion ?
 - Linting et formatage ?
@@ -711,7 +721,7 @@ audit_query("SELECT * FROM audit_log WHERE level='error' AND timestamp > ?", [ye
 ## 💡 Questions Ouvertes pour Brainstorming
 
 1. **Syntaxe des opérations vectorielles** : Opérateurs spéciaux (.+, .*) ou fonctions explicites ?
-2. **Généricité** : Support des types génériques <T> ?
+2. **Généricité** : Support des types génériques `<T>` ?
 3. **Vecteurs dynamiques** : Dimension fixe ou permettre dim=? ?
 4. **Pattern matching avancé** : Sur vecteurs, graphes, séquences ?
 5. **Transactions distribuées** : Pour fédération d'IAs ?

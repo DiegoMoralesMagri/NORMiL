@@ -2,6 +2,8 @@
 NORMiL Parser Package
 =====================
 
+Auteur : Diego Morales Magri
+
 Analyseur lexical et syntaxique pour le langage NORMiL.
 
 Modules:

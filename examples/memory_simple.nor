@@ -1,6 +1,7 @@
 // ============================================
 // memory_simple.nor
 // Test simple des opérations mémoire
+// Auteur : Diego Morales Magri
 // ============================================
 
 fn main() {

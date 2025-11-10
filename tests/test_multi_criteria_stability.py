@@ -1,5 +1,7 @@
 """
 Tests pour les multi-critères de stabilité (Phase 7.8)
+=========================================
+Auteur : Diego Morales Magri
 """
 import pytest
 import numpy as np

@@ -1,6 +1,7 @@
 // ============================================
 // plastic_simple.nor
 // Démonstration simple de l'annotation @plastic
+// Auteur : Diego Morales Magri
 // ============================================
 
 // Fonction avec plasticité neuronale lente

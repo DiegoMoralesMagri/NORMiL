@@ -1,4 +1,5 @@
 // Module vectors - Opérations vectorielles avancées
+// Auteur : Diego Morales Magri
 // Peut être importé avec: import vectors
 
 fn create_normalized(dim: int, mean: float, std: float) -> Vec {

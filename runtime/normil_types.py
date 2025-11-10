@@ -2,6 +2,8 @@
 NORMiL Runtime Types
 ====================
 
+Auteur : Diego Morales Magri
+
 Implémentation des types natifs NORMiL en Python.
 
 Types principaux:

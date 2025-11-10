@@ -2,6 +2,8 @@
 NORMiL Lexer (Analyseur Lexical)
 =================================
 
+Auteur : Diego Morales Magri
+
 Tokenise le code source NORMiL en une séquence de tokens.
 
 Exemple:

@@ -1,5 +1,10 @@
 # O-RedMind Examples
 
+**Date :** Novembre 2025
+**Auteur :** Diego Morales Magri
+
+---
+
 **Exemples complets d'implémentation O-RedMind en NORMiL**
 
 Ce répertoire contient 5 exemples fonctionnels démontrant comment implémenter l'architecture O-RedMind en NORMiL.
@@ -11,6 +16,7 @@ Ce répertoire contient 5 exemples fonctionnels démontrant comment implémenter
 ### 1. Perception Pipeline (`oredmind_perception.nor`)
 
 **Démontre** :
+
 - Capture multimodale (caméra + microphone)
 - Encodage image/audio en vecteurs (`embed_image`, `embed_audio`)
 - Fusion temporelle (`temporal_align`)
@@ -19,11 +25,13 @@ Ce répertoire contient 5 exemples fonctionnels démontrant comment implémenter
 - Transactions atomiques (`@atomic`)
 
 **Usage** :
+
 ```bash
 normil run examples/oredmind_perception.nor
 ```
 
 **Output** :
+
 ```
 === O-RedMind Perception Pipeline ===
 Camera: 640x480 @ 10fps
@@ -47,6 +55,7 @@ Indexed vector (total entries: 1)
 ### 2. Hybrid Reasoner (`oredmind_reasoner.nor`)
 
 **Démontre** :
+
 - Meta-controller pour décision shortpass/longpass
 - Neural shortpass (inférence rapide)
 - Neural longpass (reasoning profond avec retrieval)
@@ -55,11 +64,13 @@ Indexed vector (total entries: 1)
 - Plasticité contrôlée (`@plastic`)
 
 **Usage** :
+
 ```bash
 normil run examples/oredmind_reasoner.nor
 ```
 
 **Output** :
+
 ```
 === O-RedMind Hybrid Reasoner ===
 Input dimension: 512
@@ -85,6 +96,7 @@ Latency target: 100ms
 ### 3. Consolidation Worker (`oredmind_consolidation.nor`)
 
 **Démontre** :
+
 - Priority sampling (replay priorisé DQN-style)
 - Distillation épisodique → sémantique
 - Clustering de concepts
@@ -92,11 +104,13 @@ Latency target: 100ms
 - Semantic store avec merge de concepts similaires
 
 **Usage** :
+
 ```bash
 normil run examples/oredmind_consolidation.nor
 ```
 
 **Output** :
+
 ```
 === O-RedMind Consolidation Worker ===
 Initial episodic records: 20
@@ -123,6 +137,7 @@ Remaining episodic: 17
 ### 4. Safety Layer (`oredmind_safety.nor`)
 
 **Démontre** :
+
 - Guardrails déclaratifs pour actions dangereuses
 - Système de consentement utilisateur
 - Audit logging avec hash chaining (immutabilité)
@@ -130,11 +145,13 @@ Remaining episodic: 17
 - Protection contre actions non autorisées
 
 **Usage** :
+
 ```bash
 normil run examples/oredmind_safety.nor
 ```
 
 **Output** :
+
 ```
 === O-RedMind Safety Layer Demo ===
 
@@ -163,6 +180,7 @@ User: alice
 ### 5. Instinct Governance (`oredmind_instinct.nor`)
 
 **Démontre** :
+
 - Tests de validation en sandbox
 - Création de validation manifest
 - Signature cryptographique des overlays
@@ -171,11 +189,13 @@ User: alice
 - Gouvernance multi-validateurs
 
 **Usage** :
+
 ```bash
 normil run examples/oredmind_instinct.nor
 ```
 
 **Output** :
+
 ```
 === O-RedMind Instinct Governance Demo ===
 
@@ -240,6 +260,7 @@ Pour comprendre comment ces exemples s'intègrent dans l'architecture complète 
 **Fichier** : `TUTORIAL.md`
 
 Leçons 8.1 à 8.8 couvrent :
+
 - Types O-RedMind
 - Perception multimodale
 - Index et retrieval
@@ -355,6 +376,7 @@ let GUARDRAILS = [
 **Q : Puis-je utiliser ces exemples en production ?**
 
 A : Ces exemples sont des **démonstrations éducatives**. Pour production :
+
 - Ajoutez gestion d'erreurs robuste
 - Implémentez persistance (sauvegardes disque)
 - Configurez logging/monitoring
@@ -363,6 +385,7 @@ A : Ces exemples sont des **démonstrations éducatives**. Pour production :
 **Q : Comment intégrer avec des modèles PyTorch/TensorFlow ?**
 
 A : Utilisez l'interop Python de NORMiL :
+
 ```normil
 import python.torch as torch
 
@@ -391,6 +414,7 @@ Pour contribuer de nouveaux exemples :
 5. Pull request avec description
 
 **Style** :
+
 - Suivre `STYLE_GUIDE.md`
 - Commentaires détaillés
 - Exemples auto-contenus
@@ -404,6 +428,6 @@ MIT License - voir `LICENSE` file
 
 ---
 
-**Auteur** : Diego Morales Magri  
-**Date** : Novembre 2025  
+**Auteur** : Diego Morales Magri
+**Date** : Novembre 2025
 **Version** : NORMiL Phase 8.5 - Examples O-RedMind

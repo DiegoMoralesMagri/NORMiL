@@ -2,6 +2,8 @@
 NORMiL Runtime Package
 ======================
 
+Auteur : Diego Morales Magri
+
 Runtime d'exécution pour NORMiL.
 
 Modules:

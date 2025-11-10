@@ -1,5 +1,7 @@
 """
 Tests pour la Phase 4.4 - Accès aux objets Python
+=========================================
+Auteur : Diego Morales Magri
 """
 
 import sys

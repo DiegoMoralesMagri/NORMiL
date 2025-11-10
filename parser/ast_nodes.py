@@ -2,6 +2,8 @@
 NORMiL AST Nodes (Abstract Syntax Tree)
 ========================================
 
+Auteur : Diego Morales Magri
+
 Définition des nœuds de l'arbre syntaxique abstrait pour NORMiL.
 
 Hiérarchie:

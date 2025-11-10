@@ -1,4 +1,11 @@
 # Tutorial NORMiL - De Zéro à Expert
+
+
+**Date** : Novembre 2025
+**Auteur** : Diego Morales Magri
+
+---
+
 ## Apprenez NORMiL par la pratique
 
 ---
@@ -22,11 +29,11 @@
 ```normil
 fn main() {
     print("Bonjour NORMiL!")
-    
+  
     let x: int = 10
     let y: int = 20
     let somme: int = x + y
-    
+  
     print("La somme est:")
     print(somme)
 }
@@ -47,7 +54,7 @@ fn main() {
     let temperature: float = 36.6
     let nom: str = "Alice"
     let actif: bool = true
-    
+  
     print("Informations:")
     print(nom)
     print(age)
@@ -71,12 +78,12 @@ fn main() {
     let temperature = 36.6    // Déduit: float
     let nom = "Alice"         // Déduit: str
     let actif = true          // Déduit: bool
-    
+  
     // Même avec des expressions
     let somme = 10 + 20       // Déduit: int
     let moyenne = 10.5 / 2.0  // Déduit: float
     let message = "Bonjour"   // Déduit: str
-    
+  
     print("L'inférence fonctionne!")
     print(age)
     print(somme)
@@ -84,6 +91,7 @@ fn main() {
 ```
 
 **Points clés** :
+
 - ✅ `let x = 42` au lieu de `let x: int = 42`
 - ✅ Fonctionne avec literals, expressions, retours de fonction
 - ✅ Déduction intelligente : bool → int → float → str → Vec
@@ -108,10 +116,10 @@ fn triple(x: int) -> int {
 
 fn main() {
     let nombre: int = 5
-    
+  
     let d = double(nombre)
     let t = triple(nombre)
-    
+  
     print("Double:")
     print(d)
     print("Triple:")
@@ -173,7 +181,7 @@ fn compter_range(debut: int, fin: int) {
 fn main() {
     print("While:")
     compter_jusque(5)
-    
+  
     print("For:")
     compter_range(0, 5)
 }
@@ -194,30 +202,31 @@ fn main() {
     let nom = "Dupont"
     let nom_complet = prenom + " " + nom
     print(nom_complet)  // "Alice Dupont"
-    
+  
     // Conversion vers string
     let age = 25
     let message = "J'ai " + to_string(age) + " ans"
     print(message)  // "J'ai 25 ans"
-    
+  
     // Primitives string
     let texte = "NORMiL"
     print(string_length(texte))        // 6
     print(string_upper(texte))         // "NORMIL"
     print(string_lower(texte))         // "normil"
-    
+  
     // Manipulation
     let phrase = "Hello World"
     print(string_substring(phrase, 0, 5))   // "Hello"
     print(string_replace(phrase, "World", "NORMiL"))  // "Hello NORMiL"
     print(string_contains(phrase, "World")) // true
-    
+  
     // Répétition
     print(string_repeat("Ha", 3))  // "HaHaHa"
 }
 ```
 
 **Primitives disponibles** :
+
 - `string_length(s: str) -> int` - Longueur de la chaîne
 - `string_upper(s: str) -> str` - En majuscules
 - `string_lower(s: str) -> str` - En minuscules
@@ -250,16 +259,16 @@ fn main() {
     let v2 = ones(dim: 64)
     let v3 = fill(dim: 64, value: 0.5)
     let v4 = random(dim: 64, mean: 0.0, std: 1.0)
-    
+  
     // Opérations
     let somme = vec_add(v1, v2)
     let produit = vec_mul(v2, v3)
     let double_v = scale(v2, 2.0)
-    
+  
     // Métriques
     print("Norme de v4:")
     print(norm(v4))
-    
+  
     print("Norme de somme:")
     print(norm(somme))
 }
@@ -274,6 +283,7 @@ fn main() {
 **Objectif** : Réutiliser du code avec le système de modules
 
 **Créez un module** : `modules/math_utils.nor`
+
 ```normil
 fn abs(x: float) -> float {
     if x < 0.0 {
@@ -301,6 +311,7 @@ fn min(a: float, b: float) -> float {
 ```
 
 **Utilisez le module** : `main.nor`
+
 ```normil
 import math_utils
 
@@ -308,13 +319,14 @@ fn main() {
     // Appel de fonctions du module
     let valeur = math_utils.abs(-42.0)
     print(valeur)  // 42.0
-    
+  
     let maximum = math_utils.max(10.0, 25.0)
     print(maximum)  // 25.0
 }
 ```
 
 **Avec alias** :
+
 ```normil
 import math_utils as math
 
@@ -325,10 +337,12 @@ fn main() {
 ```
 
 **Modules disponibles** :
+
 - `modules/math.nor` - Fonctions mathématiques (abs, max, min, clamp)
 - `modules/vectors.nor` - Opérations vectorielles avancées
 
 **Points clés** :
+
 - ✅ Modules dans le dossier `modules/`
 - ✅ Import avec ou sans alias
 - ✅ Accès via `module.fonction()`
@@ -346,6 +360,7 @@ fn main() {
 NORMiL peut importer et utiliser **n'importe quel module Python** ! Cela vous donne accès à tout l'écosystème Python : NumPy, SciPy, pandas, et plus encore.
 
 **Import de modules Python standards** :
+
 ```normil
 import math
 
@@ -353,20 +368,21 @@ fn main() {
     // Accès aux constantes Python
     let pi = math.pi
     print(pi)  // 3.141592653589793
-    
+  
     let e = math.e
     print(e)   // 2.718281828459045
-    
+  
     // Appel de fonctions Python
     let racine = math.sqrt(16.0)
     print(racine)  // 4.0
-    
+  
     let puissance = math.pow(2.0, 3.0)
     print(puissance)  // 8.0
 }
 ```
 
 **Avec alias** :
+
 ```normil
 import math as m
 
@@ -377,35 +393,37 @@ fn main() {
 ```
 
 **Fonctions trigonométriques** :
+
 ```normil
 import math
 
 fn main() {
     let angle = math.pi / 4.0  // 45 degrés en radians
-    
+  
     let sin_val = math.sin(angle)
     print(sin_val)  // 0.7071...
-    
+  
     let cos_val = math.cos(angle)
     print(cos_val)  // 0.7071...
-    
+  
     let tan_val = math.tan(angle)
     print(tan_val)  // 1.0
 }
 ```
 
 **Module random** :
+
 ```normil
 import random
 
 fn main() {
     // Fixer la seed pour reproductibilité
     random.seed(42)
-    
+  
     // Nombre aléatoire entre 0 et 1
     let val = random.random()
     print(val)
-    
+  
     // Entier aléatoire
     let dice = random.randint(1, 6)
     print(dice)
@@ -413,6 +431,7 @@ fn main() {
 ```
 
 **Utilisation dans des fonctions** :
+
 ```normil
 import math
 
@@ -426,16 +445,17 @@ fn volume_sphere(rayon: float) -> float {
 
 fn main() {
     let r = 5.0
-    
+  
     print("Aire du cercle:")
     print(aire_cercle(r))
-    
+  
     print("Volume de la sphère:")
     print(volume_sphere(r))
 }
 ```
 
 **Mélanger modules NORMiL et Python** :
+
 ```normil
 import math           // Module Python
 import mathutils      // Module NORMiL
@@ -444,17 +464,18 @@ fn main() {
     // Fonctions Python
     let sqrt_val = math.sqrt(25.0)
     let sin_val = math.sin(math.pi)
-    
+  
     // Fonctions NORMiL
     let abs_val = mathutils.abs(-42)
     let max_val = mathutils.max(10, 20)
-    
+  
     print(sqrt_val)
     print(abs_val)
 }
 ```
 
 **Appels imbriqués** :
+
 ```normil
 import math
 
@@ -462,7 +483,7 @@ fn main() {
     // Les appels Python peuvent être imbriqués
     let resultat = math.sqrt(math.pow(3.0, 2.0) + math.pow(4.0, 2.0))
     print(resultat)  // 5.0 (théorème de Pythagore)
-    
+  
     // Dans des expressions complexes
     let aire = math.pi * math.pow(math.sqrt(100.0), 2.0)
     print(aire)  // 314.159...
@@ -470,6 +491,7 @@ fn main() {
 ```
 
 **Points clés** :
+
 - ✅ Import transparent : `import math`, `import random`, `import sys`, etc.
 - ✅ Accès aux constantes : `math.pi`, `math.e`, `math.inf`
 - ✅ Appel de fonctions : `math.sqrt()`, `math.sin()`, `random.random()`
@@ -479,6 +501,7 @@ fn main() {
 - ✅ Cache intelligent : module chargé une seule fois
 
 **Modules Python utiles** :
+
 - `math` - Fonctions mathématiques
 - `random` - Génération aléatoire
 - `datetime` - Manipulation de dates
@@ -501,25 +524,26 @@ NORMiL permet d'accéder aux objets Python, leurs méthodes et attributs de mani
 #### Méthodes sur les Types Natifs
 
 **Méthodes sur les chaînes** :
+
 ```normil
 fn manipuler_texte() {
     let message = "bonjour le monde"
-    
+  
     // Conversion casse
     let upper = message.upper()
     print(upper)  // "BONJOUR LE MONDE"
-    
+  
     let lower = upper.lower()
     print(lower)  // "bonjour le monde"
-    
+  
     // Remplacement
     let nouveau = message.replace("monde", "NORMiL")
     print(nouveau)  // "bonjour le NORMiL"
-    
+  
     // Découpage
     let mots = message.split(" ")
     print(mots)  // ["bonjour", "le", "monde"]
-    
+  
     // Tests
     let commence = message.startswith("bonjour")
     print(commence)  // true
@@ -527,10 +551,11 @@ fn manipuler_texte() {
 ```
 
 **Méthodes sur les listes** :
+
 ```normil
 fn manipuler_listes() {
     let nombres = [1, 2, 3]
-    
+  
     // Ajouter des éléments
     nombres.append(4)
     nombres.append(5)
@@ -541,14 +566,15 @@ fn manipuler_listes() {
 #### Chaînage de Méthodes
 
 Les méthodes peuvent être chaînées :
+
 ```normil
 fn chainer_methodes() {
     let texte = "  hello world  "
-    
+  
     // Chaîner strip() puis upper()
     let resultat = texte.strip().upper()
     print(resultat)  // "HELLO WORLD"
-    
+  
     // Chaînes complexes
     let complexe = "  python rocks  "
         .strip()
@@ -561,18 +587,19 @@ fn chainer_methodes() {
 #### Instantiation de Classes Python
 
 **Créer des objets** :
+
 ```normil
 import datetime
 
 fn utiliser_datetime() {
     // Instantiation d'une classe Python
     let noel = datetime.datetime(2024, 12, 25)
-    
+  
     // Accès aux attributs
     print(noel.year)   // 2024
     print(noel.month)  // 12
     print(noel.day)    // 25
-    
+  
     // Appel de méthodes
     let jour_semaine = noel.weekday()
     print(jour_semaine)  // 2 (mercredi, 0=lundi)
@@ -582,17 +609,18 @@ fn utiliser_datetime() {
 #### Accès aux Attributs
 
 Les attributs d'objets Python sont accessibles avec `.` :
+
 ```normil
 import datetime
 
 fn explorer_attributs() {
     let date = datetime.datetime(2024, 6, 15)
-    
+  
     // Attributs simples
     let annee = date.year
     let mois = date.month
     let jour = date.day
-    
+  
     print(annee)  // 2024
     print(mois)   // 6
     print(jour)   // 15
@@ -602,30 +630,32 @@ fn explorer_attributs() {
 #### Exemples Pratiques
 
 **Validation d'email** :
+
 ```normil
 fn valider_email(email: str) -> bool {
     // Utiliser les méthodes Python
     let parties = email.split("@")
-    
+  
     if parties.length == 2 {
         let commence_ok = parties[0].length > 0
         let domaine_ok = parties[1].length > 0
         return commence_ok && domaine_ok
     }
-    
+  
     return false
 }
 
 fn main() {
     let email1 = "user@example.com"
     let email2 = "@example.com"
-    
+  
     print(valider_email(email1))  // true
     print(valider_email(email2))  // false
 }
 ```
 
 **Parsing CSV simple** :
+
 ```normil
 fn parser_csv(ligne: str) -> [str] {
     return ligne.split(",")
@@ -634,12 +664,12 @@ fn parser_csv(ligne: str) -> [str] {
 fn main() {
     let entetes = "nom,prenom,age"
     let colonnes = parser_csv(entetes)
-    
+  
     // Transformer en titres
     let titre1 = colonnes[0].upper()
     let titre2 = colonnes[1].upper()
     let titre3 = colonnes[2].upper()
-    
+  
     print(titre1)  // "NOM"
     print(titre2)  // "PRENOM"
     print(titre3)  // "AGE"
@@ -647,6 +677,7 @@ fn main() {
 ```
 
 **Calculs avec datetime** :
+
 ```normil
 import datetime
 
@@ -654,18 +685,19 @@ fn analyser_dates() {
     let nouvel_an = datetime.datetime(2024, 1, 1)
     let mi_annee = datetime.datetime(2024, 6, 15)
     let fin_annee = datetime.datetime(2024, 12, 31)
-    
+  
     // Extraire informations
     print(nouvel_an.month)  // 1
     print(mi_annee.month)   // 6
     print(fin_annee.month)  // 12
-    
+  
     // Jour de la semaine
     print(nouvel_an.weekday())  // Lundi = 0
 }
 ```
 
 **Points clés** :
+
 - ✅ Méthodes natives : `.upper()`, `.lower()`, `.split()`, `.replace()`, etc.
 - ✅ Chaînage : `text.strip().upper()`
 - ✅ Classes Python : `datetime.datetime(2024, 1, 1)`
@@ -675,6 +707,7 @@ fn analyser_dates() {
 - ✅ Totalement transparent : comme du code NORMiL natif
 
 **Limitations** :
+
 - ⚠️ Pas de support kwargs Python (`func(x=1, y=2)`)
 - ⚠️ Certains types complexes peuvent nécessiter des conversions
 - ⚠️ Les exceptions Python sont propagées
@@ -695,7 +728,7 @@ fn creer_vecteur_personnalise(
     normaliser: bool
 ) -> Vec {
     let v = random(dim: taille, mean: valeur_moyenne, std: deviation)
-    
+  
     if normaliser {
         return normalize(v)
     } else {
@@ -711,14 +744,14 @@ fn main() {
         deviation: 0.2,
         normaliser: true
     )
-    
+  
     let v2 = creer_vecteur_personnalise(
         normaliser: false,
         taille: 64,
         deviation: 0.5,
         valeur_moyenne: 0.0
     )
-    
+  
     print(norm(v1))  // Devrait être ~1.0
     print(norm(v2))  // Norme variable
 }
@@ -795,7 +828,7 @@ fn analyser_score(score: float) -> str {
 
 fn main() {
     let scores = [0.99, 0.87, 0.65, 0.42, 0.20]
-    
+  
     for s in scores {
         print(analyser_score(s))
     }
@@ -825,15 +858,15 @@ fn apprentissage_hebbien(poids: Vec, entree: Vec) -> Vec {
 fn main() {
     let poids = random(dim: 64, mean: 0.0, std: 0.1)
     let signal = random(dim: 64, mean: 1.0, std: 0.2)
-    
+  
     print("Norme initiale:")
     print(norm(poids))
-    
+  
     // 10 étapes d'apprentissage
     for i in range(0, 10) {
         poids = apprentissage_hebbien(poids, signal)
     }
-    
+  
     print("Norme finale:")
     print(norm(poids))
 }
@@ -871,17 +904,17 @@ fn stdp(w: Vec, x: Vec) -> Vec {
 fn main() {
     let w_init = random(dim: 32, mean: 0.0, std: 0.1)
     let signal = random(dim: 32, mean: 1.0, std: 0.1)
-    
+  
     let w_hebb = hebb(w_init, signal)
     let w_anti = anti_hebb(w_init, signal)
     let w_stdp = stdp(w_init, signal)
-    
+  
     print("Hebbian:")
     print(norm(w_hebb))
-    
+  
     print("Anti-Hebbian:")
     print(norm(w_anti))
-    
+  
     print("STDP:")
     print(norm(w_stdp))
 }
@@ -899,24 +932,24 @@ fn main() {
 @atomic
 fn mise_a_jour_securisee(valeur: int, increment: int) -> int {
     let temp = valeur + increment
-    
+  
     // Si erreur ici, rollback automatique
     if temp < 0 {
         return valeur  // Pas de changement
     }
-    
+  
     return temp
 }
 
 @atomic
 fn normalisation_atomique(v: Vec) -> Vec {
     let n = norm(v)
-    
+  
     if n < 0.001 {
         // Éviter division par zéro
         return ones(dim: 64)
     }
-    
+  
     return normalize(v)
 }
 
@@ -924,10 +957,10 @@ fn main() {
     let x = 10
     let y = mise_a_jour_securisee(x, 5)
     let z = mise_a_jour_securisee(x, -20)
-    
+  
     print(y)  // 15
     print(z)  // 10 (rollback)
-    
+  
     let v_zero = zeros(dim: 64)
     let v_safe = normalisation_atomique(v_zero)
     print(norm(v_safe))  // ~8.0 (norme de ones(64))
@@ -949,15 +982,15 @@ fn apprentissage_securise(poids: Vec, entree: Vec, seuil: float) -> Vec {
     // Calcul plastique
     let delta = scale(vec_mul(poids, entree), 0.005)
     let nouveau = vec_add(poids, delta)
-    
+  
     // Vérification de stabilité
     let n = norm(nouveau)
-    
+  
     if n > seuil {
         // Trop instable - rollback
         return poids
     }
-    
+  
     return normalize(nouveau)
 }
 
@@ -965,15 +998,15 @@ fn main() {
     let poids = random(dim: 64, mean: 0.0, std: 0.1)
     let signal_normal = random(dim: 64, mean: 0.5, std: 0.1)
     let signal_fort = random(dim: 64, mean: 5.0, std: 2.0)
-    
+  
     print("Norme initiale:")
     print(norm(poids))
-    
+  
     // Signal normal - devrait fonctionner
     poids = apprentissage_securise(poids, signal_normal, seuil: 2.0)
     print("Après signal normal:")
     print(norm(poids))
-    
+  
     // Signal trop fort - rollback
     poids = apprentissage_securise(poids, signal_fort, seuil: 2.0)
     print("Après signal fort (rollback):")
@@ -1016,17 +1049,17 @@ fn entrainer_reseau(
     epochs: int
 ) -> Vec {
     let poids = poids_init
-    
+  
     for epoch in range(0, epochs) {
         // Forward
         let sortie = forward_propagation(entrees, poids)
-        
+      
         // Calcul erreur
         let erreur = calculer_erreur(sortie, cibles)
-        
+      
         // Backward
         poids = backprop_update(poids, erreur)
-        
+      
         if epoch % 10 == 0 {
             print("Epoch")
             print(epoch)
@@ -1034,17 +1067,17 @@ fn entrainer_reseau(
             print(norm(erreur))
         }
     }
-    
+  
     return poids
 }
 
 fn main() {
     let dim = 128
-    
+  
     let poids = random(dim: dim, mean: 0.0, std: 0.1)
     let entree = random(dim: dim, mean: 1.0, std: 0.2)
     let cible = random(dim: dim, mean: 0.5, std: 0.1)
-    
+  
     print("Entrainement...")
     let poids_entraines = entrainer_reseau(
         poids_init: poids,
@@ -1052,7 +1085,7 @@ fn main() {
         cibles: cible,
         epochs: 50
     )
-    
+  
     print("Entrainement termine!")
     print("Norme finale:")
     print(norm(poids_entraines))
@@ -1082,17 +1115,17 @@ fn oubli_progressif(memoire: Vec, bruit: Vec) -> Vec {
 @atomic
 fn consolider_memoire(memoire: Vec) -> Vec {
     let n = norm(memoire)
-    
+  
     if n < 0.1 {
         // Mémoire trop faible - réinitialiser
         return zeros(dim: 64)
     }
-    
+  
     if n > 2.0 {
         // Trop forte - normaliser
         return normalize(memoire)
     }
-    
+  
     return memoire
 }
 
@@ -1102,38 +1135,38 @@ fn cycle_memoire(
     cycles: int
 ) -> Vec {
     let memoire = memoire_init
-    
+  
     for cycle in range(0, cycles) {
         // Encoder nouveau pattern
         let pattern = random(dim: 64, mean: 1.0, std: 0.2)
         memoire = encoder_memoire(memoire, pattern)
-        
+      
         // Oubli avec bruit
         let bruit = random(dim: 64, mean: 0.5, std: 0.1)
         memoire = oubli_progressif(memoire, bruit)
-        
+      
         // Consolidation
         memoire = consolider_memoire(memoire)
-        
+      
         print("Cycle")
         print(cycle)
         print("Norme:")
         print(norm(memoire))
     }
-    
+  
     return memoire
 }
 
 fn main() {
     let memoire = zeros(dim: 64)
-    
+  
     print("Simulation memoire...")
     let memoire_finale = cycle_memoire(
         memoire_init: memoire,
         patterns: 10,
         cycles: 20
     )
-    
+  
     print("Simulation terminee!")
 }
 ```
@@ -1165,7 +1198,7 @@ fn adapter_detecteur(detecteur: Vec, signal: Vec) -> Vec {
 @atomic
 fn detecter_pattern(detecteur: Vec, signal: Vec, seuil: float) -> bool {
     let activation = dot(detecteur, signal)
-    
+  
     if activation > seuil {
         return true
     } else {
@@ -1179,42 +1212,42 @@ fn entrainer_detecteur(
     signaux_negatifs: int
 ) -> Vec {
     let detecteur = detecteur_init
-    
+  
     print("Phase 1: Apprentissage patterns positifs")
     for i in range(0, signaux_positifs) {
         let signal_pos = random(dim: 64, mean: 2.0, std: 0.3)
         detecteur = adapter_detecteur(detecteur, signal_pos)
-        
+      
         let classe = classifier_force(norm(detecteur))
         print(classe)
     }
-    
+  
     print("Phase 2: Adaptation patterns negatifs")
     for i in range(0, signaux_negatifs) {
         let signal_neg = random(dim: 64, mean: 0.2, std: 0.1)
         let inverse = scale(signal_neg, -0.5)
         detecteur = adapter_detecteur(detecteur, inverse)
-        
+      
         let classe = classifier_force(norm(detecteur))
         print(classe)
     }
-    
+  
     return normalize(detecteur)
 }
 
 fn main() {
     let detecteur = random(dim: 64, mean: 0.0, std: 0.1)
-    
+  
     detecteur = entrainer_detecteur(
         detecteur_init: detecteur,
         signaux_positifs: 10,
         signaux_negatifs: 5
     )
-    
+  
     print("Test de detection:")
     let test_signal = random(dim: 64, mean: 1.5, std: 0.2)
     let detected = detecter_pattern(detecteur, test_signal, seuil: 50.0)
-    
+  
     print("Pattern detecte:")
     print(detected)
 }
@@ -1240,11 +1273,11 @@ fn couche_encodage(entree: Vec, poids: Vec) -> Vec {
 fn couche_traitement(code: Vec, poids: Vec) -> Vec {
     let traite = vec_mul(code, poids)
     let n = norm(traite)
-    
+  
     if n > 5.0 {
         return normalize(traite)
     }
-    
+  
     return traite
 }
 
@@ -1252,7 +1285,7 @@ fn couche_traitement(code: Vec, poids: Vec) -> Vec {
 @atomic
 fn couche_sortie(traite: Vec, poids: Vec, seuil: float) -> str {
     let sortie = dot(traite, poids)
-    
+  
     match sortie {
         case float(s) where s > seuil * 2.0 -> {
             return "Classe A"
@@ -1280,19 +1313,19 @@ fn reseau_complet(
 
 fn main() {
     let dim = 128
-    
+  
     let p1 = random(dim: dim, mean: 0.0, std: 0.1)
     let p2 = random(dim: dim, mean: 0.0, std: 0.1)
     let p3 = random(dim: dim, mean: 0.0, std: 0.1)
-    
+  
     print("Test 1:")
     let e1 = random(dim: dim, mean: 3.0, std: 0.5)
     print(reseau_complet(e1, p1, p2, p3))
-    
+  
     print("Test 2:")
     let e2 = random(dim: dim, mean: 1.0, std: 0.2)
     print(reseau_complet(e2, p1, p2, p3))
-    
+  
     print("Test 3:")
     let e3 = random(dim: dim, mean: 0.1, std: 0.05)
     print(reseau_complet(e3, p1, p2, p3))
@@ -1304,21 +1337,27 @@ fn main() {
 ## Exercices de Synthèse
 
 ### Exercice Avancé 1
+
 Créez un système de reconnaissance de patterns avec:
+
 - 3 types de patterns différents
 - Apprentissage @plastic avec mode au choix
 - Validation @atomic des résultats
 - Classification par pattern matching
 
 ### Exercice Avancé 2
+
 Implémentez une mémoire associative avec:
+
 - Stockage de 5 patterns
 - Rappel par similarité
 - Consolidation progressive
 - Oubli contrôlé
 
 ### Exercice Avancé 3
+
 Développez un réseau compétitif avec:
+
 - Plusieurs neurones en compétition
 - Apprentissage winner-take-all
 - Stabilisation @atomic
@@ -1346,12 +1385,12 @@ fn main() {
         provenance: {},
         outcome: "success"
     }
-    
+  
     // Accès aux champs
     print("Event ID: " + memory.id)
     print("Trust: " + to_string(memory.trust))
     print("Summary: " + memory.summary)
-    
+  
     // Modification
     memory.outcome = "completed"
     memory.trust = 0.98
@@ -1377,12 +1416,12 @@ fn main() {
         trust_score: 0.85,
         labels: ["AI", "machine_learning", "neural_networks"]
     }
-    
+  
     // Accès et modification
     print("Concept: " + ai_concept.concept_id)
     print("Documents: " + to_string(ai_concept.doc_count))
     print("Trust: " + to_string(ai_concept.trust_score))
-    
+  
     // Mettre à jour après apprentissage
     ai_concept.doc_count = ai_concept.doc_count + 10
     ai_concept.trust_score = 0.90
@@ -1406,7 +1445,7 @@ fn main() {
         rule: "if similarity > 0.9 then activate",
         weight: 1.5
     }
-    
+  
     // Utilisation dans une fonction
     fn should_activate(instinct: ProtoInstinct, threshold: float) -> bool {
         if instinct.weight > threshold {
@@ -1414,10 +1453,10 @@ fn main() {
         }
         return false
     }
-    
+  
     let active = should_activate(safety_instinct, 1.0)
     print("Instinct actif: " + to_string(active))
-    
+  
     // Ajustement dynamique
     safety_instinct.weight = 2.0
 }
@@ -1440,19 +1479,19 @@ fn main() {
         values: [1.5, 2.0, -0.5, 3.0, 0.8],
         dim: 1000
     }
-    
+  
     print("Dimension: " + to_string(sparse.dim))
     print("Non-zeros: " + to_string(len(sparse.indices)))
-    
+  
     // Calcul de sparsité
     fn sparsity(sv: SparseVec) -> float {
         let nnz = len(sv.indices)
         return (1.0 - (to_float(nnz) / to_float(sv.dim))) * 100.0
     }
-    
+  
     let sp = sparsity(sparse)
     print("Sparsité: " + to_string(sp) + "%")
-    
+  
     // Liste de vecteurs creux
     let sparse_list = [
         SparseVec {
@@ -1466,7 +1505,7 @@ fn main() {
             dim: 100
         }
     ]
-    
+  
     print("Nombre de vecteurs: " + to_string(len(sparse_list)))
 }
 ```
@@ -1496,7 +1535,7 @@ fn systeme_memoire() {
             outcome: "analyzed"
         }
     ]
-    
+  
     // Concepts appris
     let concepts = [
         Concept {
@@ -1508,7 +1547,7 @@ fn systeme_memoire() {
             labels: ["anomaly", "temperature"]
         }
     ]
-    
+  
     // Instincts de sécurité
     let instincts = [
         ProtoInstinct {
@@ -1518,14 +1557,14 @@ fn systeme_memoire() {
             weight: 2.0
         }
     ]
-    
+  
     // Représentation creuse
     let feature_vec = SparseVec {
         indices: [5, 12, 28, 45],
         values: [1.0, 0.8, 0.6, 0.9],
         dim: 64
     }
-    
+  
     print("Système de mémoire initialisé")
     print("Events: " + to_string(len(events)))
     print("Concepts: " + to_string(len(concepts)))
@@ -1545,6 +1584,7 @@ fn main() {
 ### Exemples Complets Phase 5
 
 Consultez les fichiers d'exemples dans `examples/` :
+
 - `test_episodic_record.nor` - Tous les cas d'usage EpisodicRecord
 - `test_concept_simple.nor` - Manipulation de Concepts
 - `test_protoinstinct_simple.nor` - Gestion d'instincts
@@ -1574,6 +1614,7 @@ let W_new = lowrankupdate(W, u, v)
 ```
 
 **Cas d'usage** :
+
 - Adaptation de poids neuronaux sans ré-entraînement complet
 - Apprentissage incrémental
 - Mise à jour de modèles avec faible coût computationnel
@@ -1601,10 +1642,12 @@ print(v_q4.dim)   // 128
 ```
 
 **Comparaison** :
+
 - **8-bit** : ~1% d'erreur, 50% de compression
 - **4-bit** : ~5% d'erreur, 75% de compression
 
 **Cas d'usage** :
+
 - Stockage de vecteurs en production
 - Transmission réseau optimisée
 - Systèmes embarqués avec mémoire limitée
@@ -1636,12 +1679,14 @@ centroid = onlinecluster_update(centroid, x3, lr)
 ```
 
 **Paramètre learning rate** :
+
 - `lr = 0.0` : Aucun changement
 - `lr = 0.1` : Adaptation lente, stable
 - `lr = 0.5` : Adaptation moyenne
 - `lr = 1.0` : Remplacement complet
 
 **Cas d'usage** :
+
 - Consolidation sémantique en temps réel
 - Clustering sans stocker tous les points
 - Adaptation continue de concepts
@@ -1668,10 +1713,10 @@ transaction append_episode_safe(summary: str, trust: float) -> str {
         provenance: {"device_id": "prod", "signature": ""},
         outcome: "success"
     }
-    
+  
     // Cette opération est automatiquement loggée
     let id = episodic_append(record)
-    
+  
     return id
 }
 
@@ -1680,12 +1725,14 @@ let episode_id = append_episode_safe("Important event", 0.95)
 ```
 
 **Avantages** :
+
 - ✅ **Audit automatique** : Chaque transaction est loggée (start/success/failed)
 - ✅ **Traçabilité** : Horodatage et paramètres enregistrés
 - ✅ **Rollback** : En cas d'erreur, état restauré automatiquement
 - ✅ **Intégrité** : Hash chaining pour vérification
 
 **Transaction avec rollback** :
+
 ```normil
 transaction update_concept(concept_id: str, new_vec: Vec) {
     let old = semantic_query(concept_id, k: 1)[0]
@@ -1708,29 +1755,29 @@ Combinons toutes les primitives neurales dans un système complet :
 transaction learn_from_experience(input: Vec, label: str, trust: float) -> str {
     // 1. Quantifier pour économie mémoire
     let input_q = quantize(input, 8)
-    
+  
     // 2. Chercher le concept le plus proche
     let similar = semantic_query(input_q, k: 1)
-    
+  
     let concept_id = ""
-    
+  
     if len(similar) > 0 {
         // Concept existant : mise à jour incrémentale
         let existing = similar[0]
         concept_id = existing.concept_id
-        
+      
         // Mettre à jour le centroïde
         let new_centroid = onlinecluster_update(
             existing.centroid_vec,
             input_q,
             0.1
         )
-        
+      
         // Low-rank update pour affiner
         let u = input_q
         let v = existing.centroid_vec
         let refined = vec(input.dim, [0.0])  // Placeholder pour matrice
-        
+      
         // Sauvegarder le concept mis à jour
         let updated = Concept {
             concept_id: concept_id,
@@ -1740,13 +1787,13 @@ transaction learn_from_experience(input: Vec, label: str, trust: float) -> str {
             trust_score: (existing.trust_score + trust) / 2.0,
             labels: existing.labels + [label]
         }
-        
+      
         semantic_upsert(updated)
-        
+      
     } else {
         // Nouveau concept
         concept_id = generate_uuid()
-        
+      
         let new_concept = Concept {
             concept_id: concept_id,
             centroid_vec: input_q,
@@ -1755,10 +1802,10 @@ transaction learn_from_experience(input: Vec, label: str, trust: float) -> str {
             trust_score: trust,
             labels: [label]
         }
-        
+      
         semantic_upsert(new_concept)
     }
-    
+  
     // 3. Enregistrer l'épisode
     let record = EpisodicRecord {
         id: generate_uuid(),
@@ -1771,9 +1818,9 @@ transaction learn_from_experience(input: Vec, label: str, trust: float) -> str {
         provenance: {"device_id": "learner", "signature": ""},
         outcome: "learned"
     }
-    
+  
     episodic_append(record)
-    
+  
     return concept_id
 }
 
@@ -1788,6 +1835,7 @@ print("Learned concept: " + c1)
 ```
 
 **Ce système** :
+
 - ✅ Quantifie les entrées (économie mémoire)
 - ✅ Clustering incrémental (pas de ré-entraînement)
 - ✅ Low-rank updates (adaptation fine)
@@ -1805,20 +1853,21 @@ Vous maîtrisez maintenant :
 ✅ Les vecteurs et opérations vectorielles
 ✅ **Système de modules** et imports (Phase 3.2)
 ✅ **Interopérabilité Python complète** (Phase 4) :
-   - Import de modules Python (Phase 4.1)
-   - Appel de fonctions Python (Phase 4.2)
-   - Conversions de types automatiques (Phase 4.3)
-   - Accès aux objets, classes et méthodes Python (Phase 4.4)
-✅ **Types O-RedMind spécialisés** (Phase 5) :
-   - EpisodicRecord : mémoire épisodique horodatée
-   - Concept : mémoire sémantique compressée
-   - ProtoInstinct : comportements instinctifs
-   - SparseVec : vecteurs creux optimisés
-✅ **Primitives neurales & transactions** (Phase 6) :
-   - lowrankupdate() : Mise à jour de rang faible W' = W + u⊗v
-   - quantize() : Quantisation 8/4 bits pour compression
-   - onlinecluster_update() : Clustering incrémental
-   - transaction : Système avec audit logging automatique
+
+- Import de modules Python (Phase 4.1)
+- Appel de fonctions Python (Phase 4.2)
+- Conversions de types automatiques (Phase 4.3)
+- Accès aux objets, classes et méthodes Python (Phase 4.4)
+  ✅ **Types O-RedMind spécialisés** (Phase 5) :
+- EpisodicRecord : mémoire épisodique horodatée
+- Concept : mémoire sémantique compressée
+- ProtoInstinct : comportements instinctifs
+- SparseVec : vecteurs creux optimisés
+  ✅ **Primitives neurales & transactions** (Phase 6) :
+- lowrankupdate() : Mise à jour de rang faible W' = W + u⊗v
+- quantize() : Quantisation 8/4 bits pour compression
+- onlinecluster_update() : Clustering incrémental
+- transaction : Système avec audit logging automatique
 
 ---
 
@@ -1838,11 +1887,13 @@ fn learn_pattern(input: Vec, target: Vec) -> Vec {
 ```
 
 **Paramètres** :
+
 - `rate` : Taux d'apprentissage initial (décroît automatiquement)
 - `mode` : Type de plasticité (`"hebbian"`, `"stdp"`, `"anti_hebbian"`)
 - `stability_threshold` : Seuil de convergence (défaut: 0.01 = 1%)
 
 **Métadonnées automatiques** :
+
 - `step_count` : Nombre d'appels à la fonction
 - `is_stable` : True quand la stabilité est atteinte
 - Learning rate décroît automatiquement jusqu'à stabilité
@@ -1875,6 +1926,7 @@ fn anti_hebbian_learn(pattern: Vec) -> Vec {
 ```
 
 **Caractéristiques communes** :
+
 - ✅ Normalisation L2 automatique des résultats Vec
 - ✅ Decay du learning rate quand non-stable
 - ✅ Détection de convergence automatique
@@ -1882,6 +1934,7 @@ fn anti_hebbian_learn(pattern: Vec) -> Vec {
 ### Leçon 7.3 - Primitives de Gestion de Plasticité
 
 #### normalize_plasticity()
+
 Normalise un vecteur à norme L2 = 1.0 :
 
 ```normil
@@ -1895,6 +1948,7 @@ print("Norme: " + to_string(norm(normalized)))  // 1.0
 **Utilisation** : Maintenir la magnitude constante pendant l'apprentissage.
 
 #### decay_learning_rate()
+
 Décroissance exponentielle du taux d'apprentissage :
 
 ```normil
@@ -1914,6 +1968,7 @@ for i in range(10) {
 **Utilisation** : Convergence progressive vers un optimum.
 
 #### compute_stability()
+
 Vérifie si deux vecteurs sont stables (changement relatif < seuil) :
 
 ```normil
@@ -1940,10 +1995,10 @@ fn adaptive_network(input: Vec) -> Vec {
     // Variables "weights", "w", "synapses" ou "connections" 
     // sont automatiquement trackées
     let weights = random_vec(input.dim)
-    
+  
     // Traitement
     weights = onlinecluster_update(weights, input, 0.1)
-    
+  
     return weights
     // À chaque appel :
     // 1. step_count++
@@ -1961,6 +2016,7 @@ let learned3 = adaptive_network(data)  // step 3, LR≈0.098
 ```
 
 **Bénéfices** :
+
 - ✅ Zéro code boilerplate pour la plasticité
 - ✅ Convergence garantie (via decay + stabilité)
 - ✅ Poids toujours normalisés
@@ -1987,11 +2043,11 @@ fn train_network(data: Vec) {
     // Couche 1
     let hidden = layer1(data)
     print("Hidden norm: " + to_string(norm(hidden)))  // ≈1.0
-    
+  
     // Couche 2
     let output = layer2(hidden)
     print("Output norm: " + to_string(norm(output)))  // ≈1.0
-    
+  
     // Chaque couche converge indépendamment
 }
 
@@ -2004,6 +2060,7 @@ for epoch in range(100) {
 ```
 
 **Résultat** :
+
 - Chaque couche apprend son niveau de représentation
 - Normalisation garantit la stabilité numérique
 - Convergence détectée automatiquement
@@ -2019,12 +2076,12 @@ Plasticité + Transactions = Apprentissage traçable :
 fn safe_learn(pattern: Vec, label: string) -> Vec {
     transaction {
         audit("Learning pattern: " + label)
-        
+      
         let weights = zeros(pattern.dim)
         weights = onlinecluster_update(weights, pattern, 0.02)
-        
+      
         audit("Weights norm: " + to_string(norm(weights)))
-        
+      
         return weights  // Auto-normalisé + logged
     }
 }
@@ -2034,6 +2091,7 @@ fn safe_learn(pattern: Vec, label: string) -> Vec {
 ```
 
 **Avantages** :
+
 - 🔍 Traçabilité complète de l'apprentissage
 - 🔄 Rollback en cas de problème
 - 📊 Audit logging automatique
@@ -2066,6 +2124,7 @@ print("Available modes: " + to_string(len(all_modes)))
 ```
 
 **Cas d'usage** :
+
 - Implémenter des règles d'apprentissage spécifiques
 - Contrôler finement la normalisation
 - Organiser des expériences comparatives
@@ -2104,6 +2163,7 @@ fn constant_learner(data: Vec) -> Vec {
 ```
 
 **Stratégies** :
+
 - `0.90-0.95` : Apprentissage rapide, exploration large
 - `0.95-0.99` : Équilibre (défaut: 0.99)
 - `0.99-0.999` : Convergence fine, précision maximale
@@ -2120,20 +2180,20 @@ let weight_history = []
 for epoch in range(20) {
     let w = train_step(data)
     weight_history = weight_history + [w]
-    
+  
     // Critère 1: Stabilité sur fenêtre (tous les changements < seuil)
     let window_stable = compute_stability_window(weight_history, 0.01)
-    
+  
     // Critère 2: Variance faible
     let variance = compute_weight_variance(weight_history)
     let var_stable = variance < 0.001
-    
+  
     // Convergence si TOUS les critères sont satisfaits
     let converged = window_stable
     if converged {
         converged = var_stable
     }
-    
+  
     if converged {
         print("Convergence détectée à epoch " + to_string(epoch))
         break
@@ -2142,6 +2202,7 @@ for epoch in range(20) {
 ```
 
 **Avantages** :
+
 - Détection robuste (évite les faux positifs)
 - Critères complémentaires (stabilité locale + globale)
 - Arrêt précoce intelligent
@@ -2151,19 +2212,20 @@ for epoch in range(20) {
 Contrôle fin du LR avec différentes stratégies :
 
 #### Warmup Linéaire
+
 ```normil
 fn train_with_warmup(data: Vec, epochs: int) {
     let weights = zeros(data.dim)
     let warmup_steps = 10
     let target_lr = 0.01
-    
+  
     for epoch in range(epochs) {
         // Calculer LR avec warmup
         let current_lr = lr_warmup_linear(epoch, warmup_steps, target_lr)
-        
+      
         // Entraîner avec ce LR
         weights = onlinecluster_update(weights, data, current_lr)
-        
+      
         print("Epoch " + to_string(epoch) + ", LR: " + to_string(current_lr))
     }
 }
@@ -2173,12 +2235,13 @@ fn train_with_warmup(data: Vec, epochs: int) {
 ```
 
 #### Cosine Annealing
+
 ```normil
 fn train_with_cosine(data: Vec, total_epochs: int) {
     let weights = zeros(data.dim)
     let min_lr = 0.0001
     let max_lr = 0.01
-    
+  
     for epoch in range(total_epochs) {
         let current_lr = lr_cosine_annealing(epoch, total_epochs, min_lr, max_lr)
         weights = onlinecluster_update(weights, data, current_lr)
@@ -2188,11 +2251,12 @@ fn train_with_cosine(data: Vec, total_epochs: int) {
 ```
 
 #### Step Decay
+
 ```normil
 fn train_with_steps(data: Vec, epochs: int) {
     let weights = zeros(data.dim)
     let initial_lr = 0.1
-    
+  
     for epoch in range(epochs) {
         // Diviser par 2 tous les 10 epochs
         let current_lr = lr_step_decay(epoch, initial_lr, 0.5, 10)
@@ -2205,20 +2269,21 @@ fn train_with_steps(data: Vec, epochs: int) {
 ```
 
 #### Plateau Detection
+
 ```normil
 fn train_with_plateau(data: Vec, epochs: int) {
     let weights = zeros(data.dim)
     let current_lr = 0.01
     let losses = []
-    
+  
     for epoch in range(epochs) {
         weights = onlinecluster_update(weights, data, current_lr)
-        
+      
         // Calculer loss
         let diff = data - weights
         let loss = dot(diff, diff)
         losses = losses + [loss]
-        
+      
         // Réduire LR si plateau
         let reduction_factor = lr_plateau_factor(losses, 3, 0.5, 0.01)
         current_lr = current_lr * reduction_factor
@@ -2228,32 +2293,34 @@ fn train_with_plateau(data: Vec, epochs: int) {
 ```
 
 #### Combinaison Warmup + Cosine
+
 ```normil
 fn advanced_scheduling(data: Vec, total_epochs: int) {
     let weights = zeros(data.dim)
     let warmup_steps = 10
-    
+  
     for epoch in range(total_epochs) {
         let current_lr = 0.0
-        
+      
         // Phase 1: Warmup
         if epoch < warmup_steps {
             current_lr = lr_warmup_linear(epoch, warmup_steps, 0.01)
         }
-        
+      
         // Phase 2: Cosine annealing
         if epoch >= warmup_steps {
             let adjusted_epoch = epoch - warmup_steps
             let adjusted_total = total_epochs - warmup_steps
             current_lr = lr_cosine_annealing(adjusted_epoch, adjusted_total, 0.0001, 0.01)
         }
-        
+      
         weights = onlinecluster_update(weights, data, current_lr)
     }
 }
 ```
 
 **Stratégies recommandées** :
+
 - **Warmup + Cosine** : Meilleure performance générale
 - **Step Decay** : Simple et efficace pour réseaux profonds
 - **Plateau Detection** : Adaptatif, idéal si incertitude sur durée
@@ -2269,37 +2336,39 @@ Félicitations ! Vous maîtrisez maintenant **NORMiL v0.7.0** avec :
 ✅ Les structures de contrôle
 ✅ Les fonctions et la récursion
 ✅ Les types O-RedMind avancés :
-   - EpisodicRecord : Mémoire épisodique avec vecteurs multiples
-   - Concept : Mémoire sémantique avec centroïdes
-   - ProtoInstinct : Comportements instinctifs avec règles
-   - SparseVec : Vecteurs creux optimisés
-✅ Les primitives neurales (Phase 6) :
-   - lowrankupdate() : Mises à jour de rang faible
-   - quantize() : Quantisation 8/4 bits
-   - onlinecluster_update() : Clustering incrémental
-   - transaction : Système avec audit logging automatique
-✅ La plasticité neuronale avancée (Phase 7) :
-   - @plastic avec détection de stabilité
-   - Modes hebbian, stdp, anti_hebbian
-   - Primitives normalize_plasticity, decay_learning_rate, compute_stability
-   - Gestion automatique complète
-✅ Améliorations avancées de plasticité (Phase 7.6-7.9) :
-   - **Modes personnalisables** : register_plasticity_mode(), list_plasticity_modes()
-   - **Decay configurable** : decay_factor paramétrable (0.90-1.0)
-   - **Multi-critères de stabilité** : compute_stability_window(), compute_weight_variance()
-   - **Scheduling du learning rate** :
-     * lr_warmup_linear() : Warmup linéaire
-     * lr_cosine_annealing() : Décroissance cosinus
-     * lr_step_decay() : Decay par paliers
-     * lr_plateau_factor() : Détection de plateau
-   - **Opérations vectorielles** : +, -, * pour Vec
-✅ Les arguments nommés
-✅ Le pattern matching complet
-✅ Les annotations @plastic et @atomic
-✅ La combinaison de toutes les features
-✅ La conception de systèmes complets
+
+- EpisodicRecord : Mémoire épisodique avec vecteurs multiples
+- Concept : Mémoire sémantique avec centroïdes
+- ProtoInstinct : Comportements instinctifs avec règles
+- SparseVec : Vecteurs creux optimisés
+  ✅ Les primitives neurales (Phase 6) :
+- lowrankupdate() : Mises à jour de rang faible
+- quantize() : Quantisation 8/4 bits
+- onlinecluster_update() : Clustering incrémental
+- transaction : Système avec audit logging automatique
+  ✅ La plasticité neuronale avancée (Phase 7) :
+- @plastic avec détection de stabilité
+- Modes hebbian, stdp, anti_hebbian
+- Primitives normalize_plasticity, decay_learning_rate, compute_stability
+- Gestion automatique complète
+  ✅ Améliorations avancées de plasticité (Phase 7.6-7.9) :
+- **Modes personnalisables** : register_plasticity_mode(), list_plasticity_modes()
+- **Decay configurable** : decay_factor paramétrable (0.90-1.0)
+- **Multi-critères de stabilité** : compute_stability_window(), compute_weight_variance()
+- **Scheduling du learning rate** :
+  * lr_warmup_linear() : Warmup linéaire
+  * lr_cosine_annealing() : Décroissance cosinus
+  * lr_step_decay() : Decay par paliers
+  * lr_plateau_factor() : Détection de plateau
+- **Opérations vectorielles** : +, -, * pour Vec
+  ✅ Les arguments nommés
+  ✅ Le pattern matching complet
+  ✅ Les annotations @plastic et @atomic
+  ✅ La combinaison de toutes les features
+  ✅ La conception de systèmes complets
 
 **Prochaines étapes** :
+
 1. Explorez `examples/` pour plus d'inspiration :
    - `type_inference.nor` - Démonstration d'inférence
    - `imports_test.nor` - Utilisation de modules

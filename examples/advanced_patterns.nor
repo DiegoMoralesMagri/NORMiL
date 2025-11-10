@@ -1,6 +1,7 @@
 // ============================================
 // advanced_patterns.nor
 // Démonstration avancée du pattern matching
+// Auteur : Diego Morales Magri
 // ============================================
 
 // Classificateur de nombres avec patterns

@@ -1,5 +1,7 @@
 """
 Tests pour les types et primitives multimodales Phase 8.2
+===========================================
+Auteur : Diego Morales Magri
 """
 
 import pytest

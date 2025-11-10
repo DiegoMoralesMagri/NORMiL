@@ -1,11 +1,13 @@
 // Exemples d'interopérabilité Python (Phase 4.1)
 // Démonstration de l'utilisation de modules Python depuis NORMiL
+// Auteur : Diego Morales Magri
 
 import math
 import random
 
 // ============================================
 // Exemple 1: Fonctions mathématiques Python
+// Auteur : Diego Morales Magri
 // ============================================
 
 fn exemple_math_basique() {

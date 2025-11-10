@@ -1,6 +1,8 @@
 """
 Tests pour Phase 5.1 - Type EpisodicRecord
 
+Auteur : Diego Morales Magri
+
 EpisodicRecord est un type spécialisé pour la mémoire épisodique de O-RedMind.
 Structure: {
     id: str,

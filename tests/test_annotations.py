@@ -3,6 +3,8 @@
 Tests pour les Annotations de NORMiL
 =====================================
 
+Auteur : Diego Morales Magri
+
 Teste les différentes annotations:
 - @plastic(rate, mode) : Plasticité neuronale
 - Métadonnées accessibles dans le scope

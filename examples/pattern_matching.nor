@@ -1,6 +1,7 @@
 // ============================================
 // pattern_matching.nor
 // Démonstration du pattern matching
+// Auteur : Diego Morales Magri
 // ============================================
 
 import memory

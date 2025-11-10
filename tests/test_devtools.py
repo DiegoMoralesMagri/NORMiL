@@ -2,6 +2,8 @@
 Tests pour les primitives DevTools (Phase 8.4).
 
 Tests pour introspection, trace, signatures, et visualisation.
+
+Auteur : Diego Morales Magri
 """
 
 import pytest

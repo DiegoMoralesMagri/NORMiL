@@ -1,4 +1,5 @@
 // Test opérations sur strings - Phase 3.3
+// Auteur : Diego Morales Magri
 
 fn main() {
     print("=== Test Opérations String ===")

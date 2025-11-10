@@ -1,9 +1,15 @@
 # Phase 7 : Plasticité Neuronale Avancée - Résumé Complet
 
+
+**Date** : Novembre 2025
+**Auteur** : Diego Morales Magri
+
+---
+
 ## Vue d'Ensemble
 
-**Version**: NORMiL v0.7.0  
-**Date**: Novembre 2025  
+**Version**: NORMiL v0.7.0
+**Date**: Novembre 2025
 **Objectif**: Gestion automatique de la plasticité neuronale avec détection de stabilité
 
 La Phase 7 transforme les annotations `@plastic` en un système complet de gestion automatique de l'apprentissage, éliminant le besoin de code boilerplate et garantissant la convergence.
@@ -15,10 +21,12 @@ La Phase 7 transforme les annotations `@plastic` en un système complet de gesti
 ### 7.1 - Enrichissement @plastic avec Stabilité
 
 **Nouveau paramètre** : `stability_threshold`
+
 - Définit le seuil de convergence (défaut: 0.01 = 1%)
 - Exemple: `@plastic(rate: 0.01, stability_threshold: 0.005)`
 
 **Nouvelles métadonnées automatiques** :
+
 ```python
 'plastic': {
     'rate': 0.01,                    # Taux d'apprentissage (décroît auto)
@@ -34,13 +42,14 @@ La Phase 7 transforme les annotations `@plastic` en un système complet de gesti
 
 Trois modes implémentés avec normalisation automatique :
 
-| Mode | Description | Normalisation Auto |
-|------|-------------|-------------------|
-| `hebbian` | Renforcement corrélé (règle de Hebb) | ✅ Oui |
-| `stdp` | Spike-Timing Dependent Plasticity | ✅ Oui |
-| `anti_hebbian` | Décorrélation / compétition | ✅ Oui |
+| Mode             | Description                             | Normalisation Auto |
+| ---------------- | --------------------------------------- | ------------------ |
+| `hebbian`      | Renforcement corrélé (règle de Hebb) | ✅ Oui             |
+| `stdp`         | Spike-Timing Dependent Plasticity       | ✅ Oui             |
+| `anti_hebbian` | Décorrélation / compétition          | ✅ Oui             |
 
 **Exemple** :
+
 ```normil
 @plastic(rate: 0.005, mode: "hebbian")
 fn hebbian_learn(pre: Vec, post: Vec) -> Vec {
@@ -52,6 +61,7 @@ fn hebbian_learn(pre: Vec, post: Vec) -> Vec {
 ### 7.3 - Primitives de Gestion
 
 #### normalize_plasticity(weights: Vec) -> Vec
+
 - Normalise à norme L2 = 1.0
 - Gère le cas nul (norme < 1e-4)
 - Adapté à float16
@@ -63,6 +73,7 @@ let w_norm = normalize_plasticity(w)
 ```
 
 #### decay_learning_rate(lr: float, factor: float) -> float
+
 - Décroissance exponentielle : lr' = lr × factor
 - Validation : 0 < factor ≤ 1.0
 - Défaut : factor = 0.99
@@ -76,6 +87,7 @@ for i in range(10) {
 ```
 
 #### compute_stability(w_old: Vec, w_new: Vec, threshold: float) -> bool
+
 - Calcule : changement_relatif = ||w_new - w_old|| / ||w_old||
 - Retourne : changement < threshold
 - Type retour : bool Python natif (pas np.bool_)
@@ -93,24 +105,24 @@ let stable = compute_stability(w1, w2, 0.01)  // true
 Workflow automatique à chaque appel de fonction `@plastic` :
 
 1. **Incrémentation** : `step_count++`
-
 2. **Capture de poids** : Recherche auto de variables :
-   - `weights`, `w`, `synapses`, `connections`
 
+   - `weights`, `w`, `synapses`, `connections`
 3. **Vérification stabilité** (si poids capturés ET result Vec) :
+
    ```python
    is_stable = compute_stability(weights_before, result, threshold)
    if is_stable:
        plastic_config['is_stable'] = True
    ```
-
 4. **Normalisation automatique** (si mode ∈ {hebbian, stdp, anti_hebbian}) :
+
    ```python
    if isinstance(result, Vec):
        result = normalize_plasticity(result)
    ```
-
 5. **Decay learning rate** (si non stable ET poids capturés) :
+
    ```python
    if not is_stable and weights_before is not None:
        plastic_config['rate'] = decay_learning_rate(rate, 0.99)
@@ -125,30 +137,33 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 **Fichier** : `tests/test_plasticity_primitives.py` (318 lignes)
 
 **Classes de tests** :
+
 - `TestNormalizePlasticity` : 6 tests
+
   - Normalisation basique, vecteur déjà normalisé, vecteur nul
   - Grand vecteur, élément unique, préservation dimension
-  
 - `TestDecayLearningRate` : 8 tests
+
   - Decay basique, progressif, facteur=1.0
   - Validation facteurs invalides (0, négatif, >1)
   - LR très petit, différents facteurs
-  
 - `TestComputeStability` : 7 tests
+
   - Pas de changement, petit changement, grand changement
   - Sensibilité au seuil, vecteur nul, dimensions différentes
   - Changement relatif
-  
 - `TestPlasticityCombined` : 3 tests
+
   - Simulation boucle d'entraînement
   - Détection de convergence
   - Stabilité après normalisation
-  
 - `TestEdgeCases` : 3 tests
+
   - Valeurs très petites, accumulation decay
   - Précision numérique float16
 
 **Corrections float16** :
+
 - Seuil norme : 1e-10 → 1e-4 (adapté à float16)
 - Type retour : np.bool_ → bool (compatibilité Python)
 - Gestion warnings division par zéro
@@ -156,11 +171,13 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 #### Tests NORMiL (2 fichiers)
 
 **test_plasticity_primitives.nor** (180 lignes, 5 sections) :
+
 - Normalisation, decay, stabilité
 - Scénario combiné d'entraînement
 - Intégration @plastic
 
 **test_advanced_plasticity.nor** (233 lignes, 6 sections) :
+
 - Plasticité auto-gérée
 - Modes différents (hebbian, stdp, anti_hebbian)
 - Stabilité progressive
@@ -169,6 +186,7 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 - Détection automatique stabilité
 
 **Résultats** :
+
 - ✅ Toutes normes = 1.0 (ou 0.99951 due à float16)
 - ✅ Convergence détectée automatiquement
 - ✅ Pas de warnings
@@ -177,6 +195,7 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 #### Documentation
 
 **TUTORIAL.md - Niveau 7** (~200 lignes ajoutées) :
+
 - Leçon 7.1 : @plastic avec stabilité
 - Leçon 7.2 : Modes de plasticité
 - Leçon 7.3 : Primitives (normalize, decay, stability)
@@ -186,6 +205,7 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 - Conclusion mise à jour
 
 **API_REFERENCE.md - Section Plasticité** (~210 lignes ajoutées) :
+
 - normalize_plasticity : Spec complète, exemples, cas d'usage
 - decay_learning_rate : Syntaxe, validation, exemples
 - compute_stability : Calcul, validation, exemples
@@ -199,33 +219,33 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 
 ### Code
 
-| Fichier | Lignes Ajoutées | Description |
-|---------|----------------|-------------|
-| `runtime/primitives.py` | ~70 | 3 nouvelles primitives |
-| `runtime/executor.py` | ~75 | Gestion automatique plasticité |
-| `tests/test_plasticity_primitives.py` | 318 | Suite de tests pytest |
-| `examples/test_plasticity_primitives.nor` | 180 | Tests basiques NORMiL |
-| `examples/test_advanced_plasticity.nor` | 233 | Tests avancés NORMiL |
-| **Total** | **~876 lignes** | |
+| Fichier                                     | Lignes Ajoutées      | Description                     |
+| ------------------------------------------- | --------------------- | ------------------------------- |
+| `runtime/primitives.py`                   | ~70                   | 3 nouvelles primitives          |
+| `runtime/executor.py`                     | ~75                   | Gestion automatique plasticité |
+| `tests/test_plasticity_primitives.py`     | 318                   | Suite de tests pytest           |
+| `examples/test_plasticity_primitives.nor` | 180                   | Tests basiques NORMiL           |
+| `examples/test_advanced_plasticity.nor`   | 233                   | Tests avancés NORMiL           |
+| **Total**                             | **~876 lignes** |                                 |
 
 ### Tests
 
-| Type | Nombre | Statut |
-|------|--------|--------|
-| Pytest Phase 7 | 27 | ✅ 100% passants |
-| NORMiL basiques | 5 sections | ✅ Tous passants |
-| NORMiL avancés | 6 sections | ✅ Tous passants |
-| Tests totaux (1-7) | 230 | ✅ 100% passants |
-| **Couverture** | **Complète** | |
+| Type                 | Nombre              | Statut           |
+| -------------------- | ------------------- | ---------------- |
+| Pytest Phase 7       | 27                  | ✅ 100% passants |
+| NORMiL basiques      | 5 sections          | ✅ Tous passants |
+| NORMiL avancés      | 6 sections          | ✅ Tous passants |
+| Tests totaux (1-7)   | 230                 | ✅ 100% passants |
+| **Couverture** | **Complète** |                  |
 
 ### Documentation
 
-| Document | Contenu Ajouté | Sections |
-|----------|---------------|----------|
-| `TUTORIAL.md` | ~200 lignes | Niveau 7 (6 leçons) |
-| `API_REFERENCE.md` | ~210 lignes | Plasticité Neuronale |
-| `PHASE_7_SUMMARY.md` | Ce document | Résumé complet |
-| **Total** | **~410 lignes** | |
+| Document               | Contenu Ajouté       | Sections              |
+| ---------------------- | --------------------- | --------------------- |
+| `TUTORIAL.md`        | ~200 lignes           | Niveau 7 (6 leçons)  |
+| `API_REFERENCE.md`   | ~210 lignes           | Plasticité Neuronale |
+| `PHASE_7_SUMMARY.md` | Ce document           | Résumé complet      |
+| **Total**        | **~410 lignes** |                       |
 
 ---
 
@@ -234,33 +254,34 @@ Workflow automatique à chaque appel de fonction `@plastic` :
 ### Composants Bénéficiaires
 
 1. **Mémoire Épisodique**
+
    - Consolidation automatique avec détection de convergence
    - Normalisation des vecteurs de contexte
    - Apprentissage incrémental stable
-
 2. **Mémoire Sémantique**
+
    - Clustering de concepts avec convergence garantie
    - Centroïdes normalisés automatiquement
    - Adaptation progressive des représentations
-
 3. **ProtoInstincts**
+
    - Apprentissage de règles avec stabilité
    - Renforcement/affaiblissement contrôlé
    - Convergence vers comportements optimaux
-
 4. **Encodeurs Neuraux**
+
    - Apprentissage de transformations stables
    - Auto-encodeurs avec convergence
    - Représentations normalisées
 
 ### Avantages Système
 
-✅ **Simplicité** : Zero boilerplate code  
-✅ **Robustesse** : Convergence garantie  
-✅ **Stabilité** : Normalisation automatique  
-✅ **Traçabilité** : Métadonnées complètes  
-✅ **Performance** : Optimisé pour float16  
-✅ **Flexibilité** : 3 modes de plasticité  
+✅ **Simplicité** : Zero boilerplate code
+✅ **Robustesse** : Convergence garantie
+✅ **Stabilité** : Normalisation automatique
+✅ **Traçabilité** : Métadonnées complètes
+✅ **Performance** : Optimisé pour float16
+✅ **Flexibilité** : 3 modes de plasticité
 
 ---
 
@@ -331,20 +352,20 @@ fn safe_learn(pattern: Vec) -> Vec {
 @plastic(rate: 0.01, mode: "hebbian")
 fn learn(input: Vec) -> Vec {
     let weights = random_vec(input.dim)
-    
+  
     // Mise à jour manuelle
     weights = onlinecluster_update(weights, input, 0.01)
-    
+  
     // Normalisation manuelle requise
     let norm_val = norm(weights)
     if norm_val > 0.0001 {
         weights = vec_mul_scalar(weights, 1.0 / norm_val)
     }
-    
+  
     // Pas de détection de convergence
     // Pas de decay automatique
     // Pas de traçabilité
-    
+  
     return weights
 }
 ```
@@ -378,20 +399,21 @@ fn learn(input: Vec) -> Vec {
 
 ### Futures Améliorations (Phase 8+)
 
-1. **Modes personnalisés** : 
+1. **Modes personnalisés** :
+
    - Définition de modes custom avec callbacks
    - Meta-learning pour optimiser les paramètres
-
 2. **Decay adaptatif** :
+
    - Factor variable selon la convergence
    - Warmup + decay avec scheduling
-
 3. **Multi-critères stabilité** :
+
    - Stabilité sur N dernières itérations
    - Variance des poids
    - Loss-based stopping
-
 4. **Visualisation** :
+
    - Graphes de convergence automatiques
    - Heatmaps de plasticité
    - Dashboards temps réel
@@ -402,28 +424,28 @@ fn learn(input: Vec) -> Vec {
 
 ### Checklist Phase 7
 
-- [x] 7.1 - @plastic avec stability_threshold
-- [x] 7.2 - Modes hebbian, stdp, anti_hebbian
-- [x] 7.3 - 3 primitives (normalize, decay, stability)
-- [x] 7.4 - Gestion automatique complète
-- [x] 7.5 - Tests pytest (27 tests)
-- [x] 7.5 - Tests NORMiL (11 sections)
-- [x] 7.5 - Documentation TUTORIAL
-- [x] 7.5 - Documentation API_REFERENCE
-- [x] Pas de régression (230/230 tests)
-- [x] Corrections float16
-- [x] Résumé Phase 7
+- [X] 7.1 - @plastic avec stability_threshold
+- [X] 7.2 - Modes hebbian, stdp, anti_hebbian
+- [X] 7.3 - 3 primitives (normalize, decay, stability)
+- [X] 7.4 - Gestion automatique complète
+- [X] 7.5 - Tests pytest (27 tests)
+- [X] 7.5 - Tests NORMiL (11 sections)
+- [X] 7.5 - Documentation TUTORIAL
+- [X] 7.5 - Documentation API_REFERENCE
+- [X] Pas de régression (230/230 tests)
+- [X] Corrections float16
+- [X] Résumé Phase 7
 
 ### Métriques de Qualité
 
-| Critère | Cible | Atteint |
-|---------|-------|---------|
-| Tests passants | 100% | ✅ 230/230 |
-| Couverture code | >90% | ✅ ~95% |
-| Documentation | Complète | ✅ Oui |
-| Exemples | >5 | ✅ 11 sections |
-| Float16 compatible | Oui | ✅ Oui |
-| Performance | Pas de régression | ✅ Validé |
+| Critère           | Cible              | Atteint        |
+| ------------------ | ------------------ | -------------- |
+| Tests passants     | 100%               | ✅ 230/230     |
+| Couverture code    | >90%               | ✅ ~95%        |
+| Documentation      | Complète          | ✅ Oui         |
+| Exemples           | >5                 | ✅ 11 sections |
+| Float16 compatible | Oui                | ✅ Oui         |
+| Performance        | Pas de régression | ✅ Validé     |
 
 ---
 
@@ -431,11 +453,11 @@ fn learn(input: Vec) -> Vec {
 
 La **Phase 7** transforme NORMiL en un système de plasticité neuronale de classe production :
 
-🎯 **Objectif atteint** : Gestion automatique complète  
-🚀 **Impact** : Simplification radicale du code utilisateur  
-✅ **Qualité** : 230 tests, zéro régression  
-📚 **Documentation** : Complète et détaillée  
-🔬 **Innovation** : Premier langage avec plasticité auto-gérée  
+🎯 **Objectif atteint** : Gestion automatique complète
+🚀 **Impact** : Simplification radicale du code utilisateur
+✅ **Qualité** : 230 tests, zéro régression
+📚 **Documentation** : Complète et détaillée
+🔬 **Innovation** : Premier langage avec plasticité auto-gérée
 
 **NORMiL v0.7.0** est maintenant prêt pour des applications d'apprentissage neuronal avancées avec des garanties de convergence et de stabilité.
 

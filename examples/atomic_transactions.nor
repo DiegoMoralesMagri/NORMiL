@@ -1,6 +1,7 @@
 // ============================================
 // atomic_transactions.nor
 // Démonstration des transactions atomiques
+// Auteur : Diego Morales Magri
 // ============================================
 
 // Transaction simple : succès garanti

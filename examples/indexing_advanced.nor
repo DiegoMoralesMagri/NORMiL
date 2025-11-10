@@ -1,3 +1,5 @@
+// Auteur : Diego Morales Magri
+
 fn main() {
     // Test 1: Création et accès
     print("=== Test 1: Création et accès ===")

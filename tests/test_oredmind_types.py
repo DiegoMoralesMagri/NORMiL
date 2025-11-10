@@ -2,6 +2,8 @@
 Tests pour les types O-RedMind Phase 8
 =======================================
 
+Auteur : Diego Morales Magri
+
 Tests pour InstinctPackage, SafetyGuardrail, IndexEntry, AuditLogEntry
 """
 

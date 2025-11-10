@@ -1,4 +1,5 @@
 // Test d'inférence de types - Phase 3.1
+// Auteur : Diego Morales Magri
 
 fn main() {
     print("=== Test Inférence de Types ===")

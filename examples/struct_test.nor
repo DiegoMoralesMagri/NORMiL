@@ -1,3 +1,4 @@
+// Auteur : Diego Morales Magri
 fn main() {
     // Test 1: Struct anonyme avec syntaxe propre (sans guillemets)
     print("=== Test 1: Struct anonyme ===")

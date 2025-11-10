@@ -1,5 +1,11 @@
 # Référence API NORMiL v0.6.0
 
+
+**Date** : Novembre 2025
+**Auteur** : Diego Morales Magri
+
+---
+
 ## Table des Matières
 
 1. [Primitives Vectorielles](#primitives-vectorielles)
@@ -27,18 +33,22 @@
 Crée un vecteur de zéros.
 
 **Paramètres:**
+
 - `dim`: Dimension du vecteur (entier positif)
 
 **Retour:**
+
 - Vecteur de dimension `dim` avec toutes les valeurs à 0.0
 
 **Exemple:**
+
 ```normil
 let v = zeros(dim: 128)
 // v = [0.0, 0.0, ..., 0.0]  (128 éléments)
 ```
 
 **Erreurs possibles:**
+
 - `dim` doit être > 0
 - `dim` doit être un entier
 
@@ -49,12 +59,15 @@ let v = zeros(dim: 128)
 Crée un vecteur de uns.
 
 **Paramètres:**
+
 - `dim`: Dimension du vecteur
 
 **Retour:**
+
 - Vecteur de dimension `dim` avec toutes les valeurs à 1.0
 
 **Exemple:**
+
 ```normil
 let v = ones(dim: 64)
 // v = [1.0, 1.0, ..., 1.0]  (64 éléments)
@@ -68,13 +81,16 @@ let v = ones(dim: 64)
 Crée un vecteur rempli avec une valeur spécifique.
 
 **Paramètres:**
+
 - `dim`: Dimension du vecteur
 - `value`: Valeur de remplissage
 
 **Retour:**
+
 - Vecteur de dimension `dim` avec toutes les valeurs égales à `value`
 
 **Exemple:**
+
 ```normil
 let v = fill(dim: 32, value: 0.5)
 // v = [0.5, 0.5, ..., 0.5]  (32 éléments)
@@ -87,20 +103,24 @@ let v = fill(dim: 32, value: 0.5)
 Crée un vecteur avec des valeurs aléatoires suivant une distribution normale.
 
 **Paramètres:**
+
 - `dim`: Dimension du vecteur
 - `mean`: Moyenne de la distribution
 - `std`: Écart-type de la distribution
 
 **Retour:**
+
 - Vecteur de dimension `dim` avec valeurs ~ N(mean, std²)
 
 **Exemple:**
+
 ```normil
 let v = random(dim: 256, mean: 0.0, std: 1.0)
 // Vecteur de 256 valeurs ~ N(0, 1)
 ```
 
 **Notes:**
+
 - Utilise la distribution normale (Gaussian)
 - Implémentation: NumPy `np.random.normal(mean, std, dim)`
 
@@ -113,13 +133,16 @@ let v = random(dim: 256, mean: 0.0, std: 1.0)
 Addition élément par élément de deux vecteurs.
 
 **Paramètres:**
+
 - `v1`: Premier vecteur
 - `v2`: Second vecteur
 
 **Retour:**
+
 - Nouveau vecteur où result[i] = v1[i] + v2[i]
 
 **Exemple:**
+
 ```normil
 let v1 = fill(dim: 64, value: 1.0)
 let v2 = fill(dim: 64, value: 2.0)
@@ -128,6 +151,7 @@ let sum = vec_add(v1, v2)
 ```
 
 **Erreurs:**
+
 - Les vecteurs doivent avoir la même dimension
 
 ---
@@ -137,13 +161,16 @@ let sum = vec_add(v1, v2)
 Soustraction élément par élément.
 
 **Paramètres:**
+
 - `v1`: Premier vecteur
 - `v2`: Second vecteur
 
 **Retour:**
+
 - Nouveau vecteur où result[i] = v1[i] - v2[i]
 
 **Exemple:**
+
 ```normil
 let v1 = fill(dim: 64, value: 5.0)
 let v2 = fill(dim: 64, value: 2.0)
@@ -158,13 +185,16 @@ let diff = vec_sub(v1, v2)
 Multiplication élément par élément (produit de Hadamard).
 
 **Paramètres:**
+
 - `v1`: Premier vecteur
 - `v2`: Second vecteur
 
 **Retour:**
+
 - Nouveau vecteur où result[i] = v1[i] * v2[i]
 
 **Exemple:**
+
 ```normil
 let v1 = fill(dim: 64, value: 3.0)
 let v2 = fill(dim: 64, value: 2.0)
@@ -173,6 +203,7 @@ let prod = vec_mul(v1, v2)
 ```
 
 **Note:**
+
 - ⚠️ Ce n'est PAS le produit scalaire (voir `dot`)
 
 ---
@@ -182,13 +213,16 @@ let prod = vec_mul(v1, v2)
 Multiplie un vecteur par un scalaire.
 
 **Paramètres:**
+
 - `v`: Vecteur à multiplier
 - `scalar`: Facteur de multiplication
 
 **Retour:**
+
 - Nouveau vecteur où result[i] = v[i] * scalar
 
 **Exemple:**
+
 ```normil
 let v = ones(dim: 64)
 let doubled = scale(v, 2.0)
@@ -207,15 +241,18 @@ let doubled = scale(v, 2.0)
 Concatène des chaînes de caractères avec l'opérateur `+`.
 
 **Syntaxe:**
+
 ```normil
 let result = string1 + string2
 ```
 
 **Comportement:**
+
 - Si au moins un opérande est `str`, l'autre est automatiquement converti
 - Fonctionne avec int, float, bool convertis en string
 
 **Exemples:**
+
 ```normil
 let greeting = "Hello" + " " + "World"
 // greeting = "Hello World"
@@ -236,12 +273,15 @@ let text = "Score: " + to_string(score)
 Convertit une valeur en chaîne de caractères.
 
 **Paramètres:**
+
 - `value`: Valeur à convertir (int, float, bool, str)
 
 **Retour:**
+
 - Représentation en chaîne de la valeur
 
 **Exemples:**
+
 ```normil
 let n = 42
 let s = to_string(n)  // "42"
@@ -262,12 +302,15 @@ let s3 = to_string(flag)  // "true"
 Retourne la longueur d'une chaîne.
 
 **Paramètres:**
+
 - `s`: Chaîne de caractères
 
 **Retour:**
+
 - Nombre de caractères dans la chaîne
 
 **Exemple:**
+
 ```normil
 let text = "NORMiL"
 let len = string_length(text)  // 6
@@ -280,12 +323,15 @@ let len = string_length(text)  // 6
 Convertit une chaîne en majuscules.
 
 **Paramètres:**
+
 - `s`: Chaîne à convertir
 
 **Retour:**
+
 - Nouvelle chaîne en majuscules
 
 **Exemple:**
+
 ```normil
 let text = "hello"
 let upper = string_upper(text)  // "HELLO"
@@ -298,12 +344,15 @@ let upper = string_upper(text)  // "HELLO"
 Convertit une chaîne en minuscules.
 
 **Paramètres:**
+
 - `s`: Chaîne à convertir
 
 **Retour:**
+
 - Nouvelle chaîne en minuscules
 
 **Exemple:**
+
 ```normil
 let text = "WORLD"
 let lower = string_lower(text)  // "world"
@@ -316,14 +365,17 @@ let lower = string_lower(text)  // "world"
 Extrait une sous-chaîne.
 
 **Paramètres:**
+
 - `s`: Chaîne source
 - `start`: Index de départ (inclusif)
 - `end`: Index de fin (exclusif)
 
 **Retour:**
+
 - Sous-chaîne de `start` à `end-1`
 
 **Exemple:**
+
 ```normil
 let text = "Hello World"
 let sub = string_substring(text, 0, 5)  // "Hello"
@@ -337,13 +389,16 @@ let sub2 = string_substring(text, 6, 11)  // "World"
 Découpe une chaîne selon un séparateur.
 
 **Paramètres:**
+
 - `s`: Chaîne à découper
 - `separator`: Séparateur
 
 **Retour:**
+
 - Premier élément de la division (limitation temporaire)
 
 **Exemple:**
+
 ```normil
 let text = "a,b,c"
 let first = string_split(text, ",")  // "a"
@@ -358,13 +413,16 @@ let first = string_split(text, ",")  // "a"
 Joint des éléments avec un séparateur.
 
 **Paramètres:**
+
 - `items`: Chaîne à joindre (temporairement simple string)
 - `separator`: Séparateur
 
 **Retour:**
+
 - Items joints par le séparateur
 
 **Exemple:**
+
 ```normil
 let parts = "Hello World NORMiL"
 let joined = string_join(parts, " ")  // "Hello World NORMiL"
@@ -377,14 +435,17 @@ let joined = string_join(parts, " ")  // "Hello World NORMiL"
 Remplace toutes les occurrences d'une sous-chaîne.
 
 **Paramètres:**
+
 - `s`: Chaîne source
 - `old`: Sous-chaîne à remplacer
 - `new`: Chaîne de remplacement
 
 **Retour:**
+
 - Nouvelle chaîne avec remplacements effectués
 
 **Exemple:**
+
 ```normil
 let text = "Hello World"
 let replaced = string_replace(text, "World", "NORMiL")
@@ -398,13 +459,16 @@ let replaced = string_replace(text, "World", "NORMiL")
 Vérifie si une chaîne contient une sous-chaîne.
 
 **Paramètres:**
+
 - `s`: Chaîne à vérifier
 - `substring`: Sous-chaîne recherchée
 
 **Retour:**
+
 - `true` si trouvée, `false` sinon
 
 **Exemple:**
+
 ```normil
 let text = "Hello World"
 let has_world = string_contains(text, "World")  // true
@@ -418,13 +482,16 @@ let has_foo = string_contains(text, "foo")  // false
 Vérifie si une chaîne commence par un préfixe.
 
 **Paramètres:**
+
 - `s`: Chaîne à vérifier
 - `prefix`: Préfixe recherché
 
 **Retour:**
+
 - `true` si commence par le préfixe, `false` sinon
 
 **Exemple:**
+
 ```normil
 let text = "Hello World"
 let starts = string_startswith(text, "Hello")  // true
@@ -438,13 +505,16 @@ let not_starts = string_startswith(text, "World")  // false
 Vérifie si une chaîne finit par un suffixe.
 
 **Paramètres:**
+
 - `s`: Chaîne à vérifier
 - `suffix`: Suffixe recherché
 
 **Retour:**
+
 - `true` si finit par le suffixe, `false` sinon
 
 **Exemple:**
+
 ```normil
 let text = "Hello World"
 let ends = string_endswith(text, "World")  // true
@@ -458,12 +528,15 @@ let not_ends = string_endswith(text, "Hello")  // false
 Enlève les espaces en début et fin de chaîne.
 
 **Paramètres:**
+
 - `s`: Chaîne à nettoyer
 
 **Retour:**
+
 - Chaîne sans espaces de début/fin
 
 **Exemple:**
+
 ```normil
 let text = "  Hello World  "
 let trimmed = string_trim(text)  // "Hello World"
@@ -476,13 +549,16 @@ let trimmed = string_trim(text)  // "Hello World"
 Répète une chaîne n fois.
 
 **Paramètres:**
+
 - `s`: Chaîne à répéter
 - `n`: Nombre de répétitions
 
 **Retour:**
+
 - Chaîne répétée n fois
 
 **Exemple:**
+
 ```normil
 let pattern = "Ha"
 let repeated = string_repeat(pattern, 3)  // "HaHaHa"
@@ -495,13 +571,16 @@ let repeated = string_repeat(pattern, 3)  // "HaHaHa"
 Retourne le caractère à un index donné.
 
 **Paramètres:**
+
 - `s`: Chaîne source
 - `index`: Position du caractère (0-indexed)
 
 **Retour:**
+
 - Caractère à l'index (string d'un caractère)
 
 **Exemple:**
+
 ```normil
 let text = "NORMiL"
 let char = string_char_at(text, 0)  // "N"
@@ -509,6 +588,7 @@ let char2 = string_char_at(text, 4)  // "i"
 ```
 
 **Erreurs:**
+
 - Index hors limites retourne chaîne vide
 
 ---
@@ -518,13 +598,16 @@ let char2 = string_char_at(text, 4)  // "i"
 Trouve la position d'une sous-chaîne.
 
 **Paramètres:**
+
 - `s`: Chaîne à rechercher
 - `substring`: Sous-chaîne recherchée
 
 **Retour:**
+
 - Index de la première occurrence, ou -1 si non trouvé
 
 **Exemple:**
+
 ```normil
 let text = "Hello World"
 let pos = string_index_of(text, "World")  // 6
@@ -540,13 +623,16 @@ let not_found = string_index_of(text, "foo")  // -1
 Calcule le produit scalaire (dot product).
 
 **Paramètres:**
+
 - `v1`: Premier vecteur
 - `v2`: Second vecteur
 
 **Retour:**
+
 - Somme de v1[i] * v2[i] pour tout i
 
 **Exemple:**
+
 ```normil
 let v1 = fill(dim: 64, value: 2.0)
 let v2 = fill(dim: 64, value: 3.0)
@@ -555,6 +641,7 @@ let d = dot(v1, v2)
 ```
 
 **Applications:**
+
 - Similarité entre vecteurs
 - Projections
 - Calcul d'activation dans les réseaux neuronaux
@@ -566,12 +653,15 @@ let d = dot(v1, v2)
 Calcule la norme L2 (euclidienne) d'un vecteur.
 
 **Paramètres:**
+
 - `v`: Vecteur
 
 **Retour:**
+
 - sqrt(sum(v[i]²)) pour tout i
 
 **Exemple:**
+
 ```normil
 let v = ones(dim: 64)
 let n = norm(v)
@@ -579,6 +669,7 @@ let n = norm(v)
 ```
 
 **Formule:**
+
 ```
 norm(v) = √(v₁² + v₂² + ... + vₙ²)
 ```
@@ -590,12 +681,15 @@ norm(v) = √(v₁² + v₂² + ... + vₙ²)
 Normalise un vecteur à la norme unitaire (norme = 1.0).
 
 **Paramètres:**
+
 - `v`: Vecteur à normaliser
 
 **Retour:**
+
 - Vecteur dans la même direction avec norm = 1.0
 
 **Exemple:**
+
 ```normil
 let v = random(dim: 128, mean: 0.0, std: 1.0)
 let v_norm = normalize(v)
@@ -603,11 +697,13 @@ let v_norm = normalize(v)
 ```
 
 **Formule:**
+
 ```
 normalize(v) = v / norm(v)
 ```
 
 **Erreurs:**
+
 - Éviter de normaliser un vecteur de norme ~0 (division par zéro)
 
 ---
@@ -619,6 +715,7 @@ normalize(v) = v / norm(v)
 Annotation pour la plasticité neuronale.
 
 **Syntaxe:**
+
 ```normil
 @plastic(rate: float, mode: str)
 fn fonction(...) -> ... {
@@ -627,11 +724,13 @@ fn fonction(...) -> ... {
 ```
 
 **Paramètres:**
+
 - `rate`: Taux d'apprentissage (default: 0.001)
+
   - Valeurs typiques: 0.0001 à 0.1
   - Plus élevé = apprentissage plus rapide mais moins stable
-  
 - `mode`: Mode de plasticité (default: "hebbian")
+
   - `"hebbian"`: Apprentissage Hebbien classique
   - `"anti_hebbian"`: Désapprentissage/oubli
   - `"stdp"`: Spike-Timing Dependent Plasticity
@@ -639,6 +738,7 @@ fn fonction(...) -> ... {
   - `"backprop"`: Rétropropagation (backpropagation)
 
 **Exemple complet:**
+
 ```normil
 @plastic(rate: 0.01, mode: "hebbian")
 fn learn(weights: Vec, input: Vec) -> Vec {
@@ -648,6 +748,7 @@ fn learn(weights: Vec, input: Vec) -> Vec {
 ```
 
 **Métadonnées accessibles:**
+
 ```normil
 // Dans la fonction annotée, les métadonnées sont stockées
 // dans executor.function_metadata[function_name]
@@ -661,6 +762,7 @@ fn learn(weights: Vec, input: Vec) -> Vec {
 **Modes détaillés:**
 
 #### Hebbian
+
 ```normil
 @plastic(rate: 0.01, mode: "hebbian")
 fn hebbian_learning(w: Vec, x: Vec) -> Vec {
@@ -672,6 +774,7 @@ fn hebbian_learning(w: Vec, x: Vec) -> Vec {
 ```
 
 #### Anti-Hebbian
+
 ```normil
 @plastic(rate: 0.005, mode: "anti_hebbian")
 fn forgetting(w: Vec, x: Vec) -> Vec {
@@ -683,6 +786,7 @@ fn forgetting(w: Vec, x: Vec) -> Vec {
 ```
 
 #### STDP
+
 ```normil
 @plastic(rate: 0.002, mode: "stdp")
 fn stdp_update(w: Vec, pre: Vec, post: Vec) -> Vec {
@@ -701,6 +805,7 @@ fn stdp_update(w: Vec, pre: Vec, post: Vec) -> Vec {
 Annotation pour les transactions avec rollback automatique.
 
 **Syntaxe:**
+
 ```normil
 @atomic
 fn fonction(...) -> ... {
@@ -709,12 +814,14 @@ fn fonction(...) -> ... {
 ```
 
 **Garanties:**
+
 - ✅ **Atomicité**: Tout ou rien
 - ✅ **Isolation**: Changements temporaires isolés
 - ✅ **Rollback**: État restauré sur erreur
 - ✅ **Commit**: Changements appliqués sur succès
 
 **Exemple:**
+
 ```normil
 @atomic
 fn safe_update(value: int) -> int {
@@ -728,34 +835,36 @@ fn safe_update(value: int) -> int {
 **Comportement:**
 
 1. **Avant l'exécution:**
+
    - Snapshot de toutes les variables locales
    - État sauvegardé avec `deepcopy`
-
 2. **Pendant l'exécution:**
+
    - Modifications dans un scope isolé
    - Pas d'effet sur les variables externes
-
 3. **Si succès:**
+
    - Commit implicite
    - Changements appliqués
-
 4. **Si erreur:**
+
    - Rollback automatique
    - État restauré au snapshot
    - Exception propagée avec contexte
 
 **Exemple avec rollback:**
+
 ```normil
 @atomic
 fn risky_operation(v: Vec) -> Vec {
     let n = norm(v)
-    
+  
     if n < 0.001 {
         // Division par zéro évitée
         // Rollback automatique
         return zeros(dim: 64)
     }
-    
+  
     return normalize(v)  // Commit si ok
 }
 ```
@@ -772,19 +881,20 @@ fn risky_operation(v: Vec) -> Vec {
 fn safe_learning(w: Vec, x: Vec) -> Vec {
     let delta = scale(vec_mul(w, x), 0.005)
     let new_w = vec_add(w, delta)
-    
+  
     let n = norm(new_w)
-    
+  
     if n > 5.0 {
         // Trop instable - rollback
         return w
     }
-    
+  
     return normalize(new_w)  // Commit si stable
 }
 ```
 
 **Avantages:**
+
 - Apprentissage avec vérification de stabilité
 - Protection contre les explosions de gradient
 - Garantie de cohérence
@@ -800,16 +910,19 @@ NORMiL supporte maintenant un système de modules pour organiser et réutiliser 
 ### Import de Modules
 
 **Syntaxe de base:**
+
 ```normil
 import module_name
 ```
 
 **Import avec alias:**
+
 ```normil
 import module_name as alias
 ```
 
 **Utilisation:**
+
 ```normil
 import math
 
@@ -824,6 +937,7 @@ fn main() {
 ### Organisation des Modules
 
 **Structure:**
+
 ```
 project/
 ├── main.nor           # Votre programme principal
@@ -834,6 +948,7 @@ project/
 ```
 
 **Chemin de recherche:**
+
 1. Dossier `modules/` relatif au fichier courant
 2. Dossier `modules/` dans le répertoire de travail
 
@@ -842,6 +957,7 @@ project/
 ### Création d'un Module
 
 **Fichier:** `modules/math.nor`
+
 ```normil
 fn abs(x: float) -> float {
     if x < 0.0 {
@@ -883,6 +999,7 @@ fn clamp(value: float, min_val: float, max_val: float) -> float {
 ### Utilisation des Modules
 
 **Import simple:**
+
 ```normil
 import math
 
@@ -890,7 +1007,7 @@ fn main() {
     let x = math.abs(-10.0)
     let y = math.max(5.0, 10.0)
     let z = math.clamp(15.0, 0.0, 10.0)
-    
+  
     print(x)  // 10.0
     print(y)  // 10.0
     print(z)  // 10.0
@@ -898,21 +1015,23 @@ fn main() {
 ```
 
 **Import avec alias:**
+
 ```normil
 import vectors as vec
 
 fn main() {
     let v1 = zeros(dim: 64)
     let v2 = ones(dim: 64)
-    
+  
     let normalized = vec.create_normalized(v2)
     let sim = vec.compute_similarity(v1, v2)
-    
+  
     print(sim)
 }
 ```
 
 **Imports multiples:**
+
 ```normil
 import math
 import vectors as vec
@@ -920,10 +1039,10 @@ import vectors as vec
 fn main() {
     // Utilisation de plusieurs modules
     let x = math.abs(-5.0)
-    
+  
     let v = fill(dim: 64, value: x)
     let norm_v = vec.create_normalized(v)
-    
+  
     print(norm(norm_v))  // ~1.0
 }
 ```
@@ -935,12 +1054,14 @@ fn main() {
 #### Module `math`
 
 **Fonctions disponibles:**
+
 - `abs(x: float) -> float` - Valeur absolue
 - `max(a: float, b: float) -> float` - Maximum de deux valeurs
 - `min(a: float, b: float) -> float` - Minimum de deux valeurs
 - `clamp(value: float, min_val: float, max_val: float) -> float` - Limite entre min et max
 
 **Exemple:**
+
 ```normil
 import math
 
@@ -957,34 +1078,36 @@ fn main() {
 #### Module `vectors`
 
 **Fonctions disponibles:**
+
 - `create_normalized(v: Vec) -> Vec` - Crée un vecteur normalisé
 - `compute_similarity(v1: Vec, v2: Vec) -> float` - Similarité cosinus
 - `weighted_sum(v1: Vec, w1: float, v2: Vec, w2: float) -> Vec` - Somme pondérée
 - `distance(v1: Vec, v2: Vec) -> float` - Distance euclidienne
 
 **Exemple:**
+
 ```normil
 import vectors as vec
 
 fn main() {
     let v1 = random(dim: 64, mean: 1.0, std: 0.2)
     let v2 = random(dim: 64, mean: 0.5, std: 0.1)
-    
+  
     // Normalisation
     let n1 = vec.create_normalized(v1)
     let n2 = vec.create_normalized(v2)
-    
+  
     // Similarité
     let sim = vec.compute_similarity(n1, n2)
     print(sim)
-    
+  
     // Somme pondérée
     let combined = vec.weighted_sum(
         v1: n1, w1: 0.7,
         v2: n2, w2: 0.3
     )
     print(norm(combined))
-    
+  
     // Distance
     let dist = vec.distance(v1, v2)
     print(dist)
@@ -1002,17 +1125,20 @@ NORMiL peut importer et utiliser **n'importe quel module Python**, vous donnant 
 ### Import de Modules Python
 
 **Syntaxe (identique aux modules NORMiL):**
+
 ```normil
 import python_module
 import python_module as alias
 ```
 
 **Détection automatique:**
+
 - NORMiL cherche d'abord un fichier `.nor` dans le dossier `modules/`
 - Si non trouvé, essaie d'importer comme module Python
 - Gestion d'erreur si le module n'existe ni en NORMiL ni en Python
 
 **Exemple:**
+
 ```normil
 import math        // Module Python (math.py n'existe pas dans modules/)
 import mathutils   // Module NORMiL (mathutils.nor existe)
@@ -1025,6 +1151,7 @@ import mathutils   // Module NORMiL (mathutils.nor existe)
 #### Module `math`
 
 **Constantes:**
+
 - `math.pi` - π (3.141592...)
 - `math.e` - e (2.718281...)
 - `math.tau` - τ = 2π
@@ -1032,36 +1159,38 @@ import mathutils   // Module NORMiL (mathutils.nor existe)
 - `math.nan` - Not a Number
 
 **Fonctions de base:**
+
 ```normil
 import math
 
 fn main() {
     // Racine carrée
     let sqrt_val = math.sqrt(16.0)  // 4.0
-    
+  
     // Puissance
     let pow_val = math.pow(2.0, 10.0)  // 1024.0
-    
+  
     // Arrondi
     let ceil_val = math.ceil(3.2)    // 4
     let floor_val = math.floor(3.8)  // 3
-    
+  
     // Valeur absolue
     let abs_val = math.fabs(-5.5)    // 5.5
 }
 ```
 
 **Fonctions trigonométriques:**
+
 ```normil
 import math
 
 fn main() {
     let angle = math.pi / 4.0  // 45 degrés
-    
+  
     let sin_val = math.sin(angle)      // 0.7071...
     let cos_val = math.cos(angle)      // 0.7071...
     let tan_val = math.tan(angle)      // 1.0
-    
+  
     // Inverses
     let asin_val = math.asin(0.5)      // π/6
     let acos_val = math.acos(0.5)      // π/3
@@ -1070,13 +1199,14 @@ fn main() {
 ```
 
 **Fonctions exponentielles et logarithmiques:**
+
 ```normil
 import math
 
 fn main() {
     // Exponentielle
     let exp_val = math.exp(1.0)        // e ≈ 2.718
-    
+  
     // Logarithmes
     let log_val = math.log(math.e)     // 1.0 (ln)
     let log10_val = math.log10(100.0)  // 2.0
@@ -1089,34 +1219,36 @@ fn main() {
 #### Module `random`
 
 **Génération aléatoire:**
+
 ```normil
 import random
 
 fn main() {
     // Fixer la seed pour reproductibilité
     random.seed(42)
-    
+  
     // Nombre aléatoire [0.0, 1.0)
     let rand_float = random.random()
-    
+  
     // Entier aléatoire [a, b] (inclusif)
     let rand_int = random.randint(1, 100)
-    
+  
     // Flottant aléatoire [a, b)
     let rand_uniform = random.uniform(0.0, 10.0)
 }
 ```
 
 **Distribution normale:**
+
 ```normil
 import random
 
 fn main() {
     random.seed(123)
-    
+  
     // Gaussienne standard (μ=0, σ=1)
     let gauss = random.gauss(0.0, 1.0)
-    
+  
     // Distribution normale
     let normal = random.normalvariate(5.0, 2.0)
 }
@@ -1127,6 +1259,7 @@ fn main() {
 #### Module `json`
 
 **Sérialisation:**
+
 ```normil
 import json
 
@@ -1135,7 +1268,7 @@ fn main() {
     let json_str = json.dumps("hello")     // "\"hello\""
     let json_num = json.dumps(42)          // "42"
     let json_bool = json.dumps(true)       // "true"
-    
+  
     print(json_str)
     print(json_num)
     print(json_bool)
@@ -1147,19 +1280,21 @@ fn main() {
 ### Appels de Fonctions Python
 
 **Arguments multiples:**
+
 ```normil
 import math
 
 fn main() {
     // Fonction à 2 arguments
     let pow_result = math.pow(2.0, 10.0)  // 1024.0
-    
+  
     // Fonction à 3 arguments
     let atan2_result = math.atan2(1.0, 1.0)  // π/4
 }
 ```
 
 **Appels imbriqués:**
+
 ```normil
 import math
 
@@ -1168,13 +1303,14 @@ fn main() {
     let hypotenuse = math.sqrt(
         math.pow(3.0, 2.0) + math.pow(4.0, 2.0)
     )  // 5.0
-    
+  
     // Dans des expressions complexes
     let aire_cercle = math.pi * math.pow(5.0, 2.0)  // 78.539...
 }
 ```
 
 **Chaîne d'appels:**
+
 ```normil
 import math
 
@@ -1182,24 +1318,25 @@ fn main() {
     let a = math.sqrt(16.0)      // 4.0
     let b = math.pow(a, 2.0)     // 16.0
     let c = math.floor(b)        // 16
-    
+  
     print(c)
 }
 ```
 
 **Calculs mixtes NORMiL/Python:**
+
 ```normil
 import math
 
 fn main() {
     // Variables NORMiL
     let rayon = 5.0
-    
+  
     // Calculs avec fonctions Python
     let aire = math.pi * rayon * rayon
     let perimetre = 2.0 * math.pi * rayon
     let volume = (4.0 / 3.0) * math.pi * math.pow(rayon, 3.0)
-    
+  
     print(aire)       // 78.539...
     print(perimetre)  // 31.415...
     print(volume)     // 523.598...
@@ -1211,19 +1348,21 @@ fn main() {
 ### Gestion des Types
 
 **Conversions automatiques:**
+
 ```normil
 import math
 
 fn main() {
     // int → float automatique
     let result1 = math.sqrt(16)     // 4.0 (16 converti en 16.0)
-    
+  
     // bool converti en int/float selon contexte
     let result2 = math.pow(2.0, 3)  // 8.0 (3 utilisé comme 3.0)
 }
 ```
 
 **Types supportés:**
+
 - `int` NORMiL → `int` Python
 - `float` NORMiL → `float` Python
 - `str` NORMiL → `str` Python
@@ -1231,16 +1370,17 @@ fn main() {
 - `None` Python → `None` en NORMiL
 
 **Retours de fonctions:**
+
 ```normil
 import random
 
 fn main() {
     // Fonction retournant None
     let result = random.seed(42)  // None
-    
+  
     // Fonction retournant float
     let value = random.random()   // float
-    
+  
     // Fonction retournant int
     let dice = random.randint(1, 6)  // int
 }
@@ -1251,19 +1391,21 @@ fn main() {
 ### Gestion des Exceptions
 
 **Exceptions Python propagées:**
+
 ```normil
 import math
 
 fn main() {
     // Ceci lève une exception Python (sqrt de négatif)
     // let error = math.sqrt(-1.0)  // ValueError!
-    
+  
     // Utilisez des valeurs valides
     let valid = math.sqrt(1.0)  // 1.0
 }
 ```
 
 **Erreurs d'import:**
+
 ```normil
 // Module inexistant
 // import nonexistent_module  // ImportError!
@@ -1278,6 +1420,7 @@ import math
 ### Exemples Pratiques
 
 **Calcul scientifique:**
+
 ```normil
 import math
 
@@ -1297,13 +1440,14 @@ fn aire_triangle(a: float, b: float, c: float) -> float {
 fn main() {
     let dist = distance_euclidienne(0.0, 0.0, 3.0, 4.0)
     print(dist)  // 5.0
-    
+  
     let area = aire_triangle(3.0, 4.0, 5.0)
     print(area)  // 6.0
 }
 ```
 
 **Simulation Monte Carlo:**
+
 ```normil
 import random
 import math
@@ -1311,17 +1455,17 @@ import math
 fn estimer_pi(iterations: int) -> float {
     random.seed(42)
     let inside = 0
-    
+  
     for i in range(0, iterations) {
         let x = random.random()
         let y = random.random()
         let distance = math.sqrt(x * x + y * y)
-        
+      
         if distance <= 1.0 {
             inside = inside + 1
         }
     }
-    
+  
     let pi_estimate = 4.0 * inside / iterations
     return pi_estimate
 }
@@ -1333,6 +1477,7 @@ fn main() {
 ```
 
 **Conversions d'angles:**
+
 ```normil
 import math
 
@@ -1347,7 +1492,7 @@ fn radians_vers_degres(radians: float) -> float {
 fn main() {
     let rad_90 = degres_vers_radians(90.0)
     print(rad_90)  // π/2 ≈ 1.5707...
-    
+  
     let deg_pi = radians_vers_degres(math.pi)
     print(deg_pi)  // 180.0
 }
@@ -1358,11 +1503,13 @@ fn main() {
 ### Limites Actuelles
 
 **Pas encore supporté:**
+
 - ❌ Arguments nommés Python (kwargs) : `func(x=1, y=2)`
 - ❌ Conversion automatique Vec ↔ numpy.ndarray
 - ❌ Certains types Python complexes
 
 **Fonctionnel (Phases 4.1-4.4 complètes):**
+
 - ✅ Import de modules Python (Phase 4.1)
 - ✅ Accès aux constantes (Phase 4.1)
 - ✅ Appels de fonctions (Phase 4.2)
@@ -1387,15 +1534,15 @@ Les chaînes, listes et autres types Python supportent leurs méthodes natives :
 ```normil
 fn manipuler_strings() {
     let texte = "hello world"
-    
+  
     // Méthodes de transformation
     let upper = texte.upper()        // "HELLO WORLD"
     let lower = upper.lower()        // "hello world"
     let replaced = texte.replace("world", "NORMiL")  // "hello NORMiL"
-    
+  
     // Méthodes de parsing
     let mots = texte.split(" ")      // ["hello", "world"]
-    
+  
     // Méthodes de test
     let starts = texte.startswith("hello")  // true
     let ends = texte.endswith("world")      // true
@@ -1403,10 +1550,11 @@ fn manipuler_strings() {
 ```
 
 **Méthodes sur les listes:**
+
 ```normil
 fn manipuler_listes() {
     let nombres = [1, 2, 3]
-    
+  
     // Modification en place
     nombres.append(4)
     nombres.append(5)
@@ -1421,11 +1569,11 @@ Les méthodes peuvent être chaînées pour des transformations complexes :
 ```normil
 fn chainer() {
     let texte = "  hello world  "
-    
+  
     // Chaîner strip() puis upper()
     let resultat = texte.strip().upper()
     print(resultat)  // "HELLO WORLD"
-    
+  
     // Chaînage complexe
     let complexe = "  python rocks  "
         .strip()
@@ -1444,7 +1592,7 @@ fn creer_dates() {
     // Créer un objet datetime
     let noel = datetime.datetime(2024, 12, 25)
     let nouvel_an = datetime.datetime(2024, 1, 1)
-    
+  
     print(noel)        // Objet datetime
     print(nouvel_an)   // Objet datetime
 }
@@ -1457,12 +1605,12 @@ import datetime
 
 fn explorer_date() {
     let date = datetime.datetime(2024, 6, 15)
-    
+  
     // Accès aux attributs
     let annee = date.year     // 2024
     let mois = date.month     // 6
     let jour = date.day       // 15
-    
+  
     print(annee)
     print(mois)
     print(jour)
@@ -1476,7 +1624,7 @@ import datetime
 
 fn utiliser_methodes() {
     let date = datetime.datetime(2024, 12, 25)
-    
+  
     // Appeler des méthodes
     let jour_semaine = date.weekday()  // 0=Lundi, 6=Dimanche
     print(jour_semaine)  // 2 (Mercredi)
@@ -1486,16 +1634,17 @@ fn utiliser_methodes() {
 **Exemples pratiques:**
 
 Validation d'email avec méthodes :
+
 ```normil
 fn valider_email(email: str) -> bool {
     let parties = email.split("@")
-    
+  
     if parties.length == 2 {
         let user_ok = parties[0].length > 0
         let domain_ok = parties[1].length > 0
         return user_ok && domain_ok
     }
-    
+  
     return false
 }
 
@@ -1506,6 +1655,7 @@ fn main() {
 ```
 
 Parser CSV simple :
+
 ```normil
 fn parser_csv(ligne: str) -> [str] {
     return ligne.split(",")
@@ -1524,12 +1674,13 @@ fn main() {
     let ligne = "nom,prenom,age"
     let colonnes = parser_csv(ligne)
     let titres = formater_entetes(colonnes)
-    
+  
     print(titres)  // ["NOM", "PRENOM", "AGE"]
 }
 ```
 
 Manipulation de dates :
+
 ```normil
 import datetime
 
@@ -1537,7 +1688,7 @@ fn analyser_annee(annee: int) {
     let debut = datetime.datetime(annee, 1, 1)
     let milieu = datetime.datetime(annee, 6, 15)
     let fin = datetime.datetime(annee, 12, 31)
-    
+  
     print(debut.weekday())
     print(milieu.weekday())
     print(fin.weekday())
@@ -1553,19 +1704,23 @@ fn main() {
 ### Caractéristiques du Système de Modules
 
 **Caching:**
+
 - Modules chargés une seule fois en mémoire
 - Performances optimales avec multiples imports
 
 **Scopes isolés:**
+
 - Chaque module a son propre scope
 - Pas de pollution de namespace
 - Variables de module non accessibles
 
 **Accès aux fonctions:**
+
 - Syntaxe `module.fonction()`
 - Ou `alias.fonction()` avec import aliasé
 
 **Gestion des erreurs:**
+
 ```normil
 import non_existent  // Erreur: Module 'non_existent' not found
 
@@ -1584,6 +1739,7 @@ NORMiL peut maintenant déduire automatiquement le type des variables.
 ### Syntaxe
 
 **Avec annotation explicite (classique):**
+
 ```normil
 let x: int = 42
 let y: float = 3.14
@@ -1591,6 +1747,7 @@ let s: str = "hello"
 ```
 
 **Avec inférence (nouveau):**
+
 ```normil
 let x = 42          // Type inféré: int
 let y = 3.14        // Type inféré: float
@@ -1602,6 +1759,7 @@ let s = "hello"     // Type inféré: str
 ### Types Inférés
 
 **Depuis des literals:**
+
 ```normil
 let a = 42               // int
 let b = 3.14             // float
@@ -1611,6 +1769,7 @@ let e = zeros(dim: 64)   // Vec
 ```
 
 **Depuis des expressions:**
+
 ```normil
 let sum = 10 + 20        // int (10 et 20 sont int)
 let avg = 10.0 / 2.0     // float (opération sur floats)
@@ -1619,6 +1778,7 @@ let flag = 5 > 3         // bool (résultat de comparaison)
 ```
 
 **Depuis des retours de fonction:**
+
 ```normil
 fn get_number() -> int {
     return 42
@@ -1631,6 +1791,7 @@ fn main() {
 ```
 
 **Avec des vecteurs:**
+
 ```normil
 let v1 = zeros(dim: 64)           // Vec
 let v2 = random(dim: 128, mean: 0.0, std: 1.0)  // Vec
@@ -1650,6 +1811,7 @@ L'inférence suit cet ordre de priorité:
 5. **Vec** - Si la valeur est un vecteur NumPy
 
 **Exemples:**
+
 ```normil
 let a = true         // bool (priorité 1)
 let b = 42           // int (priorité 2)
@@ -1663,6 +1825,7 @@ let e = zeros(dim: 5) // Vec (priorité 5)
 ### Compatibilité
 
 **Avec @plastic:**
+
 ```normil
 @plastic(rate: 0.01, mode: "hebbian")
 fn learn(weights: Vec, input: Vec) -> Vec {
@@ -1673,6 +1836,7 @@ fn learn(weights: Vec, input: Vec) -> Vec {
 ```
 
 **Avec @atomic:**
+
 ```normil
 @atomic
 fn safe_operation(value: int) -> int {
@@ -1683,6 +1847,7 @@ fn safe_operation(value: int) -> int {
 ```
 
 **Avec const:**
+
 ```normil
 const PI = 3.14159          // Inféré: float
 const MAX_ITER = 1000       // Inféré: int
@@ -1696,6 +1861,7 @@ const GREETING = "Hello"    // Inféré: str
 **Type explicite recommandé dans certains cas:**
 
 1. **Paramètres de fonction** (obligatoire):
+
 ```normil
 fn add(a: int, b: int) -> int {  // Types requis
     return a + b
@@ -1703,6 +1869,7 @@ fn add(a: int, b: int) -> int {  // Types requis
 ```
 
 2. **Pour la clarté**:
+
 ```normil
 // Moins clair
 let x = 42
@@ -1712,6 +1879,7 @@ let max_iterations: int = 42
 ```
 
 3. **Conversion de type intentionnelle**:
+
 ```normil
 let x: float = 42  // Force int vers float
 // vs
@@ -1735,6 +1903,7 @@ match expression {
 ### Types de Patterns
 
 #### 1. Literal Pattern
+
 ```normil
 match x {
     case 0 -> { return "zero" }
@@ -1744,6 +1913,7 @@ match x {
 ```
 
 #### 2. Wildcard Pattern
+
 ```normil
 match x {
     case _ -> { return "n'importe quoi" }
@@ -1751,6 +1921,7 @@ match x {
 ```
 
 #### 3. Type Extraction Pattern
+
 ```normil
 match value {
     case int(x) -> { /* x est extrait */ }
@@ -1761,6 +1932,7 @@ match value {
 ```
 
 #### 4. Pattern avec Condition (where)
+
 ```normil
 match value {
     case int(x) where x > 0 -> { return "positif" }
@@ -1772,6 +1944,7 @@ match value {
 ### Exemples Complets
 
 #### Classification par Plages
+
 ```normil
 fn classifier(score: float) -> str {
     match score {
@@ -1785,6 +1958,7 @@ fn classifier(score: float) -> str {
 ```
 
 #### Validation avec Patterns
+
 ```normil
 fn valider_entree(n: int) -> bool {
     match n {
@@ -1799,6 +1973,7 @@ fn valider_entree(n: int) -> bool {
 ```
 
 #### Patterns sur Strings
+
 ```normil
 fn detecter_langue(mot: str) -> str {
     match mot {
@@ -1819,14 +1994,17 @@ fn detecter_langue(mot: str) -> str {
 Affiche une valeur sur la sortie standard.
 
 **Paramètres:**
+
 - `value`: Valeur à afficher (int, float, str, bool, Vec)
 
 **Comportement:**
+
 - Int/Float/Bool: Affiche la valeur
 - String: Affiche sans quotes
 - Vec: Affiche un résumé (premiers/derniers éléments si > 10)
 
 **Exemple:**
+
 ```normil
 print("Hello")        // Hello
 print(42)             // 42
@@ -1844,13 +2022,16 @@ print(v)              // [1.0, 1.0, 1.0, ...]
 Génère une séquence d'entiers.
 
 **Paramètres:**
+
 - `start`: Valeur de départ (incluse)
 - `end`: Valeur de fin (exclue)
 
 **Retour:**
+
 - Itérable pour boucles for
 
 **Exemple:**
+
 ```normil
 for i in range(0, 5) {
     print(i)  // 0, 1, 2, 3, 4
@@ -1867,27 +2048,30 @@ for i in range(10, 15) {
 
 ### Types Primitifs
 
-| Type | Description | Valeurs | Exemple |
-|------|-------------|---------|---------|
-| `int` | Entier | ..., -1, 0, 1, ... | `let x: int = 42` |
-| `float` | Flottant | 3.14, -0.5, 1e-3 | `let y: float = 3.14` |
-| `str` | Chaîne | "hello", "world" | `let s: str = "hi"` |
-| `bool` | Booléen | true, false | `let b: bool = true` |
-| `Vec` | Vecteur | NumPy array | `let v: Vec = zeros(dim: 64)` |
+| Type      | Description | Valeurs            | Exemple                         |
+| --------- | ----------- | ------------------ | ------------------------------- |
+| `int`   | Entier      | ..., -1, 0, 1, ... | `let x: int = 42`             |
+| `float` | Flottant    | 3.14, -0.5, 1e-3   | `let y: float = 3.14`         |
+| `str`   | Chaîne     | "hello", "world"   | `let s: str = "hi"`           |
+| `bool`  | Booléen    | true, false        | `let b: bool = true`          |
+| `Vec`   | Vecteur     | NumPy array        | `let v: Vec = zeros(dim: 64)` |
 
 ### Type Vec
 
 **Représentation interne:**
+
 - NumPy array (np.ndarray)
 - dtype: float64
 - 1-dimension
 
 **Propriétés:**
+
 - Dimension fixe à la création
 - Opérations vectorisées (rapides)
 - Compatible avec toutes les primitives vectorielles
 
 **Exemple d'utilisation:**
+
 ```normil
 let v1: Vec = random(dim: 128, mean: 0.0, std: 1.0)
 let v2: Vec = ones(dim: 128)
@@ -1908,6 +2092,7 @@ NORMiL fournit des types spécialisés pour l'architecture O-RedMind :
 Enregistrement d'événement brut horodaté avec vecteurs multimodaux.
 
 **Structure:**
+
 ```normil
 EpisodicRecord {
     id: str,                    // Identifiant unique
@@ -1923,6 +2108,7 @@ EpisodicRecord {
 ```
 
 **Exemple:**
+
 ```normil
 let event = EpisodicRecord {
     id: "evt_001",
@@ -1942,6 +2128,7 @@ let event = EpisodicRecord {
 Concept compressé avec confiance pour la knowledge base.
 
 **Structure:**
+
 ```normil
 Concept {
     concept_id: str,              // Identifiant unique
@@ -1954,6 +2141,7 @@ Concept {
 ```
 
 **Exemple:**
+
 ```normil
 let ai_concept = Concept {
     concept_id: "ai_ml_001",
@@ -1970,6 +2158,7 @@ let ai_concept = Concept {
 Prototype d'instinct avec vecteur de référence et règle.
 
 **Structure:**
+
 ```normil
 ProtoInstinct {
     id: str,           // Identifiant unique
@@ -1980,6 +2169,7 @@ ProtoInstinct {
 ```
 
 **Exemple:**
+
 ```normil
 let safety = ProtoInstinct {
     id: "privacy_guard",
@@ -1994,6 +2184,7 @@ let safety = ProtoInstinct {
 Vecteur creux stockant seulement les valeurs non-nulles.
 
 **Structure:**
+
 ```normil
 SparseVec {
     indices: [int],    // Indices des valeurs non-nulles
@@ -2003,6 +2194,7 @@ SparseVec {
 ```
 
 **Exemple:**
+
 ```normil
 let sparse = SparseVec {
     indices: [0, 100, 500, 999],
@@ -2014,6 +2206,7 @@ let sparse = SparseVec {
 ```
 
 **Cas d'usage:**
+
 - NLP: word embeddings
 - Réseaux de neurones creux
 - Économie mémoire pour grandes dimensions
@@ -2029,11 +2222,13 @@ Primitives avancées pour l'apprentissage incrémental et l'optimisation mémoir
 Mise à jour de rang faible d'une matrice : W' = W + u ⊗ v
 
 **Signature:**
+
 ```normil
 lowrankupdate(W: [[float]], u: Vec, v: Vec) -> [[float]]
 ```
 
 **Paramètres:**
+
 - `W` : Matrice à mettre à jour (list de lists)
 - `u` : Vecteur gauche (Vec)
 - `v` : Vecteur droit (Vec)
@@ -2041,6 +2236,7 @@ lowrankupdate(W: [[float]], u: Vec, v: Vec) -> [[float]]
 **Retourne:** Nouvelle matrice W' = W + u ⊗ v
 
 **Exemple:**
+
 ```normil
 let W = [[1.0, 0.0], [0.0, 1.0]]  // Matrice identité
 let u = vec(2, [1.0, 0.0])
@@ -2051,6 +2247,7 @@ let W_new = lowrankupdate(W, u, v)
 ```
 
 **Cas d'usage:**
+
 - Adaptation de poids neuronaux sans ré-entraînement
 - Apprentissage incrémental efficace
 - Mise à jour de modèles avec faible coût
@@ -2062,17 +2259,20 @@ let W_new = lowrankupdate(W, u, v)
 Quantisation d'un vecteur sur n bits (8 ou 4).
 
 **Signature:**
+
 ```normil
 quantize(vec: Vec, bits: int) -> Vec
 ```
 
 **Paramètres:**
+
 - `vec` : Vecteur à quantifier
 - `bits` : Nombre de bits (8 ou 4)
 
 **Retourne:** Vecteur quantifié (dimension préservée)
 
 **Exemple:**
+
 ```normil
 let v = random(128, 0.0, 1.0)
 
@@ -2085,12 +2285,13 @@ let v_q4 = quantize(v, 4)
 
 **Comparaison:**
 
-| Bits | Précision | Compression | Use Case |
-|------|-----------|-------------|----------|
-| 8 | ~1% erreur | 50% | Production, faible perte |
-| 4 | ~5% erreur | 75% | Stockage, transmission |
+| Bits | Précision | Compression | Use Case                 |
+| ---- | ---------- | ----------- | ------------------------ |
+| 8    | ~1% erreur | 50%         | Production, faible perte |
+| 4    | ~5% erreur | 75%         | Stockage, transmission   |
 
 **Cas d'usage:**
+
 - Stockage de vecteurs à grande échelle
 - Transmission réseau optimisée
 - Systèmes embarqués
@@ -2102,11 +2303,13 @@ let v_q4 = quantize(v, 4)
 Mise à jour incrémentale d'un centroïde : c' = (1 - lr) × c + lr × x
 
 **Signature:**
+
 ```normil
 onlinecluster_update(centroid: Vec, x: Vec, lr: float) -> Vec
 ```
 
 **Paramètres:**
+
 - `centroid` : Centroïde actuel
 - `x` : Nouveau point à intégrer
 - `lr` : Learning rate ∈ [0, 1]
@@ -2114,6 +2317,7 @@ onlinecluster_update(centroid: Vec, x: Vec, lr: float) -> Vec
 **Retourne:** Nouveau centroïde après mise à jour
 
 **Exemple:**
+
 ```normil
 let c = zeros(64)
 let lr = 0.1
@@ -2130,14 +2334,15 @@ c = onlinecluster_update(c, x2, lr)
 
 **Learning rate:**
 
-| Valeur | Comportement | Use Case |
-|--------|--------------|----------|
-| 0.0 | Aucun changement | Freeze |
-| 0.1 | Adaptation lente | Stabilité |
-| 0.5 | Adaptation moyenne | Balance |
-| 1.0 | Remplacement | Reset |
+| Valeur | Comportement       | Use Case   |
+| ------ | ------------------ | ---------- |
+| 0.0    | Aucun changement   | Freeze     |
+| 0.1    | Adaptation lente   | Stabilité |
+| 0.5    | Adaptation moyenne | Balance    |
+| 1.0    | Remplacement       | Reset      |
 
 **Cas d'usage:**
+
 - Consolidation sémantique en temps réel
 - Clustering sans stocker tous les points
 - Adaptation continue de concepts
@@ -2151,6 +2356,7 @@ Transactions avec audit logging automatique et rollback.
 #### Déclaration
 
 **Syntaxe:**
+
 ```normil
 transaction name(params) -> ReturnType {
     // Corps de la transaction
@@ -2159,6 +2365,7 @@ transaction name(params) -> ReturnType {
 ```
 
 **Exemple basique:**
+
 ```normil
 transaction append_episode_safe(summary: str, trust: float) -> str {
     let v = random(128, 0.0, 1.0)
@@ -2173,7 +2380,7 @@ transaction append_episode_safe(summary: str, trust: float) -> str {
         provenance: {"device_id": "prod", "signature": ""},
         outcome: "success"
     }
-    
+  
     let id = episodic_append(record)
     return id
 }
@@ -2185,6 +2392,7 @@ let ep_id = append_episode_safe("Important event", 0.95)
 #### Transaction avec Rollback
 
 **Syntaxe:**
+
 ```normil
 transaction name(params) {
     // Corps principal
@@ -2194,6 +2402,7 @@ transaction name(params) {
 ```
 
 **Exemple:**
+
 ```normil
 transaction update_concept(concept_id: str, new_vec: Vec) {
     let old = semantic_query(concept_id, k: 1)[0]
@@ -2210,6 +2419,7 @@ transaction update_concept(concept_id: str, new_vec: Vec) {
 Chaque transaction enregistre automatiquement :
 
 **Au début:**
+
 ```
 transaction_start_<name>: {
     params: {...}
@@ -2217,6 +2427,7 @@ transaction_start_<name>: {
 ```
 
 **En cas de succès:**
+
 ```
 transaction_success_<name>: {
     result: "...",
@@ -2225,6 +2436,7 @@ transaction_success_<name>: {
 ```
 
 **En cas d'erreur:**
+
 ```
 transaction_failed_<name>: {
     error: "..."
@@ -2232,6 +2444,7 @@ transaction_failed_<name>: {
 ```
 
 **Avantages:**
+
 - ✅ Traçabilité complète
 - ✅ Intégrité garantie
 - ✅ Rollback automatique
@@ -2248,21 +2461,26 @@ La Phase 7 apporte la gestion automatique de la plasticité avec trois nouvelles
 Normalise un vecteur à norme L2 = 1.0 pour maintenir une magnitude constante.
 
 **Syntaxe:**
+
 ```normil
 let normalized = normalize_plasticity(weights)
 ```
 
 **Paramètres:**
+
 - `weights` : Vecteur à normaliser
 
 **Retour:**
+
 - `Vec` : Vecteur normalisé (norme L2 = 1.0)
 
 **Comportement:**
+
 - Si norme < 1e-4 : Retourne le vecteur inchangé (évite division par zéro)
 - Sinon : v' = v / ||v||₂
 
 **Exemple:**
+
 ```normil
 let w = vec(3, [3.0, 4.0, 0.0])
 let w_norm = normalize_plasticity(w)
@@ -2272,6 +2490,7 @@ print("Norm: " + to_string(norm(w_norm)))  // 1.0
 ```
 
 **Cas d'usage:**
+
 - Maintenir la stabilité numérique pendant l'apprentissage
 - Éviter l'explosion/extinction de gradient
 - Garantir que les poids restent dans une plage stable
@@ -2283,21 +2502,26 @@ print("Norm: " + to_string(norm(w_norm)))  // 1.0
 Applique une décroissance exponentielle au taux d'apprentissage.
 
 **Syntaxe:**
+
 ```normil
 let new_lr = decay_learning_rate(lr, factor)
 ```
 
 **Paramètres:**
+
 - `lr` : Taux d'apprentissage actuel
 - `factor` : Facteur de decay (0 < factor ≤ 1.0, défaut: 0.99)
 
 **Retour:**
+
 - `float` : Nouveau taux d'apprentissage (lr' = lr × factor)
 
 **Validation:**
+
 - Lève `ValueError` si `factor` ≤ 0 ou `factor` > 1.0
 
 **Exemple:**
+
 ```normil
 let lr = 0.1
 
@@ -2312,6 +2536,7 @@ for i in range(10) {
 ```
 
 **Cas d'usage:**
+
 - Convergence progressive vers un optimum
 - Réduction automatique du pas d'apprentissage
 - Amélioration de la stabilité en fin de training
@@ -2323,27 +2548,33 @@ for i in range(10) {
 Vérifie si deux vecteurs sont stables (changement relatif < seuil).
 
 **Syntaxe:**
+
 ```normil
 let is_stable = compute_stability(w_old, w_new, threshold)
 ```
 
 **Paramètres:**
+
 - `weights_old` : Vecteur avant mise à jour
 - `weights_new` : Vecteur après mise à jour
 - `threshold` : Seuil de stabilité (ex: 0.01 = 1%)
 
 **Retour:**
+
 - `bool` : `true` si changement < seuil, sinon `false`
 
 **Calcul:**
+
 - relative_change = ||w_new - w_old||₂ / ||w_old||₂
 - Retourne `true` si relative_change < threshold
 - Retourne aussi `true` si ||w_old||₂ < 1e-4 (poids quasi-nuls)
 
 **Validation:**
+
 - Lève `ValueError` si dimensions différentes
 
 **Exemple:**
+
 ```normil
 let w1 = vec(3, [1.0, 2.0, 3.0])
 let w2 = vec(3, [1.001, 2.002, 3.001])
@@ -2359,6 +2590,7 @@ let unstable = compute_stability(w1, w3, 0.01)
 ```
 
 **Cas d'usage:**
+
 - Critère d'arrêt pour l'apprentissage
 - Détection de convergence
 - Optimisation early stopping
@@ -2370,6 +2602,7 @@ let unstable = compute_stability(w1, w3, 0.01)
 L'annotation `@plastic` supporte maintenant le paramètre `stability_threshold` et la gestion automatique.
 
 **Syntaxe:**
+
 ```normil
 @plastic(rate: float, mode: string, stability_threshold: float)
 fn learn_function(...) -> Vec {
@@ -2378,11 +2611,13 @@ fn learn_function(...) -> Vec {
 ```
 
 **Paramètres:**
+
 - `rate` : Taux d'apprentissage initial (sera automatiquement décru)
 - `mode` : Mode de plasticité (`"hebbian"`, `"stdp"`, `"anti_hebbian"`)
 - `stability_threshold` : Seuil de convergence (défaut: 0.01 = 1%)
 
 **Métadonnées automatiques:**
+
 - `step_count` : Compteur d'appels à la fonction
 - `is_stable` : `true` quand la stabilité est atteinte
 - `rate` : Taux d'apprentissage actuel (décroît automatiquement)
@@ -2392,34 +2627,35 @@ fn learn_function(...) -> Vec {
 Pour chaque appel à une fonction `@plastic`:
 
 1. **Incrémentation:** `step_count++`
-
 2. **Capture de poids:** Recherche automatique de variables nommées:
-   - `weights`, `w`, `synapses`, `connections`
 
+   - `weights`, `w`, `synapses`, `connections`
 3. **Vérification stabilité:** Si poids capturés ET résultat Vec:
+
    ```
    is_stable = compute_stability(weights_before, result, stability_threshold)
    ```
-
 4. **Normalisation automatique:** Si mode ∈ {hebbian, stdp, anti_hebbian}:
+
    ```
    result = normalize_plasticity(result)
    ```
-
 5. **Decay learning rate:** Si non stable ET poids capturés:
+
    ```
    rate = decay_learning_rate(rate, 0.99)
    ```
 
 **Exemple complet:**
+
 ```normil
 @plastic(rate: 0.1, mode: "hebbian", stability_threshold: 0.01)
 fn adapt_weights(input: Vec) -> Vec {
     let weights = random_vec(input.dim)
-    
+  
     // Mise à jour
     weights = onlinecluster_update(weights, input, 0.1)
-    
+  
     return weights
     // Automatiquement:
     // - Normalisé (norme = 1.0)
@@ -2436,20 +2672,22 @@ let w2 = adapt_weights(data)  // step_count=2, rate≈0.099, norm=1.0
 
 **Modes disponibles:**
 
-| Mode | Description | Normalisation |
-|------|-------------|---------------|
-| `hebbian` | Renforcement corrélé (Hebb) | Oui (auto) |
-| `stdp` | Spike-Timing Dependent | Oui (auto) |
-| `anti_hebbian` | Décorrélation | Oui (auto) |
-| Autre | Mode personnalisé | Non |
+| Mode             | Description                   | Normalisation |
+| ---------------- | ----------------------------- | ------------- |
+| `hebbian`      | Renforcement corrélé (Hebb) | Oui (auto)    |
+| `stdp`         | Spike-Timing Dependent        | Oui (auto)    |
+| `anti_hebbian` | Décorrélation               | Oui (auto)    |
+| Autre            | Mode personnalisé            | Non           |
 
 **Avantages:**
+
 - ✅ Zero boilerplate code
 - ✅ Convergence garantie
 - ✅ Stabilité numérique assurée
 - ✅ Traçabilité complète
 
 **Exemple multi-couches:**
+
 ```normil
 @plastic(rate: 0.05, mode: "hebbian", stability_threshold: 0.01)
 fn layer1(x: Vec) -> Vec {
@@ -2477,19 +2715,21 @@ fn train(data: Vec) {
 
 ### Arithmétiques
 
-| Opérateur | Types | Exemple | Résultat |
-|-----------|-------|---------|----------|
-| `+` | int, float | `5 + 3` | `8` |
-| `+` | str (concat) ✨ | `"Hello" + " World"` | `"Hello World"` |
-| `-` | int, float | `5 - 3` | `2` |
-| `*` | int, float | `5 * 3` | `15` |
-| `/` | int, float | `6 / 2` | `3` |
+| Opérateur | Types           | Exemple                | Résultat         |
+| ---------- | --------------- | ---------------------- | ----------------- |
+| `+`      | int, float      | `5 + 3`              | `8`             |
+| `+`      | str (concat) ✨ | `"Hello" + " World"` | `"Hello World"` |
+| `-`      | int, float      | `5 - 3`              | `2`             |
+| `*`      | int, float      | `5 * 3`              | `15`            |
+| `/`      | int, float      | `6 / 2`              | `3`             |
 
-⚠️ **Note:** 
+⚠️ **Note:**
+
 - Pour les vecteurs, utilisez `vec_add`, `vec_mul`, etc.
 - L'opérateur `+` supporte maintenant la concaténation de strings (Phase 3.3)
 
 **Concaténation de strings:**
+
 ```normil
 let greeting = "Hello" + " " + "World"  // "Hello World"
 let message = "The answer is " + to_string(42)  // "The answer is 42"
@@ -2497,22 +2737,22 @@ let message = "The answer is " + to_string(42)  // "The answer is 42"
 
 ### Comparaison
 
-| Opérateur | Description | Exemple |
-|-----------|-------------|---------|
-| `==` | Égalité | `x == 5` |
-| `!=` | Différence | `x != 5` |
-| `<` | Inférieur | `x < 5` |
-| `<=` | Inférieur ou égal | `x <= 5` |
-| `>` | Supérieur | `x > 5` |
-| `>=` | Supérieur ou égal | `x >= 5` |
+| Opérateur | Description         | Exemple    |
+| ---------- | ------------------- | ---------- |
+| `==`     | Égalité           | `x == 5` |
+| `!=`     | Différence         | `x != 5` |
+| `<`      | Inférieur          | `x < 5`  |
+| `<=`     | Inférieur ou égal | `x <= 5` |
+| `>`      | Supérieur          | `x > 5`  |
+| `>=`     | Supérieur ou égal | `x >= 5` |
 
 ### Logiques
 
-| Opérateur | Description | Exemple |
-|-----------|-------------|---------|
-| `and` | ET logique | `x > 0 and x < 10` |
-| `or` | OU logique | `x < 0 or x > 10` |
-| `not` | NON logique | `not active` |
+| Opérateur | Description | Exemple              |
+| ---------- | ----------- | -------------------- |
+| `and`    | ET logique  | `x > 0 and x < 10` |
+| `or`     | OU logique  | `x < 0 or x > 10`  |
+| `not`    | NON logique | `not active`       |
 
 ---
 
@@ -2641,6 +2881,7 @@ match value {
 ### Phase 3 - Complétée ✅
 
 **✅ Implémenté:**
+
 - **Inférence de types** (Phase 3.1) - `let x = 42` sans type explicite
 - **Système d'imports** (Phase 3.2) - Modules réutilisables
 - **Opérations sur strings** (Phase 3.3) - Concaténation et 14 primitives
@@ -2650,18 +2891,21 @@ match value {
 ### Phase 4 - Complétée ✅
 
 **✅ Implémenté:**
+
 - **Import modules Python** (Phase 4.1) - `import math`, `import random`, etc.
 - **Appels de fonctions Python** (Phase 4.2) - `math.sqrt()`, arguments multiples
 - **Conversions automatiques** (Phase 4.3) - Types NORMiL ↔ Python seamless
 - **Objets et classes Python** (Phase 4.4) - Instantiation, méthodes, attributs, chaînage
 
 ### Vecteurs
+
 - ✅ Dimension fixe (comportement intentionnel)
 - ✅ Accès par index - `v[i]` (Phase 3.4)
 - ❌ Pas de slicing `v[start:end]` (futur)
 - ❌ Pas de concaténation directe
 
 ### Strings
+
 - ✅ Concaténation avec `+` (Phase 3.3)
 - ✅ Conversion `to_string()` (Phase 3.3)
 - ✅ 14 primitives (length, upper, lower, etc.) (Phase 3.3)
@@ -2669,6 +2913,7 @@ match value {
 - ❌ Pas d'interpolation (futur)
 
 ### Types
+
 - ✅ Inférence de type (Phase 3.1)
 - ✅ Types doivent être explicites pour paramètres de fonction
 - ✅ Conversions automatiques NORMiL ↔ Python (Phase 4.3)
@@ -2676,6 +2921,7 @@ match value {
 - ❌ Pas de types union
 
 ### Imports
+
 - ✅ Système de modules NORMiL (Phase 3.2)
 - ✅ Import modules Python (Phase 4.1)
 - ✅ Import avec alias (`import math as m`)
@@ -2683,6 +2929,7 @@ match value {
 - ❌ Pas d'imports conditionnels
 
 ### Interopérabilité Python
+
 - ✅ Import de modules Python (Phase 4.1)
 - ✅ Accès constantes (`math.pi`, `math.e`)
 - ✅ Appels de fonctions (`math.sqrt()`, `random.random()`)
@@ -2701,6 +2948,7 @@ match value {
 ## Exemples de Référence
 
 Consultez les fichiers dans `examples/`:
+
 - `hello.nor` - Programme de base
 - `type_inference.nor` - Démonstration d'inférence de types ✨
 - `imports_test.nor` - Utilisation de modules ✨
@@ -2715,10 +2963,12 @@ Consultez les fichiers dans `examples/`:
 - `combined_features.nor` - Toutes les features
 
 **Modules disponibles dans `modules/`:**
+
 - `mathutils.nor` - Fonctions mathématiques (abs, max, min, clamp) ✨
 - `vectors.nor` - Opérations vectorielles avancées ✨
 
 **Accès à l'écosystème Python complet:**
+
 - `math` - Fonctions mathématiques
 - `random` - Génération aléatoire
 - `datetime` - Manipulation de dates et heures
@@ -2728,6 +2978,6 @@ Consultez les fichiers dans `examples/`:
 
 ---
 
-**NORMiL API Reference v0.6.0**  
+**NORMiL API Reference v0.6.0**
 Dernière mise à jour : Phase 4 Complete (4.1, 4.2, 4.3, 4.4)
 Pour plus d'informations : `TUTORIAL.md`, `PHASE2_FINAL_REPORT.md`

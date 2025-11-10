@@ -3,6 +3,8 @@
 Tests pour les Transactions @atomic de NORMiL
 ==============================================
 
+Auteur : Diego Morales Magri
+
 Teste les transactions atomiques:
 - @atomic : Rollback automatique sur erreur
 - Commit implicite sur succès

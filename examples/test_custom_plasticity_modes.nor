@@ -1,5 +1,6 @@
 // Test des modes de plasticité personnalisables (Phase 7.6)
 // Validation du registry et de l'enregistrement de modes custom
+// Auteur : Diego Morales Magri
 
 print("=== Test Custom Plasticity Modes ===")
 print("")

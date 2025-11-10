@@ -1,5 +1,11 @@
 # 🤝 Contributing to NORMiL
 
+
+**Date** : Novembre 2025
+**Auteur** : Diego Morales Magri
+
+---
+
 Merci de votre intérêt pour contribuer à NORMiL ! Ce document vous guide dans le processus de contribution.
 
 ---
@@ -115,14 +121,14 @@ Résultat
 
 ### Composants Clés
 
-| Composant | Fichier | Responsabilité |
-|-----------|---------|----------------|
-| **Lexer** | `parser/lexer.py` | Tokenization |
-| **Parser** | `parser/parser.py` | Construction AST |
-| **AST** | `parser/ast_nodes.py` | Nœuds syntaxiques |
-| **Executor** | `runtime/executor.py` | Interprétation |
-| **Types** | `runtime/normil_types.py` | Types natifs |
-| **Primitives** | `runtime/primitives.py` | Fonctions built-in |
+| Composant            | Fichier                     | Responsabilité    |
+| -------------------- | --------------------------- | ------------------ |
+| **Lexer**      | `parser/lexer.py`         | Tokenization       |
+| **Parser**     | `parser/parser.py`        | Construction AST   |
+| **AST**        | `parser/ast_nodes.py`     | Nœuds syntaxiques |
+| **Executor**   | `runtime/executor.py`     | Interprétation    |
+| **Types**      | `runtime/normil_types.py` | Types natifs       |
+| **Primitives** | `runtime/primitives.py`   | Fonctions built-in |
 
 ### Ajouter une Feature
 
@@ -148,7 +154,7 @@ class MyNewNode(Statement):
     """Description du nœud"""
     field1: str
     field2: Expression
-    
+  
     def __repr__(self) -> str:
         return f"MyNewNode({self.field1}, {self.field2})"
 ```
@@ -223,6 +229,7 @@ git commit -m "wip"
 ### Convention de Messages
 
 Préfixes recommandés :
+
 - `feat:` Nouvelle fonctionnalité
 - `fix:` Correction de bug
 - `docs:` Documentation
@@ -266,21 +273,21 @@ def test_ma_feature():
     let x = my_new_feature(42)
     print(x)
     """
-    
+  
     # Setup
     lexer = Lexer(code)
     tokens = lexer.tokenize()
     parser = Parser(tokens)
     ast = parser.parse()
     executor = Executor()
-    
+  
     # Execute
     for stmt in ast.statements:
         executor.exec_statement(stmt)
-    
+  
     # Assert
     assert executor.current_scope.get_var('x') == expected_value
-    
+  
 if __name__ == '__main__':
     test_ma_feature()
     print("✅ Tests passed!")
@@ -289,6 +296,7 @@ if __name__ == '__main__':
 ### Couverture de Tests
 
 Visez au minimum :
+
 - **Nouveaux tokens** : 1 test
 - **Nouveaux nœuds AST** : 2-3 tests (parsing + execution)
 - **Nouvelles primitives** : 3-5 tests (cas nominal, edge cases)
@@ -304,20 +312,20 @@ Visez au minimum :
 def my_function(param1: int, param2: str) -> bool:
     """
     Description courte de la fonction.
-    
+  
     Description plus détaillée si nécessaire.
     Peut tenir sur plusieurs lignes.
-    
+  
     Args:
         param1: Description du paramètre 1
         param2: Description du paramètre 2
-    
+  
     Returns:
         Description du retour
-    
+  
     Raises:
         ValueError: Si param1 < 0
-    
+  
     Example:
         >>> my_function(42, "hello")
         True
@@ -358,6 +366,7 @@ fn main() {
 ### Avant de Soumettre
 
 Checklist :
+
 - [ ] Code suit le [Style Guide](STYLE_GUIDE.md)
 - [ ] Tests passent tous
 - [ ] Documentation mise à jour
@@ -368,11 +377,12 @@ Checklist :
 ### Créer la PR
 
 1. **Push votre branche**
+
    ```bash
    git push origin feature/ma-feature
    ```
-
 2. **Créer la Pull Request** sur GitHub
+
    - Titre clair et descriptif
    - Description détaillée :
      - Quoi : Qu'est-ce qui change ?
@@ -380,7 +390,6 @@ Checklist :
      - Comment : Comment avez-vous implémenté ?
    - Screenshots/exemples si applicable
    - Référencer les issues liées
-
 3. **Template de PR**
 
 ```markdown
@@ -465,4 +474,3 @@ sous la même licence que le projet (voir LICENSE).
 **Merci de contribuer à NORMiL !** 🚀
 
 Ensemble, créons le meilleur langage pour contrôler l'IA O-RedMind. 🧠❤️
-

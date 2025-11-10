@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Tests pour le système d'imports (Phase 3.2)
+====================================
+Auteur : Diego Morales Magri
 """
 
 import sys

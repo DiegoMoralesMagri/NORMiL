@@ -2,6 +2,8 @@
 Tests pour les primitives neurales - Phase 6
 ============================================
 
+Auteur : Diego Morales Magri
+
 Tests unitaires pour :
 - lowrankupdate() : Mise à jour de rang faible
 - quantize() : Quantisation 8/4 bits

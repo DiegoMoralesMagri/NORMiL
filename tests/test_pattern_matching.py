@@ -3,6 +3,8 @@
 Tests pour le Pattern Matching de NORMiL
 =========================================
 
+Auteur : Diego Morales Magri
+
 Teste les différents types de patterns:
 - Literal patterns (42, "hello", true)
 - Wildcard pattern (_)

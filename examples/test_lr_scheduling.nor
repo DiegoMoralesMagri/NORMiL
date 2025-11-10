@@ -1,5 +1,6 @@
 // Test des stratégies de scheduling du learning rate (Phase 7.9)
 // Warmup, cosine annealing, step decay, plateau detection
+// Auteur : Diego Morales Magri
 
 print("=== Test Learning Rate Scheduling ===")
 print("")

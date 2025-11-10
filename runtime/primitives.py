@@ -2,6 +2,8 @@
 NORMiL Primitives
 =================
 
+Auteur : Diego Morales Magri
+
 Implémentation des primitives natives NORMiL en Python.
 
 Catégories:
